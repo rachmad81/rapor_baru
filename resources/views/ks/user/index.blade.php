@@ -158,7 +158,7 @@
   });
 
   function form_mapel(id){
-    $.post("{{route('form_guru_mengajar_ks')}}",{id:id},function(data){
+    $.post("{{route('ks-reset_password-main')}}",{id:id},function(data){
       $('.modal_page').html(data.content);
       $('#modal-default').modal('show');
     });
@@ -166,7 +166,7 @@
 
   function simpan(){
     var data = $('form#form_simpan').serialize();
-    $.post("{{route('simpan_guru_mengajar_ks')}}",data,function(data){
+    $.post("{{route('ks-reset_password-reset')}}",data,function(data){
 
     });
   }

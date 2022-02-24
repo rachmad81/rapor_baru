@@ -4,10 +4,10 @@
 		<th class="headcol">Nama</th>
 		@if($kd->count()!=0)
 		@foreach($kd as $k=>$v)
-		<th onclick="nama_kolom('bg-lime','KD {{$k+1}}','{{$v->kd_isi}}','npas_{{$k+1}}')">
+		<th onclick="nama_kolom('bg-lime','KD {{$k+1}}','{{$v->isi}}','npas_{{$k+1}}')">
 			<i class="fa fa-comment"></i> KD {{($k+1)}}
 			<div style="display: none;border: 1px solid black;margin: 5px;padding: 5px;font-size: 12px;" class="tooltip123 bg-dark" id="npas_{{$k+1}}">
-				{{$v->kd_isi}}
+				{{$v->isi}}
 			</div>
 		</th>
 		@endforeach
@@ -32,5 +32,11 @@
 		<td><a href="javascript:void(0)" class="btn btn-sm btn-primary" onclick="simpan_nilai('{{$s->id_siswa}}','npas')">Simpan</a></td>
 	</tr>
 	@endforeach
+	@else
+	<tr>
+		<td colspan="6" style="text-align: center">
+			-- Data siswa belum di <i>Generate</i> --
+		</td>
+	</tr>
 	@endif
 </table>

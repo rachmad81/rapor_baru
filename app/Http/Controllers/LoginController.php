@@ -31,7 +31,7 @@ class LoginController extends Controller
 
 		if($is_login=='1'){
 			if($sebagai=='guru'){
-				return Redirect::route('dashboard_guru');
+				return Redirect::route('guru-dashboard-main');
 			}else{
 				return Redirect::route('dashboard_siswa');
 			}

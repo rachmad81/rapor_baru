@@ -12,7 +12,10 @@ use Session,DB,Redirect;
 class SiswaController extends Controller
 {
 	function main(){
-		$tahun_ajaran = Setkoneksi::tahun_ajaran();
+		$coni = new Request;
+		$coni->jenjang = Session::get('jenjang');
+		$conn = Setkoneksi::set_koneksi($coni);
+		$tahun_ajaran = DB::connection($conn)->table('public.tahun_ajaran')->orderBy('nama_tahun_ajaran')->get();
 
 		$data = [
 			'main_menu'=>'master_siswa',
@@ -24,20 +27,25 @@ class SiswaController extends Controller
 	}
 
 	function get_data(Request $request){
-		$nama_schema = $request->tahun_ajaran;
+		$id = $request->tahun_ajaran;
 		$request->jenjang = Session::get('jenjang');
 		$conn = Setkoneksi::set_koneksi($request);
+		$npsn = Session::get('npsn');
 
-		if($request->kelas==''){
-			$siswa = [];
+		$kelasrombel = explode('|||',$request->kelas);
+		$kelas = (count($kelasrombel)>1) ? $kelasrombel[0] : '';
+		$rombel = (count($kelasrombel)>1) ? $kelasrombel[1] : '';
+
+		if($id!=null){
+			$ta = DB::connection($conn)->table('public.tahun_ajaran')->where('id_tahun_ajaran',$id)->first();
+			$now = date('Y-m-d');
+			if($now>=date('Y-m-d',strtotime($ta->tgl_setting_awal)) && $now<=date('Y-m-d',strtotime($ta->tgl_setting_akhir))){
+				$siswa = DB::connection($conn)->table('public.siswa')->whereRaw("npsn='$npsn' AND kelas='$kelas' AND rombel='$rombel' AND status_siswa='Aktif' AND alumni is not true")->get();
+			}else{
+				$siswa = [];
+			}
 		}else{
-			$kelasrombel = explode('|||',$request->kelas);
-			$kelas = $kelasrombel[0];
-			$rombel = $kelasrombel[1];
-			$npsn = Session::get('npsn');
-
-			$siswa = DB::connection($conn)->table($nama_schema.'.nilai_akhir as n')->selectRaw("n.npsn,n.id_siswa,n.nama,n.kelas,n.rombel,s.nik,s.nis,s.tgl_lahir,s.kelamin,s.alamat_domisili")
-			->leftjoin('public.siswa as s','n.id_siswa','s.id_siswa')->whereRaw("n.kelas='$kelas' AND n.rombel='$rombel' AND n.npsn='$npsn'")->groupByRaw("n.npsn,n.id_siswa,n.nama,n.kelas,n.rombel,s.nik,s.nis,s.tgl_lahir,s.kelamin,s.alamat_domisili")->get();
+			$siswa = [];
 		}
 
 		return ['data'=>$siswa];

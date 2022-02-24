@@ -77,7 +77,7 @@
 		function cetak(){
 			var data = $('form#bukuinduk_form').serialize(0);
 
-			$.post("{{route('buku_induk-simpan',)}}",data,function(data){
+			$.post("{{route('guru-buku_induk-simpan',)}}",data,function(data){
 				if(data.code=='200'){
 					window.open("{{Request::url()}}?cetak=cetak");
 				}else{

@@ -11,11 +11,17 @@
 		<tr>
 			<td>{{($k+1)}}</td>
 			<td>{!! $s->nama !!}</td>
-			<td><a href="{{route('buku_induk-data',['id_siswa'=>$s->id_siswa])}}" target="_blank" class="btn btn-info btn-sm">Cetak Buku Induk</a></td>
-			<td><a href="javascript:void(0)" onclick="cetak_rapor('{{$s->id_siswa}}','{{$nama_schema}}','sisipan')" class="btn btn-warning btn-sm">Rapor Sisipan</a></td>
-			<td><a href="javascript:void(0)" onclick="cetak_rapor('{{$s->id_siswa}}','{{$nama_schema}}')" class="btn btn-danger btn-sm">Rapor Akhir</a></td>
+			<td><a href="{{route('guru-buku_induk-data',['id_siswa'=>$s->id_siswa])}}" target="_blank" class="btn btn-info btn-sm">Cetak Buku Induk</a></td>
+			<td><a href="javascript:void(0)" onclick="cetak_rapor('{{$s->id_siswa}}','nama_schema','sisipan')" class="btn btn-warning btn-sm">Rapor Sisipan</a></td>
+			<td><a href="javascript:void(0)" onclick="cetak_rapor('{{$s->id_siswa}}','nama_schema')" class="btn btn-danger btn-sm">Rapor Akhir</a></td>
 		</tr>
 		@endforeach
+		@else
+		<tr>
+			<td colspan="5" style="text-align: center">
+				-- Data siswa belum di <i>Generate</i> --
+			</td>
+		</tr>
 		@endif
 	</table>
 </div>

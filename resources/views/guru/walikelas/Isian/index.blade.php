@@ -61,11 +61,11 @@
 							</tr>
 							<tr>
 								<td style="text-align: right;">Kelas</td>
-								<td>: {{$mengajar->kelas}} - {{$mengajar->rombel}}</td>
+								<td>: {{$rombongan_belajar->kelas}} - {{$rombongan_belajar->rombel}}</td>
 							</tr>
 							<tr>
 								<td style="text-align: right;">Semester</td>
-								<td>: {{$semester}}</td>
+								<td>: {{$rombongan_belajar->nama_tahun_ajaran}} {{($rombongan_belajar->semester=='1') ? 'Semester Ganjil' : 'Semester Genap';}}</td>
 							</tr>
 						</table>
 					</div>
@@ -133,7 +133,7 @@
 
 		$('.overlay').show();
 		$('#custom-tabs-four-home').hide();
-		$.post("{{route('page_isian')}}",{i:i},function(data){
+		$.post("{{route('guru-isian-pages')}}",{i:i},function(data){
 			$('#custom-tabs-four-home').show();
 			$('#custom-tabs-four-home').html(data.content);
 			$('.overlay').hide();
@@ -160,7 +160,7 @@
 	function simpan_kkm(ini){
 		var kkm = ini.value;
 		if(kkm!=''){
-			$.post("{{route('simpan_kkm')}}",{kkm:kkm},function(data){
+			$.post("{{route('guru-isian-simpan_kkm')}}",{kkm:kkm},function(data){
 				swal(data.title,data.message,data.type);
 			}).fail(function(){
 				swal('Whooops','Terjadi kesalahan pada aplikasi','error');
@@ -174,7 +174,7 @@
 
 		$('#pages2').hide();
 		$('.loading-page').show();
-		$.post("{{route('pages2_isian')}}",{id:id},function(data){
+		$.post("{{route('guru-isian-pages2')}}",{id:id},function(data){
 			$('#pages2').show();
 			$('#pages2').html(data.content);
 			$('.loading-page').hide();
@@ -187,7 +187,7 @@
 
 		$('#pages3').hide();
 		$('.loading-page').show();
-		$.post("{{route('pages3_isian')}}",{id:id},function(data){
+		$.post("{{route('guru-isian-pages3')}}",{id:id},function(data){
 			$('#pages3').show();
 			$('#pages3').html(data.content);
 			$('.loading-page').hide();
@@ -200,7 +200,7 @@
 
 		$('#pages6').hide();
 		$('.loading-page').show();
-		$.post("{{route('pages6_isian')}}",{id:id},function(data){
+		$.post("{{route('guru-isian-pages6')}}",{id:id},function(data){
 			$('#pages6').show();
 			$('#pages6').html(data.content);
 			$('.loading-page').hide();
@@ -231,7 +231,7 @@
 			nilai:nilai,
 		};
 
-		$.post("{{route('simpan_nilai_guru')}}",data,function(data){
+		$.post("{{route('guru-isian-simpan_nilai')}}",data,function(data){
 			swal(data.title,data.message,data.type);
 		}).fail(function(){
 			swal('Whooops','Terjadi kesalahan pada aplikasi','error');

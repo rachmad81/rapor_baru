@@ -12,13 +12,20 @@
 					{{csrf_field()}}
 					<label>Pilih Tahun Ajaran</label>
 					<div class="input-group mb-3">
-						<select class="form-control" name="tahun_ajaran" onchange="set_ta(this)">
+						<select class="form-control" id="tahun_ajaran" name="tahun_ajaran" onchange="set_ta('1')">
 							@if(count($tahun_ajaran)!=0)
 							<option value="">..:: Pilih Tahun Ajaran ::..</option>
 							@foreach($tahun_ajaran as $ta)
-							<option value="{{$ta['nilai']}}">{{$ta['nama']}}</option>
+							<option value="{{$ta->id_tahun_ajaran}}">{{$ta->nama_tahun_ajaran}}</option>
 							@endforeach
 							@endif
+						</select>
+					</div>
+					<label>Semester</label>
+					<div class="input-group mb-3">
+						<select class="form-control" id="semester" name="semester" onchange="set_ta('1')">
+							<option value="1">Ganjil</option>
+							<option value="2">Genap</option>
 						</select>
 					</div>
 					<label>Pilih Mata Kategori Pelajaran</label>

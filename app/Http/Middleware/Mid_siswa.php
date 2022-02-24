@@ -24,7 +24,7 @@ class Mid_siswa
             if(Session::get('sebagai')=='siswa'){
                 return $next($request);
             }else{
-                return Redirect::route('dashboard_guru');
+                return Redirect::route('ks-dashboard-main');
             }
         }
 

@@ -35,9 +35,19 @@
 										<option value="">..:: Pilih Tahun Ajaran ::..</option>
 										@if(count($tahun_ajaran)!=0)
 										@foreach($tahun_ajaran as $ta)
-										<option value="{{$ta['nilai']}}" @if(Session::has('tahun_ajaran') && Session::get('tahun_ajaran')==$ta['nilai']) selected @endif>{{$ta['nama']}}</option>
+										<option value="{{$ta->id_tahun_ajaran}}">{{$ta->nama_tahun_ajaran}}</option>
 										@endforeach
 										@endif
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-lg-6">
+								<div class="input-group mb-3">
+									<select class="form-control" name="semester" onchange="get_data()">
+										<option value="1">Semester Ganjil</option>
+										<option value="2">Semester Genap</option>
 									</select>
 								</div>
 							</div>
@@ -80,12 +90,14 @@
 
 	function get_data(){
 		var ta = $('select[name=tahun_ajaran]').val();
+		var semester = $('select[name=semester]').val();
 
 		var data = {
 			ta:ta,
+			semester:semester,
 		};
 
-		$.post("{{route('get_rombel_by_ta')}}",data,function(data){
+		$.post("{{route('guru-walikelas-get_rombel')}}",data,function(data){
 			$('#tempat_sekolah').html(data.content);
 		});
 	}

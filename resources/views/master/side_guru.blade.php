@@ -1,7 +1,7 @@
 <!-- Main Sidebar Container -->
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
   <!-- Brand Logo -->
-  <a href="{{route('dashboard_guru')}}" class="brand-link">
+  <a href="{{route('guru-dashboard-main')}}" class="brand-link">
     <img src="{{asset('dist/img/AdminLTELogo.png')}}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
     <span class="brand-text font-weight-light">Rapor Online</span>
   </a>
@@ -36,7 +36,7 @@
       <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
         <!-- Add icons to the links using the .nav-icon class with font-awesome or any other icon font library -->
         <li class="nav-item">
-          <a href="{{route('dashboard_guru')}}" class="nav-link @if(isset($main_menu) && $main_menu=='dashboard') active @endif">
+          <a href="{{route('guru-dashboard-main')}}" class="nav-link @if(isset($main_menu) && $main_menu=='dashboard') active @endif">
             <i class="nav-icon fas fa-tachometer-alt"></i>
             <p>
               Dashboard
@@ -45,7 +45,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a href="{{route('walikelas')}}" class="nav-link @if(isset($main_menu) && $main_menu=='walikelas') active @endif">
+          <a href="{{route('guru-walikelas-main')}}" class="nav-link @if(isset($main_menu) && $main_menu=='walikelas') active @endif">
             <i class="nav-icon fas fa-user"></i>
             <p>
               Walikelas
@@ -54,7 +54,7 @@
           </a>
         </li>
         {{-- <li class="nav-item">
-          <a href="{{route('dashboard_guru')}}" class="nav-link @if(isset($main_menu) && $main_menu=='mapelajar') active @endif">
+          <a href="{{route('ks-dashboard-main')}}" class="nav-link @if(isset($main_menu) && $main_menu=='mapelajar') active @endif">
             <i class="nav-icon fas fa-clipboard"></i>
             <p>
               Mapelajar

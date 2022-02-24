@@ -16,9 +16,16 @@
 							@if(count($tahun_ajaran)!=0)
 							<option value="">..:: Pilih Tahun Ajaran ::..</option>
 							@foreach($tahun_ajaran as $ta)
-							<option value="{{$ta['nilai']}}">{{$ta['nama']}}</option>
+							<option value="{{$ta->id_tahun_ajaran}}">{{$ta->nama_tahun_ajaran}}</option>
 							@endforeach
 							@endif
+						</select>
+					</div>
+					<label>Semester</label>
+					<div class="input-group mb-3">
+						<select class="form-control" name="semester">
+							<option value="1">Ganjil</option>
+							<option value="2">Genap</option>
 						</select>
 					</div>
 					<label>Pilih Guru</label>
@@ -40,14 +47,6 @@
 								</select>
 							</div>
 						</div>
-					</div>
-					<label>Pilih Kurikulum</label>
-					<div class="input-group mb-3">
-						<select class="form-control" name="kurikulum">
-							<option value="">..:: Pilih Kurikulum ::..</option>
-							<option value="ktsp">Kurikulum KTSP</option>
-							<option value="2013">Kurikulum 2013</option>
-						</select>
 					</div>
 				</form>
 			</div>

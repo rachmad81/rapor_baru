@@ -15,7 +15,7 @@
 						<div class="icon">
 							<i class="fa fa-building"></i>
 						</div>
-						<a href="{{route('isian_wk',['kelas'=>$w->kelas,'rombel'=>$w->rombel])}}" class="small-box-footer">More Info <i class="fa fa-arrow-circle-right"></i></a>
+						<a href="{{route('guru-isian_wk-main',['id_rombel'=>$w->id_rombongan_belajar])}}" class="small-box-footer">More Info <i class="fa fa-arrow-circle-right"></i></a>
 					</div>
 				</div>
 				@endforeach
@@ -43,7 +43,7 @@
 						<div class="icon">
 							<i class="fa fa-building"></i>
 						</div>
-						<a href="{{route('isian_nilai',['kelas'=>$w->kelas,'rombel'=>$w->rombel,'mapel_id'=>$w->mapel_id])}}" class="small-box-footer">More Info <i class="fa fa-arrow-circle-right"></i></a>
+						<a href="{{route('guru-isian-main',['id_rombel'=>$w->id_rombongan_belajar,'mapel_id'=>$w->mapel_id])}}" class="small-box-footer">More Info <i class="fa fa-arrow-circle-right"></i></a>
 					</div>
 				</div>
 				@endforeach

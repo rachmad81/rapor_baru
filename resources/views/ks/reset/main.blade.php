@@ -73,7 +73,7 @@
 			};
 		}
 
-		$.post("{{route('proses_reset_password_guru')}}",data,function(data){
+		$.post("{{route('ks-reset_password-reset')}}",data,function(data){
 			if(data.code=='200'){
 				swal('Success',data.message,'success');
 			}else{

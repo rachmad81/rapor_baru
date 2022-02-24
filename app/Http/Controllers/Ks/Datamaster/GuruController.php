@@ -11,6 +11,13 @@ use Session,DB;
 
 class GuruController extends Controller
 {
+	protected $schema;
+
+    public function __construct() 
+    {
+        $this->schema = env('CURRENT_SCHEMA','production');
+    }
+    
 	function main(){
 		$data = [
 			'main_menu'=>'master_guru',

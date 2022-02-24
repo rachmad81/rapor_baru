@@ -34,7 +34,7 @@
                     <option value="">..:: Pilih Tahun Ajaran ::..</option>
                     @if(count($tahun_ajaran)!=0)
                     @foreach($tahun_ajaran as $ta)
-                    <option value="{{$ta['nilai']}}">{{$ta['nama']}}</option>
+                    <option value="{{$ta->id_tahun_ajaran}}">{{$ta->nama_tahun_ajaran}}</option>
                     @endforeach
                     @endif
                   </select>
@@ -85,7 +85,7 @@
     var rombel = $('select[name=rombel]').val();
 
     dt_table = $('#example2').DataTable( {
-      "ajax": "{{route('get_data_data_master_siswa')}}?tahun_ajaran="+tahun_ajaran+'&kelas='+rombel,
+      "ajax": "{{route('ks-data-master-siswa-get_data')}}?tahun_ajaran="+tahun_ajaran+'&kelas='+rombel,
       "columns": [
       { "data": "nis" },
       { "data": "nik" },
@@ -106,15 +106,18 @@
     var rombel = $('select[name=rombel]').val();
     $.post("{{route('set_ta')}}",{ta:ta},function(data){
       var selectnya = '<option value="">..:: Pilih Kelas Rombel ::..</option>';
-      if(data.length!=0){
-        $.each(data,function(k,v){
-          selectnya += '<option value="'+v.kelas+'|||'+v.rombel+'">'+v.kelas+' '+v.rombel+'</option>';
-        });
+      if(data.code=='200'){
+        if(data.kelas.length!=0){
+          $.each(data.kelas,function(k,v){
+            selectnya += '<option value="'+v.kelas+'|||'+v.rombel+'">'+v.kelas+' '+v.rombel+'</option>';
+          });
+        }
+      }else{
+        swal('Whooops','Tahun ajaran belum dibuka','warning');
       }
       $('#rombel').html(selectnya);
     });
 
-    // dt_table.ajax.url("{{route('get_data_data_master_siswa')}}?tahun_ajaran="+ta+'&kelas='+rombel).load();
     setTimeout(function(){
       get_siswa();
     },1000)
@@ -124,7 +127,7 @@
     var tahun_ajaran = $('select[name=tahun_ajaran]').val();
     var rombel = $('select[name=rombel]').val();
     
-    dt_table.ajax.url("{{route('get_data_data_master_siswa')}}?tahun_ajaran="+tahun_ajaran+'&kelas='+rombel).load();
+    dt_table.ajax.url("{{route('ks-data-master-siswa-get_data')}}?tahun_ajaran="+tahun_ajaran+'&kelas='+rombel).load();
   }
 </script>
 @endsection

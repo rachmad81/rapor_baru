@@ -32,13 +32,24 @@
               <div class="col-lg-6">
                 <label>Tahun Ajaran</label>
                 <div class="input-group mb-3">
-                  <select class="form-control" name="tahun_ajaran" onchange="set_ta(this)">
+                  <select class="form-control" name="tahun_ajaran" onchange="set_ta()">
                     @if(count($tahun_ajaran)!=0)
                     <option value="">..:: Pilih Tahun Ajaran ::..</option>
                     @foreach($tahun_ajaran as $ta)
-                    <option value="{{$ta['nilai']}}">{{$ta['nama']}}</option>
+                    <option value="{{$ta->id_tahun_ajaran}}">{{$ta->nama_tahun_ajaran}}</option>
                     @endforeach
                     @endif
+                  </select>
+                </div>
+              </div>  
+            </div>
+            <div class="row">
+              <div class="col-lg-6">
+                <label>Semester</label>
+                <div class="input-group mb-3">
+                  <select class="form-control" name="semester" onchange="set_ta()">
+                    <option value="1">Ganjil</option>
+                    <option value="2">Genap</option>
                   </select>
                 </div>
               </div>  
@@ -77,12 +88,26 @@
 
   var dt_table = '';
   $(document).ready(function () {
-    data_pengajar();
+    var tahun_ajaran = $('select[name=tahun_ajaran]').val();
+    var semester = $('select[name=semester]').val();
+
+    dt_table = $('#data_pengajar').DataTable( {
+      "ajax": "{{route('ks-data-master-guru_mengajar-get_data')}}?tahun_ajaran="+tahun_ajaran+"&semester="+semester,
+      "columns": [
+      { "data": "nama_mapel" },
+      { "data": "kelas_rombel" },
+      { "data": "nama_guru" },
+      { "data": "aksi" },
+      ],
+      "autoWidth": false,
+      "responsive": true,
+      "processing": true,
+    });
     set_ta();
   });
 
   function form(id){
-    $.post("{{route('form_guru_mengajar_ks')}}",{id:id},function(data){
+    $.post("{{route('ks-data-master-guru_mengajar-form')}}",{id:id},function(data){
       $('.modal_page').html(data.content);
 
       var ini = {
@@ -97,11 +122,13 @@
 
   function simpan(){
     var data = $('form#form_simpan').serialize();
-    $.post("{{route('simpan_guru_mengajar_ks')}}",data,function(data){
+    $.post("{{route('ks-data-master-guru_mengajar-simpan')}}",data,function(data){
       if(data.code=='200'){
-        location.reload();
+        data_pengajar();
+        swal('Success','Berhasil disimpan','success');
+        $('#modal-default').modal('hide');
       }else{
-        swal(data.title,data.message,data.type);
+        swal('Whooops','Gagal disimpan','error');
       }
 
     }).fail(function(){
@@ -109,36 +136,36 @@
     });
   }
 
-  function set_ta(ini=null){
-    var ta = ini.value;
-    $.post("{{route('set_ta')}}",{ta:ta},function(data){
+  function set_ta(form=null){
+    if(form==null){
+      var ta = $('select[name=tahun_ajaran]').val();
+      var semester = $('select[name=semester]').val();
+    }else{
+      var ta = $('#tahun_ajaran').val();
+      var semester = $('#semester').val();
+    }
+    $.post("{{route('get_rombel')}}",{ta:ta,semester:semester},function(data){
       var selectnya = '<option value="">..:: Pilih Kelas Rombel ::..</option>';
-      if(data.length!=0){
-        $.each(data,function(k,v){
-          selectnya += '<option value="'+v.kelas+'|||'+v.rombel+'">'+v.kelas+' '+v.rombel+'</option>';
-        });
+      if(data.code=='200'){
+        if(data.kelas.length!=0){
+          $.each(data.kelas,function(k,v){
+            selectnya += '<option value="'+v.id_rombongan_belajar+'">'+v.kelas+' '+v.rombel+'</option>';
+          });
+        }
+      }else{
+        swal('Whooops','Tahun ajaran belum dibuka','warning');
       }
       $('#rombel').html(selectnya);
     });
 
-    dt_table.ajax.url( "{{route('get_data_guru_mengajar_ks')}}?tahun_ajaran="+ta ).load();
+    data_pengajar();
   }
 
   function data_pengajar(){
-    var tahun_ajaran = $('select[name=tahun_ajaran]').val();
+    var ta = $('select[name=tahun_ajaran]').val();
+    var semester = $('select[name=semester]').val();
 
-    dt_table = $('#data_pengajar').DataTable( {
-      "ajax": "{{route('get_data_guru_mengajar_ks')}}?tahun_ajaran="+tahun_ajaran,
-      "columns": [
-      { "data": "nama_mapel" },
-      { "data": "kelas_rombel" },
-      { "data": "nama_guru" },
-      { "data": "aksi" },
-      ],
-      "autoWidth": false,
-      "responsive": true,
-      "processing": true,
-    });
+    dt_table.ajax.url( "{{route('ks-data-master-guru_mengajar-get_data')}}?tahun_ajaran="+ta+"&semester="+semester ).load();
   }
 
   function set_mapel(ini=null){
@@ -172,9 +199,9 @@
         tahun_ajaran:tahun_ajaran,
       };
       if (willDelete) {
-        $.post("{{route('hapus_guru_mengajar_ks')}}",data,function(data){
+        $.post("{{route('ks-data-master-guru_mengajar-hapus')}}",data,function(data){
           if(data.code=='200'){
-            location.reload();
+            data_pengajar();
           }else{
             swal(data.title,data.message,data.type);
           }

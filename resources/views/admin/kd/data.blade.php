@@ -6,10 +6,10 @@
 	@else
 	@endif
 	<td>{{($k+1)}}</td>
-	<td><input type="text" name="uraian_k3{{$k}}" value="{{$v->kd_isi}}" class="form-control"></td>
+	<td><input type="text" name="uraian_k3{{$k}}" value="{{$v->isi}}" class="form-control"></td>
 	<td>
-		<a href="javascript:void(0)" class="btn btn-sm btn-warning" onclick="update('{{$v->kd_id}}','uraian_k3{{$k}}','{{$kelas}}','3')">Update</a>
-		<a href="javascript:void(0)" class="btn btn-sm btn-danger" onclick="hapus('{{$v->kd_id}}','{{$kelas}}','3')">Hapus</a>
+		<a href="javascript:void(0)" class="btn btn-sm btn-warning" onclick="update('{{$v->id_kd}}','uraian_k3{{$k}}','{{$kelas}}','3')">Update</a>
+		{{-- <a href="javascript:void(0)" class="btn btn-sm btn-danger" onclick="hapus('{{$v->kd_id}}','{{$kelas}}','3')">Hapus</a> --}}
 	</td>
 </tr>
 @endforeach
@@ -33,10 +33,10 @@
 	@else
 	@endif
 	<td>{{($k+1)}}</td>
-	<td><input type="text" name="uraian_k4{{$k}}" value="{{$v->kd_isi}}" class="form-control"></td>
+	<td><input type="text" name="uraian_k4{{$k}}" value="{{$v->isi}}" class="form-control"></td>
 	<td>
-		<a href="javascript:void(0)" class="btn btn-sm btn-warning" onclick="update('{{$v->kd_id}}','uraian_k4{{$k}}','{{$kelas}}','4')">Update</a>
-		<a href="javascript:void(0)" class="btn btn-sm btn-danger" onclick="hapus('{{$v->kd_id}}','{{$kelas}}','4')">Hapus</a>
+		<a href="javascript:void(0)" class="btn btn-sm btn-warning" onclick="update('{{$v->id_kd}}','uraian_k4{{$k}}','{{$kelas}}','4')">Update</a>
+		{{-- <a href="javascript:void(0)" class="btn btn-sm btn-danger" onclick="hapus('{{$v->kd_id}}','{{$kelas}}','4')">Hapus</a> --}}
 	</td>
 </tr>
 @endforeach

@@ -58,7 +58,7 @@
 
   $(document).ready(function () {
     dt_table = $('#example2').DataTable({
-      "ajax": "{{route('get_data_mapel')}}",
+      "ajax": "{{route('admin-mapel-get_data')}}",
       "columns": [
       {"data":"kategori"},
       {"data":"kategori"},
@@ -72,7 +72,7 @@
   });
 
   function form_mapel(id){
-    $.post("{{route('form_mapel')}}",{id:id},function(data){
+    $.post("{{route('admin-mapel-form')}}",{id:id},function(data){
       $('.modal_page').html(data.content);
       $('#modal-default').modal('show');
     });
@@ -80,13 +80,13 @@
 
   function simpan(){
     var data = $('form#form_simpan').serialize();
-    $.post("{{route('simpan_mapel')}}",data,function(data){
+    $.post("{{route('admin-mapel-simpan')}}",data,function(data){
 
     });
   }
 
   function get_data(){
-    dt_table.ajax.url("{{route('get_data_mapel')}}").load();
+    dt_table.ajax.url("{{route('admin-mapel-get_data')}}").load();
   }
 </script>
 @endsection

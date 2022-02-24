@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/',function(){
-    return Redirect::route('dashboard_guru');
+    return Redirect::route('ks-dashboard-main');
 });
 
 Route::group(['prefix'=>'login'],function(){
@@ -33,5 +33,6 @@ Route::group(['middleware'=>'mid_all'],function(){
     });
 
     Route::post('/set_ta','SessionController@set_tahun_ajaran')->name('set_ta');
+    Route::post('/get_rombel','SessionController@get_rombel')->name('get_rombel');
     Route::post('/get_mapel','SessionController@get_mapel_by_kategori')->name('get_mapel_by_kategori');
 });

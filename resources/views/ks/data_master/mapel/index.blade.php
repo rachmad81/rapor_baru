@@ -59,7 +59,7 @@
 
   function get_data(){
     $('#example2').DataTable({
-      "ajax": "{{route('get_data_mapel_ks')}}",
+      "ajax": "{{route('ks-data-master-mapel-get_data')}}",
       "columns": [
       {"data":"kategori"},
       {"data":"kategori"},
@@ -68,20 +68,6 @@
       ],
       "autoWidth": false,
       "responsive": true,
-    });
-  }
-
-  function form_mapel(id){
-    $.post("{{route('form_mapel')}}",{id:id},function(data){
-      $('.modal_page').html(data.content);
-      $('#modal-default').modal('show');
-    });
-  }
-
-  function simpan(){
-    var data = $('form#form_simpan').serialize();
-    $.post("{{route('simpan_mapel')}}",data,function(data){
-
     });
   }
 </script>

@@ -14,5 +14,11 @@
 		<td><input type="number" name="nilai"></td>
 	</tr>
 	@endforeach
+	@else
+	<tr>
+		<td colspan="6" style="text-align: center">
+			-- Data siswa belum di <i>Generate</i> --
+		</td>
+	</tr>
 	@endif
 </table>

@@ -66,42 +66,58 @@
   });
 
   function get_mapel_kd(){
-    $.post("{{route('get_mapel_kd')}}",{kelas:'{{$kelas}}'},function(data){
+    $.post("{{route('admin-kd-get_mapel')}}",{kelas:'{{$kelas}}'},function(data){
       $('#data_mapel').html(data.content);
     });
   }
 
   function form_setting(id,kelas){
-    $.post("{{route('setting_kd')}}",{id:id,kelas:kelas},function(data){
+    $.post("{{route('admin-kd-setting')}}",{id:id,kelas:kelas},function(data){
       $('.modal_page').html(data.content);
       $('#modal-default').modal('show');
     });
 
-    get_kd(id,kelas);
+    get_kd();
     get_mapel_kd();
   }
 
   function simpan(isi,kd,kelas){
     var uraian = $('input[name='+isi+']').val();
     var mapel = $('input[name=mapel_id]').val();
+    var tahun_ajaran = $('select[name=tahun_ajaran]').val();
+    var semester = $('select[name=semester]').val();
 
     var data = {
       uraian:uraian,
       mapel:mapel,
       kd:kd,
       kelas:kelas,
+      tahun_ajaran:tahun_ajaran,
+      semester:semester,
     };
 
-    $.post("{{route('simpan_kd')}}",data,function(data){
-      get_kd(mapel,kelas);
+    $.post("{{route('admin-kd-simpan')}}",data,function(data){
+      get_kd();
       get_mapel_kd();
     }).fail(function(){
       swal('Whooops','Terjadi kesalahan pada aplikasi','error');
     });
   }
 
-  function get_kd(id,kelas){
-    $.post("{{route('get_kd')}}",{id:id,kelas:kelas},function(data){
+  function get_kd(){
+    var id = $('input[name=mapel_id]').val();
+    var kelas = $('input[name=kelas]').val();
+    var tahun_ajaran = $('select[name=tahun_ajaran]').val();
+    var semester = $('select[name=semester]').val();
+
+    var data = {
+      tahun_ajaran:tahun_ajaran,
+      semester:semester,
+      id:id,
+      kelas:kelas,
+    };
+
+    $.post("{{route('admin-kd-get')}}",data,function(data){
       $('#tempat_3').html(data.content);
     });
   }
@@ -125,9 +141,9 @@
     })
     .then((willDelete) => {
       if (willDelete) {
-        $.post("{{route('hapus_kd')}}",data,function(data){
+        $.post("{{route('admin-kd-hapus')}}",data,function(data){
           if(data.code=='200'){
-            get_kd(mapel,kelas);
+            get_kd();
             get_mapel_kd();
           }else{
             swal(data.title,data.message,data.type);
@@ -143,6 +159,8 @@
   function update(id,isi,kelas,no_kd){
     var uraian = $('input[name='+isi+']').val();
     var mapel = $('input[name=mapel_id]').val();
+    var tahun_ajaran = $('select[name=tahun_ajaran]').val();
+    var semester = $('select[name=semester]').val();
 
     var data = {
       uraian:uraian,
@@ -150,11 +168,13 @@
       id:id,
       kelas:kelas,
       no_kd:no_kd,
+      tahun_ajaran:tahun_ajaran,
+      semester:semester,
     };
 
-    $.post("{{route('update_kd')}}",data,function(data){
+    $.post("{{route('admin-kd-update')}}",data,function(data){
       swal(data.title,data.message,data.type);
-      get_kd(mapel,kelas);
+      get_kd();
       get_mapel_kd();
     });
   }

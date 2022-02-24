@@ -11,10 +11,21 @@ use App\Http\Libraries\Get_data;
 
 use DB,Session,Datatables;
 
+
 class GurumengajarController extends Controller
 {
+	protected $schema;
+
+    public function __construct() 
+    {
+        $this->schema = env('CURRENT_SCHEMA','production');
+    }
+
 	function main(){
-		$tahun_ajaran = Setkoneksi::tahun_ajaran();
+		$coni = new Request;
+		$coni->jenjang = Session::get('jenjang');
+		$conn = Setkoneksi::set_koneksi($coni);
+		$tahun_ajaran = DB::connection($conn)->table('public.tahun_ajaran')->orderBy('nama_tahun_ajaran')->get();
 
 		$data = [
 			'main_menu'=>'guru_mengajar',
@@ -27,7 +38,9 @@ class GurumengajarController extends Controller
 
 	function form(Request $request){
 		$id = $request->id;
-		$tahun_ajaran = Setkoneksi::tahun_ajaran();
+		$request->jenjang = Session::get('jenjang');
+		$conn = Setkoneksi::set_koneksi($request);
+		$tahun_ajaran = DB::connection($conn)->table('public.tahun_ajaran')->orderBy('nama_tahun_ajaran')->get();
 		$kategori = Get_data::get_kategori_rapor_mapel();
 		$guru = Get_data::get_guru();
 
@@ -35,7 +48,7 @@ class GurumengajarController extends Controller
 		$coni->jenjang = Session::get('jenjang');
 		$conn = Setkoneksi::set_koneksi($coni);
 
-		$mengajar = DB::connection($conn)->table('rapor_dummy.mengajar as m')
+		$mengajar = DB::connection($conn)->table($this->schema.'.mengajar as m')
 		->leftjoin('public.pegawai as peg',function($join){
 			$join->on('m.peg_id','=','peg.peg_id')->on('m.nik_pengajar','=','peg.nik');
 		})
@@ -71,13 +84,11 @@ class GurumengajarController extends Controller
 	}
 
 	function simpan(Request $request){
-		$guru = $request->guru;
-		$kategori = $request->kategori;
-		$mapel_id = $request->mapel_id;
-		$kelasrombel = explode('|||',$request->rombel);
-		$kelas = $kelasrombel[0];
-		$rombel = $kelasrombel[1];
-		$nama_schema = $request->tahun_ajaran;
+		$guru = $request->guru; // "218787"
+		$kategori = $request->kategori; // "AGAMA ISLAM"
+		$mapel_id = $request->mapel_id; // "51"
+		$rombel = $request->rombel; // "2"
+		$tahun_ajaran = $request->tahun_ajaran; // "1"
 
 		$coni = new Request;
 		$coni->jenjang = Session::get('jenjang');
@@ -85,21 +96,19 @@ class GurumengajarController extends Controller
 		$npsn = Session::get('npsn');
 
 		$pegawai = DB::connection($conn)->table('public.pegawai')->whereRaw("peg_id='$guru'")->first();
-		$user_rapor = (!empty($pegawai)) ? $pegawai->user_rapor : '';
-		$nama = (!empty($pegawai)) ? $pegawai->nama : '';
+		$nik = (!empty($pegawai)) ? $pegawai->nik : '';
+		$peg_id = (!empty($pegawai)) ? $pegawai->peg_id : '';
 
 		$data = [
-			'nip'=>$user_rapor,
 			'mapel_id'=>$mapel_id,
-			'npsn'=>$npsn,
-			'kelas'=>$kelas,
-			'rombel'=>$rombel,
-			'nama'=>$nama,
-			'kkm'=>0,
-			'kurikulum'=>'',
+			'rombel_id'=>$rombel,
+			'nik_pengajar'=>$nik,
+			'peg_id'=>$peg_id,
+			'created_at'=>date('Y-m-d H:i:s'),
+			'updated_at'=>date('Y-m-d H:i:s'),
 		];
 
-		$simpan = DB::connection($conn)->table($nama_schema.'.mengajar')->insert($data);
+		$simpan = DB::connection($conn)->table($this->schema.'.mengajar')->insert($data);
 
 		if($simpan){
 			Session::flash('title','Success');
@@ -112,7 +121,8 @@ class GurumengajarController extends Controller
 	}
 
 	function get_data(Request $request){
-		$nama_schema = $request->tahun_ajaran;
+		$id = $request->tahun_ajaran;
+		$semester = $request->semester;
 		
 		$coni = new Request;
 		$coni->jenjang = Session::get('jenjang');
@@ -120,39 +130,26 @@ class GurumengajarController extends Controller
 
 		$npsn = Session::get('npsn');
 
-		if($nama_schema==''){
+		if($id==''){
 			$mengajar = [];
 		}else{
-			$mengajar = DB::connection($conn)->table($nama_schema.'.mengajar as m')
-			->leftjoin('public.pegawai as peg',function($join){
-				$join->on('m.nip','=','peg.user_rapor')->on('m.npsn','=','peg.npsn');
+			$mengajar = DB::connection($conn)->table('public.rombongan_belajar as rb')
+			->join($this->schema.'.mengajar as m','m.rombel_id','rb.id_rombongan_belajar')
+			->join('public.rapor_mapel as rm','rm.mapel_id','m.mapel_id')
+			->leftjoin('public.pegawai as p',function($join){
+				return $join->on('p.nik','=','m.nik_pengajar')->on('p.peg_id','=','m.peg_id');
 			})
-			->leftjoin('public.rapor_mapel as rm',function($join){
-				$join->on('m.mapel_id','=','rm.mapel_id');
-			})
-			->selectRaw("m.*,peg.nama as nama_guru,rm.nama as nama_mapel,CONCAT(m.kelas,' ',m.rombel) as kelas_rombel")
-			->whereRaw("m.npsn='$npsn'")->get();
+			->selectRaw("p.nama as nama_guru,rm.nama as nama_mapel,CONCAT(rb.kelas,'.',rb.rombel) as kelas_rombel,rb.tahun_ajaran_id,m.id_mengajar")
+			->whereRaw("rb.npsn='$npsn' AND rb.tahun_ajaran_id='$id' AND semester='$semester'")
+			->get();
 
 			if($mengajar->count()!=0){
 				foreach($mengajar as $m){
-					$m->aksi = '<a href="javascript:void(0)" class="btn btn-danger btn-sm" onclick="hapus_data(\''.$m->nip.'\',\''.$m->mapel_id.'\',\''.$m->kelas.'\',\''.$m->rombel.'\')"><i class="fa fa-trash"></i> Hapus</a>';
-					
-					// $m->aksi = '<div class="btn-group">'.
-					// '<button type="button" class="btn btn-default">Action</button>'.
-					// '<button type="button" class="btn btn-default dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="true">'.
-					// '<span class="sr-only">Toggle Dropdown</span>'.
-					// '</button>'.
-					// '<div class="dropdown-menu" role="menu" style="position: absolute; transform: translate3d(68px, 38px, 0px); top: 0px; left: 0px; will-change: transform;" x-placement="bottom-start">'.
-					// '<a class="dropdown-item" href="javascript:void(0)" onclick="form(\''.$m->id_mengajar.'\')"><i class="fa fa-edit"></i> Edit</a>'.
-					// '<a class="dropdown-item" href="javascript:void(0)" onclick="hapus_data(\''.$m->id_mengajar.'\')"><i class="fa fa-trash"></i> Hapus</a>'.
-					// //'<div class="dropdown-divider"></div>'.
-					// //'<a class="dropdown-item" href="#">Separated link</a>'.
-					// '</div>'.
-					// '</div>';
+					$aksi = '';
+					$m->aksi = $aksi;
 				}
 			}
 		}
-
 
 		return ['data'=>$mengajar];
 	}

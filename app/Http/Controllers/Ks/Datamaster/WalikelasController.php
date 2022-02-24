@@ -13,8 +13,18 @@ use DB,Session;
 
 class WalikelasController extends Controller
 {
+	protected $schema;
+
+    public function __construct() 
+    {
+        $this->schema = env('CURRENT_SCHEMA','production');
+    }
+
 	function main(){
-		$tahun_ajaran = Setkoneksi::tahun_ajaran();
+		$coni = new Request;
+		$coni->jenjang = Session::get('jenjang');
+		$conn = Setkoneksi::set_koneksi($coni);
+		$tahun_ajaran = DB::connection($conn)->table('public.tahun_ajaran')->orderBy('nama_tahun_ajaran')->get();
 
 		$data = [
 			'main_menu'=>'walikelas',
@@ -27,10 +37,14 @@ class WalikelasController extends Controller
 
 	function form(Request $request){
 		$id = $request->id;
-		$tahun_ajaran = Setkoneksi::tahun_ajaran();
+		$jenjang = Session::get('jenjang');
+
+		$request->jenjang = $jenjang;
+		$conn = Setkoneksi::set_koneksi($request);
+
+		$tahun_ajaran = DB::connection($conn)->table('public.tahun_ajaran')->orderBy('nama_tahun_ajaran')->get();
 		$guru = Get_data::get_guru();
 
-		$jenjang = Session::get('jenjang');
 
 		if($jenjang=='SD'){
 			$kelas = ['1','2','3','4','5','6'];
@@ -59,25 +73,28 @@ class WalikelasController extends Controller
 		$rombel = $kelasrombel[1]; // "C"
 		$tahun_ajaran = $request->tahun_ajaran; // "1"
 		$kurikulum = $request->kurikulum; // "ktsp"
+		$semester = $request->semester;
 
 		$coni = new Request;
 		$coni->jenjang = Session::get('jenjang');
 		$conn = Setkoneksi::set_koneksi($coni);
+		$npsn = Session::get('npsn');
 		
-		$pegawai = DB::connection($conn)->table('public.pegawai')->whereRaw("peg_id='$peg_id'")->first();
-		$user_rapor = (!empty($pegawai)) ? $pegawai->user_rapor : '';
+		$pegawai = DB::connection($conn)->table('public.pegawai')->whereRaw("peg_id='$peg_id' and npsn='$npsn'")->first();
+		$nik = (!empty($pegawai)) ? $pegawai->nik : '';
 		$nama = (!empty($pegawai)) ? $pegawai->nama : '';
 
 		$data = [
-			'nip'=>$user_rapor,
-			'npsn'=>Session::get('npsn'),
+			'wali_kelas_peg_id'=>$pegawai->peg_id,
+			'tahun_ajaran_id'=>$tahun_ajaran,
+			'npsn'=>$npsn,
+			'nik_wk'=>$nik,
 			'kelas'=>$kelas,
 			'rombel'=>$rombel,
-			'nama'=>$nama,
-			'kurikulum'=>$kurikulum,
+			'semester'=>$semester,
 		];
 
-		$simpan = DB::connection($conn)->table($tahun_ajaran.'.walikelas')->insert($data);
+		$simpan = DB::connection($conn)->table('public.rombongan_belajar')->insert($data);
 		if($simpan){
 			Session::flash('title','Success');
 			Session::flash('message','Berhasil disimpan');
@@ -89,7 +106,8 @@ class WalikelasController extends Controller
 	}
 
 	function get_data(Request $request){
-		$nama_schema = $request->tahun_ajaran;
+		$id = $request->tahun_ajaran;
+		$semester = $request->semester;
 		$request->jenjang = Session::get('jenjang');
 		$conn = Setkoneksi::set_koneksi($request);
 
@@ -98,13 +116,15 @@ class WalikelasController extends Controller
 		if($request->tahun_ajaran==''){
 			$wali_kelas = [];
 		}else{
-			$wali_kelas = DB::connection($conn)->table($nama_schema.'.walikelas')->whereRaw("npsn='$npsn'")->get();
+			$wali_kelas = DB::connection($conn)->table('public.rombongan_belajar as wk')
+			->join('public.pegawai as p',function($join){
+				return $join->on('p.nik','=','wk.nik_wk')->on(DB::raw("CAST(p.peg_id as varchar)"),'=','wk.wali_kelas_peg_id');
+			})->whereRaw("wk.npsn='$npsn' AND wk.tahun_ajaran_id='$id' AND semester='$semester'")->get();
 
-
-			if(count($wali_kelas)!=0){
-				foreach($wali_kelas as $w){
-					$w->aksi = '<a href="javascript:void(0)" class="btn btn-sm btn-danger" onclick="hapus(\''.$w->nip.'\',\''.$w->kelas.'\',\''.$w->rombel.'\')"><i class="fa fa-trash"></i> Hapus</a>';
-					// $w->aksi = '';
+			if($wali_kelas->count()!=0){
+				foreach($wali_kelas as $wk){
+					$aksi = '';
+					$wk->aksi = $aksi;
 				}
 			}
 		}

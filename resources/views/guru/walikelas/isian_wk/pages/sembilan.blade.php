@@ -14,21 +14,21 @@
 			<td>
 				<?php
 				$selected = ['selected',''];
-				if($s->kenaikan_kelas!=null){
-					if($s->kenaikan_kelas=='false'){
-					$selected = ['','selected'];
-					}else{
-					}
-				}
-				?>
-				<select name="naik_{{$k}}" class="form-control">
-					<option {{$selected[0]}} value="true">Naik Kelas</option>
-					<option {{$selected[1]}} value="false">Tidak Naik Kelas</option>
-				</select>
-			</td>
-			<td><a href="javascript:void(0)" class="btn btn-sm btn-primary" onclick="simpan_catatan('{{$s->id_siswa}}','{{$nama_schema}}','naik_{{$k}}','kenaikan_kelas')">Simpan</a></td>
-		</tr>
-		@endforeach
-		@endif
-	</table>
+			?>
+			<select name="naik_{{$k}}" class="form-control">
+				<option {{$selected[0]}} value="true">Naik Kelas</option>
+				<option {{$selected[1]}} value="false">Tidak Naik Kelas</option>
+			</select>
+		</td>
+		<td><a href="javascript:void(0)" class="btn btn-sm btn-primary" onclick="simpan_catatan('{{$s->id_siswa}}','{{$nama_schema}}','naik_{{$k}}','kenaikan_kelas')">Simpan</a></td>
+	</tr>
+	@endforeach
+	@else
+	<tr>
+		<td colspan="6" style="text-align: center">
+			-- Data siswa belum di <i>Generate</i> --
+		</td>
+	</tr>
+	@endif
+</table>
 </div>

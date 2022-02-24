@@ -24,14 +24,14 @@
 					<tr>
 						<td>1</td>
 						<td>Tinggi</td>
-						<td><input type="number" name="tinggi_modal[]" value="{{$siswa->tinggi_semester1}}"> Cm</td>
-						<td><input type="number" name="tinggi_modal[]" value="{{$siswa->tinggi_semester2}}"> Cm</td>
+						<td><input type="number" name="tinggi_modal[]" value=""> Cm</td>
+						<td><input type="number" name="tinggi_modal[]" value=""> Cm</td>
 					</tr>
 					<tr>
 						<td>2</td>
 						<td>Berat Badan</td>
-						<td><input type="number" name="beratbadan_modal[]" value="{{$siswa->beratbadan_semester1}}"> Kg</td>
-						<td><input type="number" name="beratbadan_modal[]" value="{{$siswa->beratbadan_semester2}}"> Kg</td>
+						<td><input type="number" name="beratbadan_modal[]" value=""> Kg</td>
+						<td><input type="number" name="beratbadan_modal[]" value=""> Kg</td>
 					</tr>
 				</table>
 				<br>
@@ -50,26 +50,26 @@
 					<tr>
 						<td>1</td>
 						<td>Pendengaran</td>
-						<td><input type="text" name="dengar_modal[]" value="{{$siswa->pendengaran_semester1}}"></td>
-						<td><input type="text" name="dengar_modal[]" value="{{$siswa->pendengaran_semester2}}"></td>
+						<td><input type="text" name="dengar_modal[]" value=""></td>
+						<td><input type="text" name="dengar_modal[]" value=""></td>
 					</tr>
 					<tr>
 						<td>2</td>
 						<td>Penglihatan</td>
-						<td><input type="text" name="lihat_modal[]" value="{{$siswa->penglihatan_semester1}}"></td>
-						<td><input type="text" name="lihat_modal[]" value="{{$siswa->penglihatan_semester2}}"></td>
+						<td><input type="text" name="lihat_modal[]" value=""></td>
+						<td><input type="text" name="lihat_modal[]" value=""></td>
 					</tr>
 					<tr>
 						<td>3</td>
 						<td>Gigi</td>
-						<td><input type="text" name="gigi_modal[]" value="{{$siswa->gigi_semester1}}"></td>
-						<td><input type="text" name="gigi_modal[]" value="{{$siswa->gigi_semester2}}"></td>
+						<td><input type="text" name="gigi_modal[]" value=""></td>
+						<td><input type="text" name="gigi_modal[]" value=""></td>
 					</tr>
 					<tr>
 						<td>4</td>
 						<td>Lainnya</td>
-						<td><input type="text" name="lainnya_modal[]" value="{{$siswa->lainnya_semester1}}"></td>
-						<td><input type="text" name="lainnya_modal[]" value="{{$siswa->lainnya_semester2}}"></td>
+						<td><input type="text" name="lainnya_modal[]" value=""></td>
+						<td><input type="text" name="lainnya_modal[]" value=""></td>
 					</tr>
 				</table>
 			</div>

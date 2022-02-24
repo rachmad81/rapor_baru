@@ -59,9 +59,10 @@
 
 @section('extend_js')
 <script>
+  var dt_table = '';
   $(document).ready(function () {
-    $('#example2').DataTable({
-      "ajax": "{{route('get_data_data_master_guru')}}",
+    dt_table = $('#example2').DataTable({
+      "ajax": "{{route('ks-data-master-guru-get_data')}}",
       "columns": [
       {"data": "nama"},
       {"data": "user_rapor"},
@@ -82,33 +83,41 @@
 
   function reset_password(guru){
     var data = {guru:guru};
-    $.post("{{route('proses_reset_password_guru')}}",data,function(data){
+    $.post("{{route('ks-reset_password-reset')}}",data,function(data){
       if(data.code=='200'){
         swal('Success',data.message,'success');
       }else{
         swal('Whooops',data.message,'error');
       }
+    }).fail(function(){
+      swal('Whooops','Ada masalah silahkan coba lagi','error');
     });
   }
 
   function form(id){
-    $.post("{{route('form_master_guru')}}",{id:id},function(data){
+    $.post("{{route('ks-data-master-guru-form')}}",{id:id},function(data){
       $('.modal_page').html(data.content);
-
       $('#modal-default').modal('show');
     });
   }
 
   function simpan(){
     var data = $('form#form_simpan').serialize();
-    $.post("{{route('simpan_master_guru')}}",data,function(data){
+    $.post("{{route('ks-data-master-guru-simpan')}}",data,function(data){
       if(data.code=='200'){
         swal('Success',data.message,'success');
-        location.reload();
+        $('#modal-default').modal('hide');
+        load_data();
       }else{
         swal('Whooops',data.message,'error');
       }
+    }).fail(function(){
+      swal('Whooops','Ada masalah silahkan coba lagi','error');
     });    
+  }
+
+  function load_data(){
+    dt_table.ajax.url("{{route('ks-data-master-guru-get_data')}}").load();
   }
 </script>
 @endsection

@@ -45,12 +45,18 @@
 			<td>
 				<select class="form-control" name="{{$kolom}}" onblur="simpan_nilai('{{$kolom}}','{{$s->id_siswa}}',this)">
 					@for($i=0;$i<count($options);$i++)
-					<option value="{{$options[$i]['value']}}" @if($options[$i]['value']==$s->$kolom) selected @endif>{{$options[$i]['text']}}</option>
+					<option value="{{$options[$i]['value']}}">{{$options[$i]['text']}}</option>
 					@endfor
 				</select>
 			</td>
 			@endfor
 		</tr>
 		@endforeach
+		@else
+		<tr>
+			<td colspan="8" style="text-align: center">
+				-- Data siswa belum di <i>Generate</i> --
+			</td>
+		</tr>
 		@endif
 	</table>

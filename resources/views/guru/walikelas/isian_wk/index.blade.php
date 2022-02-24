@@ -51,6 +51,9 @@
 					<div class="card-header p-0 border-bottom-0">
 						<ul class="nav nav-tabs" id="custom-tabs-four-tab" role="tablist">
 							<li class="nav-item">
+								<a class="nav-link" id="tab-generate" onclick="get_pages('generate')">Generate</a>
+							</li>
+							<li class="nav-item">
 								<a class="nav-link" id="tab-1" onclick="get_pages(1)">Rapor Siswa</a>
 							</li>
 							@if(!(Session::get('kelas_wk')=='6' || Session::get('kelas_wk')=='9') && $semester=='genap')
@@ -124,7 +127,7 @@
 
 		$('.overlay').show();
 		$('#custom-tabs-four-home').hide();
-		$.post("{{route('page_isian_wk')}}",{i:i},function(data){
+		$.post("{{route('guru-isian_wk-page')}}",{i:i},function(data){
 			$('#custom-tabs-four-home').show();
 			$('#custom-tabs-four-home').html(data.content);
 			$('.overlay').hide();
@@ -147,7 +150,7 @@
 
 		$('.overlay1').show();
 		$('#pages2').html('');
-		$.post("{{route('pages2_isian_wk')}}",{i:i},function(data){
+		$.post("{{route('guru-isian_wk-pages2')}}",{i:i},function(data){
 			$('#pages2').html(data.content);
 			$('.overlay1').hide();
 		});
@@ -159,7 +162,7 @@
 
 		$('.overlay1').show();
 		$('#pages3').html('');
-		$.post("{{route('pages3_isian_wk')}}",{i:i},function(data){
+		$.post("{{route('guru-isian_wk-pages3')}}",{i:i},function(data){
 			$('#pages3').html(data.content);
 			$('.overlay1').hide();
 		});
@@ -187,7 +190,7 @@
 			nilai:ini.value,
 		};
 
-		$.post("{{route('simpan_nilai_wk_guru')}}",data,function(data){
+		$.post("{{route('guru-isian_wk-simpan_nilai')}}",data,function(data){
 			swal(data.title,data.message,data.type);
 		}).fail(function(){
 			swal('Whooops','Terjadi kesalahan pada aplikasi','error');
@@ -215,7 +218,7 @@
 			nilai:nilai_ekskul,
 		};
 
-		$.post("{{route('simpan_ekskul_wk')}}",data,function(data){
+		$.post("{{route('guru-isian_wk-simpan_ekskul')}}",data,function(data){
 			swal(data.title,data.message,data.type);
 		}).fail(function(){
 			swal('Whooops','Terjadi kesalahan pada aplikasi','error');
@@ -231,7 +234,7 @@
 			absen:absen,
 		};
 
-		$.post("{{route('simpan_absen_wk')}}",data,function(data){
+		$.post("{{route('guru-isian_wk-simpan_absen')}}",data,function(data){
 			swal(data.title,data.message,data.type);
 		}).fail(function(){
 			swal('Whooops','Terjadi kesalahan pada aplikasi','error');
@@ -252,7 +255,7 @@
 			kolom:kolom,
 		};
 
-		$.post("{{route('simpan_catatan_wk')}}",data,function(data){
+		$.post("{{route('guru-isian_wk-simpan_catatan')}}",data,function(data){
 			swal(data.title,data.message,data.type);
 		}).fail(function(){
 			swal('Whooops','Terjadi kesalahan pada aplikasi','error');
@@ -260,7 +263,7 @@
 	}
 
 	function modal_kesehatan(id_siswa,schema){
-		$.post("{{route('modal_kesehatan_wk')}}",{id_siswa:id_siswa,schema:schema},function(data){
+		$.post("{{route('guru-isian_wk-modal_kesehatan')}}",{id_siswa:id_siswa,schema:schema},function(data){
 			$('.modal_page').html(data.content);
 			$('#modal-default').modal('show');
 		});
@@ -285,10 +288,35 @@
 			lainnya:lainnya,
 		};
 
-		$.post("{{route('simpan_kesehatan_wk')}}",data,function(data){
+		$.post("{{route('guru-isian_wk-simpan_kesehatan')}}",data,function(data){
 			swal(data.title,data.message,data.type);
 		}).fail(function(){
 			swal('Whooops','Terjadi kesalahan pada aplikasi','error');
+		});
+	}
+
+	function generate_anggota(){
+		swal({
+			title: "Apakah anda yakin?",
+			text: "Data siswa saat ini akan disimpan sebagai anggota rombel!",
+			icon: "warning",
+			buttons: true,
+			dangerMode: false,
+		})
+		.then((willDelete) => {
+			if (willDelete) {
+				var data = {
+				};
+				$.post("{{route('guru-isian_wk-generate_anggota')}}",data,function(data){
+					if(data.code=='200'){
+						get_pages('generate');
+					}else{
+						swal('Whooops','gagal generate','error');
+					}
+				}).fail(function(){
+					swal('Whooops','Terjadi kesalahan dengan aplikasi','error');
+				});
+			}
 		});
 	}
 </script>

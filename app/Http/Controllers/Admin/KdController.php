@@ -12,7 +12,14 @@ use App\Http\Controllers\Controller;
 use DB,Session;
 
 class KdController extends Controller
-{
+{	
+	protected $schema;
+
+	public function __construct() 
+	{
+		$this->schema = env('CURRENT_SCHEMA','production');
+	}
+
 	function main(Request $request){
 		$coni = new Request;
 		$jenjang = Session::get('jenjang');
@@ -43,16 +50,16 @@ class KdController extends Controller
 		$conn = Setkoneksi::set_koneksi($coni);
 
 		if($jenjang=='SD'){
-			$nama_schema = env('CURREND_DB_SD', 'production');
+			$nama_schema = env('CURRENT_DB_SD', 'production');
 		}else{
-			$nama_schema = env('CURREND_DB_SMP', 'production');
+			$nama_schema = env('CURRENT_DB_SMP', 'production');
 		}
 
 		$kelas = $request->kelas;
 		$mapel = DB::connection($conn)->table('public.rapor_mapel')->whereRaw("is_aktif is true")->orderByRaw("kategori asc,nama asc")->get();
 		if($mapel->count()!=0){
 			foreach($mapel as $v){
-				$kd = DB::connection($conn)->table($nama_schema.'.master_kd')->whereRaw("kelas='$kelas' AND mapel_id='".$v->mapel_id."'")->count();
+				$kd = DB::connection($conn)->table($this->schema.'.kd')->whereRaw("kelas='$kelas' AND mapel_id='".$v->mapel_id."'")->count();
 				$v->kd = $kd;
 			}
 		}
@@ -70,6 +77,10 @@ class KdController extends Controller
 	function setting(Request $request){
 		$id = $request->id;
 		$kelas = $request->kelas;
+		$request->jenjang = Session::get('jenjang');
+		$conn = Setkoneksi::set_koneksi($request);
+
+		$tahun_ajaran = DB::connection($conn)->table('public.tahun_ajaran')->orderBy('nama_tahun_ajaran','ASC')->get();
 
 		$title = ($id=='0') ? 'Tambah' : 'Edit';
 
@@ -77,6 +88,7 @@ class KdController extends Controller
 			'title'=>$title,
 			'mapel_id'=>$id,
 			'kelas'=>$kelas,
+			'tahun_ajaran'=>$tahun_ajaran,
 		];
 
 		$content = view('admin.kd.setting',$data)->render();
@@ -86,43 +98,27 @@ class KdController extends Controller
 
 	function simpan(Request $request){
 		$kd = $request->kd; // "3"
-		$mapel = $request->mapel; // "0"
-		$kelas = $request->kelas; // "0"
-		$uraian = $request->uraian; // "asdaf"
-		$tempat = ($kd=='3') ? 'tempat_3' : 'tempat_4';
+		$kelas = $request->kelas; // "1"
+		$mapel = $request->mapel; // "52"
+		$semester = $request->semester; // "1"
+		$tahun_ajaran = $request->tahun_ajaran; // "1"
+		$uraian = $request->uraian; // "Anjirlah"
 
 		$coni = new Request;
 		$jenjang = Session::get('jenjang');
 		$coni->jenjang = $jenjang;
 		$conn = Setkoneksi::set_koneksi($coni);
 
-		if($jenjang=='SD'){
-			$nama_schema = env('CURREND_DB_SD', 'production');
-		}else{
-			$nama_schema = env('CURREND_DB_SMP', 'production');
-		}
-
 		$data = [
-			'kelas'=>$kelas,
 			'mapel_id'=>$mapel,
-			'kd_id'=>$kd,
-			'kd_isi'=>$uraian,
+			'isi'=>$uraian,
 			'no_ki'=>$kd,
+			'kelas'=>$kelas,
+			'tahun_ajaran_id'=>$tahun_ajaran,
+			'semester'=>$semester,
 		];
 
-		$where = $data;
-		unset($where['kd_id']);
-		unset($where['kd_isi']);
-
-		$last_kd_id = DB::connection($conn)->table($nama_schema.'.master_kd')->where($where)->orderBy('kd_id','DESC')->first();
-		if(!empty($last_kd_id)){
-			$kd_id = $last_kd_id->kd_id+1;
-		}else{
-			$kd_id = 1;
-		}
-		$data['kd_id'] = $kd_id;
-
-		$simpan = DB::connection($conn)->table($nama_schema.'.master_kd')->insert($data);
+		$simpan = DB::connection($conn)->table($this->schema.'.kd')->insert($data);
 		if($simpan){
 			return ['code'=>'200'];
 		}else{
@@ -133,20 +129,16 @@ class KdController extends Controller
 	function get_kd(Request $request){
 		$id = $request->id;
 		$kelas = $request->kelas;
+		$tahun_ajaran = $request->tahun_ajaran;
+		$semester = $request->semester;
 
 		$coni = new Request;
 		$jenjang = Session::get('jenjang');
 		$coni->jenjang = $jenjang;
 		$conn = Setkoneksi::set_koneksi($coni);
 
-		if($jenjang=='SD'){
-			$nama_schema = env('CURREND_DB_SD', 'production');
-		}else{
-			$nama_schema = env('CURREND_DB_SMP', 'production');
-		}
-
-		$ki3 = DB::connection($conn)->table($nama_schema.'.master_kd')->whereRaw("kelas='$kelas' AND mapel_id='$id' AND no_ki='3'")->orderBy('kd_id','ASC')->get();
-		$ki4 = DB::connection($conn)->table($nama_schema.'.master_kd')->whereRaw("kelas='$kelas' AND mapel_id='$id' AND no_ki='4'")->orderBy('kd_id','ASC')->get();
+		$ki3 = DB::connection($conn)->table($this->schema.'.kd')->whereRaw("kelas='$kelas' AND mapel_id='$id' AND tahun_ajaran_id='$tahun_ajaran' AND semester='$semester' AND no_ki='3'")->orderBy('id_kd','ASC')->get();
+		$ki4 = DB::connection($conn)->table($this->schema.'.kd')->whereRaw("kelas='$kelas' AND mapel_id='$id' AND tahun_ajaran_id='$tahun_ajaran' AND semester='$semester' AND no_ki='4'")->orderBy('id_kd','ASC')->get();
 
 		$data = [
 			'ki3'=>$ki3,
@@ -192,35 +184,29 @@ class KdController extends Controller
 	}
 
 	function update(Request $request){
-		$id = $request->id;
-		$mapel = $request->mapel; // "0"
-		$uraian = $request->uraian; // "asdaf"
-		$kelas = $request->kelas;
-		$no_kd = $request->no_kd;
+		$id = $request->id; // "27"
+		$kelas = $request->kelas; // "1"
+		$mapel = $request->mapel; // "52"
+		$no_kd = $request->no_kd; // "3"
+		$semester = $request->semester; // "1"
+		$tahun_ajaran = $request->tahun_ajaran; // "1"
+		$uraian = $request->uraian; // "Anjirlah"
 
 		$coni = new Request;
 		$jenjang = Session::get('jenjang');
 		$coni->jenjang = $jenjang;
 		$conn = Setkoneksi::set_koneksi($coni);
 
-		if($jenjang=='SD'){
-			$nama_schema = env('CURREND_DB_SD', 'production');
-		}else{
-			$nama_schema = env('CURREND_DB_SMP', 'production');
-		}
-
 		$data = [
-			'kelas'=>$kelas,
 			'mapel_id'=>$mapel,
-			'kd_id'=>$id,
-			'kd_isi'=>$uraian,
+			'isi'=>$uraian,
 			'no_ki'=>$no_kd,
+			'kelas'=>$kelas,
+			'tahun_ajaran_id'=>$tahun_ajaran,
+			'semester'=>$semester,
 		];
 
-		$where = $data;
-		unset($where['kd_isi']);
-
-		$update = DB::connection($conn)->table($nama_schema.'.master_kd')->where($where)->update($data);
+		$update = DB::connection($conn)->table($this->schema.'.kd')->where('id_kd',$id)->update($data);
 		if($update){
 			return ['code'=>'200','title'=>'Success','message'=>'Berhasil diupdate','type'=>'success'];
 		}else{

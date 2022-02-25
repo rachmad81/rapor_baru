@@ -222,13 +222,16 @@
 		});
 	}
 
-	function simpan_nilai(id_siswa,kategori){
+	function simpan_nilai(id_siswa,kategori,no_ki){
 		var nilai = $("input[name='"+kategori+"_"+id_siswa+"[]']").map(function(){return $(this).val();}).get();
+		var id_kd = $("input[name='id_kd_"+id_siswa+"[]']").map(function(){return $(this).val();}).get();
 
 		var data = {
 			id_siswa:id_siswa,
 			kategori:kategori,
 			nilai:nilai,
+			id_kd:id_kd,
+			no_ki:no_ki,
 		};
 
 		$.post("{{route('guru-isian-simpan_nilai')}}",data,function(data){

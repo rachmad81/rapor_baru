@@ -62,6 +62,7 @@
             </p>
           </a>
         </li>
+        @if(Session::get('jenjang')=='SD')
         <li class="nav-item">
           <a href="{{route('admin-kd-main',['kelas'=>'1'])}}" class="nav-link @if(isset($main_menu) && $main_menu=='kd-1') active @endif">
             <i class="nav-icon fas fa-user"></i>
@@ -116,6 +117,35 @@
             </p>
           </a>
         </li>
+        @else
+        <li class="nav-item">
+          <a href="{{route('admin-kd-main',['kelas'=>'7'])}}" class="nav-link @if(isset($main_menu) && $main_menu=='kd-6') active @endif">
+            <i class="nav-icon fas fa-user"></i>
+            <p>
+              KD Kelas 7 (Kurtilas)
+              <!-- <span class="right badge badge-danger">New</span> -->
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{{route('admin-kd-main',['kelas'=>'8'])}}" class="nav-link @if(isset($main_menu) && $main_menu=='kd-6') active @endif">
+            <i class="nav-icon fas fa-user"></i>
+            <p>
+              KD Kelas 8 (Kurtilas)
+              <!-- <span class="right badge badge-danger">New</span> -->
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{{route('admin-kd-main',['kelas'=>'9'])}}" class="nav-link @if(isset($main_menu) && $main_menu=='kd-6') active @endif">
+            <i class="nav-icon fas fa-user"></i>
+            <p>
+              KD Kelas 9 (Kurtilas)
+              <!-- <span class="right badge badge-danger">New</span> -->
+            </p>
+          </a>
+        </li>
+        @endif
       </ul>
     </nav>
     <!-- /.sidebar-menu -->

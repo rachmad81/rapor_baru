@@ -183,11 +183,12 @@
 		});
 	}
 
-	function simpan_nilai(kolom,id_siswa,ini){
+	function simpan_nilai(kolom,id_siswa,ini,no_ki){
 		var data = {
 			kolom:kolom,
 			id_siswa:id_siswa,
 			nilai:ini.value,
+			no_ki:no_ki,
 		};
 
 		$.post("{{route('guru-isian_wk-simpan_nilai')}}",data,function(data){

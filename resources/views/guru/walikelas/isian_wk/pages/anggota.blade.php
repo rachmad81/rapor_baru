@@ -13,13 +13,15 @@
 			<td style="vertical-align: top;width: 50%">
 				<table style="width: 100%;border-collapse: collapse;" border="1">
 					<tr>
+						<th>No</th>
 						<th>Nama</th>
 						<th>Kelas</th>
 						<th>Rombel</th>
 					</tr>
 					@if($siswa_ta->count()!=0)
-					@foreach($siswa_ta as $st)
+					@foreach($siswa_ta as $k=>$st)
 					<tr>
+						<td>{{$k+1}}</td>
 						<td>{{$st->nama}}</td>
 						<td>{{$st->kelas}}</td>
 						<td>{{$st->rombel}}</td>
@@ -31,13 +33,15 @@
 			<td style="vertical-align: top;width: 50%">
 				<table style="width: 100%;border-collapse: collapse;" border="1">
 					<tr>
+						<th>No</th>
 						<th>Nama</th>
 						<th>Kelas</th>
 						<th>Rombel</th>
 					</tr>
 					@if($siswa_skrg->count()!=0)
-					@foreach($siswa_skrg as $st)
+					@foreach($siswa_skrg as $k=>$st)
 					<tr>
+						<td>{{($k+1)}}</td>
 						<td>{{$st->nama}}</td>
 						<td>{{$st->kelas}}</td>
 						<td>{{$st->rombel}}</td>

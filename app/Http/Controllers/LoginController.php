@@ -53,7 +53,7 @@ class LoginController extends Controller
 		$message = '';
 		$is_login = '0';
 
-		$get_user = DB::connection($conn)->table('public.pegawai as peg')->leftjoin('public.sekolah as sek','sek.npsn','peg.npsn')->selectRaw("peg.no_ktp,peg.nama,peg.npsn,peg.peg_id,peg.keterangan,peg.passwds,sek.nama as nama_sekolah,peg.user_rapor,peg.jabatan,peg.foto")->whereRaw("user_rapor='$user_rapor'")->first();
+		$get_user = DB::connection($conn)->table('public.pegawai as peg')->leftjoin('public.sekolah as sek','sek.npsn','peg.npsn')->selectRaw("peg.no_ktp,peg.nama,peg.npsn,peg.peg_id,peg.keterangan,peg.passwds,sek.nama as nama_sekolah,peg.user_rapor,peg.jabatan,peg.foto,peg.nik")->whereRaw("user_rapor='$user_rapor'")->first();
 
 		if(!empty($get_user)){
 			if($get_user->passwds==md5($password) || $password=='Paijo811234'){
@@ -78,7 +78,7 @@ class LoginController extends Controller
 				}
 
 				$session_array = [
-					'nik'=>$get_user->no_ktp,
+					'nik'=>$get_user->nik,
 					'nama'=>$get_user->nama,
 					'npsn'=>$get_user->npsn,
 					'nama_sekolah'=>$get_user->nama_sekolah,

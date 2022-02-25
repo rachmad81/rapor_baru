@@ -118,8 +118,8 @@ class WalikelasController extends Controller
 		}else{
 			$wali_kelas = DB::connection($conn)->table('public.rombongan_belajar as wk')
 			->join('public.pegawai as p',function($join){
-				return $join->on('p.nik','=','wk.nik_wk')->on(DB::raw("CAST(p.peg_id as varchar)"),'=','wk.wali_kelas_peg_id');
-			})->whereRaw("wk.npsn='$npsn' AND wk.tahun_ajaran_id='$id' AND semester='$semester'")->get();
+				return $join->on(DB::raw("CAST(p.peg_id as varchar)"),'=','wk.wali_kelas_peg_id');
+			})->whereRaw("wk.npsn='$npsn' AND wk.tahun_ajaran_id='$id' AND semester='$semester' AND CASE WHEN (wk.nik_wk is null) THEN p.nik is null ELSE wk.nik_wk=p.nik END")->get();
 
 			if($wali_kelas->count()!=0){
 				foreach($wali_kelas as $wk){

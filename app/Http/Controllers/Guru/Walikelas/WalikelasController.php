@@ -46,17 +46,31 @@ class WalikelasController extends Controller
 		$coni->jenjang = Session::get('jenjang');
 		$conn = Setkoneksi::set_koneksi($coni);
 
-		$pegawai = DB::connection($conn)->table('public.pegawai')->whereRaw("user_rapor='$user_rapor' AND nik='$nik' AND npsn='$npsn'")->first();
+		if($nik==''){
+			$pegawai = DB::connection($conn)->table('public.pegawai')->whereRaw("user_rapor='$user_rapor' AND nik is null AND npsn='$npsn'")->first();
+		}else{
+			$pegawai = DB::connection($conn)->table('public.pegawai')->whereRaw("user_rapor='$user_rapor' AND nik='$nik' AND npsn='$npsn'")->first();
+		}
 
 		if(!empty($pegawai)){
-			$walikelas = DB::connection($conn)->table('public.rombongan_belajar')->whereRaw("npsn='$npsn' AND nik_wk='$pegawai->nik' AND wali_kelas_peg_id='$pegawai->peg_id' AND tahun_ajaran_id='$ta' AND semester='$semester'")->get();
+			if($nik==''){
+				$walikelas = DB::connection($conn)->table('public.rombongan_belajar')->whereRaw("npsn='$npsn' AND nik_wk is null AND wali_kelas_peg_id='$pegawai->peg_id' AND tahun_ajaran_id='$ta' AND semester='$semester'")->get();
+				$mengajar = DB::connection($conn)->table($this->schema.'.mengajar as m')
+				->join('public.rombongan_belajar as rb','rb.id_rombongan_belajar','m.rombel_id')
+				->join('public.rapor_mapel as ma','ma.mapel_id','m.mapel_id')
+				->selectRaw("*,ma.nama as nama_mapel")
+				->whereRaw("rb.npsn='$npsn' AND m.nik_pengajar is null AND m.peg_id='$pegawai->peg_id' AND rb.tahun_ajaran_id='$ta' AND rb.semester='$semester'")
+				->get();
+			}else{
+				$walikelas = DB::connection($conn)->table('public.rombongan_belajar')->whereRaw("npsn='$npsn' AND nik_wk='$pegawai->nik' AND wali_kelas_peg_id='$pegawai->peg_id' AND tahun_ajaran_id='$ta' AND semester='$semester'")->get();
+				$mengajar = DB::connection($conn)->table($this->schema.'.mengajar as m')
+				->join('public.rombongan_belajar as rb','rb.id_rombongan_belajar','m.rombel_id')
+				->join('public.rapor_mapel as ma','ma.mapel_id','m.mapel_id')
+				->selectRaw("*,ma.nama as nama_mapel")
+				->whereRaw("rb.npsn='$npsn' AND m.nik_pengajar='$pegawai->nik' AND m.peg_id='$pegawai->peg_id' AND rb.tahun_ajaran_id='$ta' AND rb.semester='$semester'")
+				->get();
+			}
 
-			$mengajar = DB::connection($conn)->table($this->schema.'.mengajar as m')
-			->join('public.rombongan_belajar as rb','rb.id_rombongan_belajar','m.rombel_id')
-			->join('public.rapor_mapel as ma','ma.mapel_id','m.mapel_id')
-			->selectRaw("*,ma.nama as nama_mapel")
-			->whereRaw("rb.npsn='$npsn' AND m.nik_pengajar='$pegawai->nik' AND m.peg_id='$pegawai->peg_id' AND rb.tahun_ajaran_id='$ta' AND rb.semester='$semester'")
-			->get();
 
 			$data = [
 				'walikelas'=>$walikelas,

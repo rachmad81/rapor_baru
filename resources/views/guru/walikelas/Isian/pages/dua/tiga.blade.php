@@ -22,14 +22,25 @@
 		<td class="headcol">{{($k+1)}}</td>
 		<td class="headcol" style="white-space: nowrap;">{!!$s->nama!!}</td>
 		@if($kd->count()!=0)
+		@if(count($s->nilai)!=0)
 		@foreach($kd as $k=>$v)
-		<?php $kolom = 'npas_'.($k+1);?>
-		<td><input type="number" name="npas_{{$s->id_siswa}}[]" value="{{(isset($s->$kolom)) ? $s->$kolom : ''}}"></td>
+		<td>
+			<input type="hidden" name="id_kd_{{$s->id_siswa}}[]" value="{{$v->id_kd}}">
+			<input type="number" name="npas_{{$s->id_siswa}}[]" value="{{$s->nilai[$k]}}">
+		</td>
 		@endforeach
+		@else
+		@foreach($kd as $k=>$v)
+		<td>
+			<input type="hidden" name="id_kd_{{$s->id_siswa}}[]" value="{{$v->id_kd}}">
+			<input type="number" name="npas_{{$s->id_siswa}}[]" value="">
+		</td>
+		@endforeach
+		@endif
 		@else
 		<td>..:: KD tidak disetting ::..</td>
 		@endif
-		<td><a href="javascript:void(0)" class="btn btn-sm btn-primary" onclick="simpan_nilai('{{$s->id_siswa}}','npas')">Simpan</a></td>
+		<td><a href="javascript:void(0)" class="btn btn-sm btn-primary" onclick="simpan_nilai('{{$s->id_siswa}}','npas','3')">Simpan</a></td>
 	</tr>
 	@endforeach
 	@else

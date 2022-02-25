@@ -198,6 +198,24 @@ class IsianController extends Controller
 
 		$kd = DB::connection($conn)->table($this->schema.'.kd')->whereRaw("kelas='$kelas' AND mapel_id='$mapel_id' AND no_ki='3'")->orderBy('id_kd','ASC')->get();
 
+		if($siswa->count()!=0){
+			foreach($siswa as $s){
+				$arr_nilai = [];
+				if($kd->count()!=0){
+					foreach($kd as $k){
+						$get_nilai = DB::connection($conn)->table($this->schema.'.nilai')->whereRaw("kd_id='$k->id_kd' AND siswa_id='$s->id_siswa' AND no_ki='3' AND uraian='nph' AND mapel_id='$mapel_id'")->first();
+						if(!empty($get_nilai)){
+							array_push($arr_nilai,$get_nilai->nilai);
+						}else{
+							array_push($arr_nilai,'');
+						}
+					}
+				}
+
+				$s->nilai = $arr_nilai;
+			}
+		}
+
 		$data = [
 			'siswa'=>$siswa,
 			'kd'=>$kd,
@@ -228,6 +246,24 @@ class IsianController extends Controller
 
 		$kd = DB::connection($conn)->table($this->schema.'.kd')->whereRaw("kelas='$kelas' AND mapel_id='$mapel_id' AND no_ki='3'")->orderBy('id_kd','ASC')->get();
 
+		if($siswa->count()!=0){
+			foreach($siswa as $s){
+				$arr_nilai = [];
+				if($kd->count()!=0){
+					foreach($kd as $k){
+						$get_nilai = DB::connection($conn)->table($this->schema.'.nilai')->whereRaw("kd_id='$k->id_kd' AND siswa_id='$s->id_siswa' AND no_ki='3' AND uraian='npts' AND mapel_id='$mapel_id'")->first();
+						if(!empty($get_nilai)){
+							array_push($arr_nilai,$get_nilai->nilai);
+						}else{
+							array_push($arr_nilai,'');
+						}
+					}
+				}
+
+				$s->nilai = $arr_nilai;
+			}
+		}
+
 		$data = [
 			'siswa'=>$siswa,
 			'kd'=>$kd,
@@ -257,6 +293,24 @@ class IsianController extends Controller
 		->whereRaw("rombongan_belajar_id='$id_rombel'")->get();
 
 		$kd = DB::connection($conn)->table($this->schema.'.kd')->whereRaw("kelas='$kelas' AND mapel_id='$mapel_id' AND no_ki='3'")->orderBy('id_kd','ASC')->get();
+
+		if($siswa->count()!=0){
+			foreach($siswa as $s){
+				$arr_nilai = [];
+				if($kd->count()!=0){
+					foreach($kd as $k){
+						$get_nilai = DB::connection($conn)->table($this->schema.'.nilai')->whereRaw("kd_id='$k->id_kd' AND siswa_id='$s->id_siswa' AND no_ki='3' AND uraian='npas' AND mapel_id='$mapel_id'")->first();
+						if(!empty($get_nilai)){
+							array_push($arr_nilai,$get_nilai->nilai);
+						}else{
+							array_push($arr_nilai,'');
+						}
+					}
+				}
+
+				$s->nilai = $arr_nilai;
+			}
+		}
 
 		$data = [
 			'siswa'=>$siswa,
@@ -314,6 +368,24 @@ class IsianController extends Controller
 		->whereRaw("rombongan_belajar_id='$id_rombel'")->get();
 
 		$kd = DB::connection($conn)->table($this->schema.'.kd')->whereRaw("kelas='$kelas' AND mapel_id='$mapel_id' AND no_ki='4'")->orderBy('id_kd','ASC')->get();
+
+		if($siswa->count()!=0){
+			foreach($siswa as $s){
+				$arr_nilai = [];
+				if($kd->count()!=0){
+					foreach($kd as $k){
+						$get_nilai = DB::connection($conn)->table($this->schema.'.nilai')->whereRaw("kd_id='$k->id_kd' AND siswa_id='$s->id_siswa' AND no_ki='4' AND uraian='praktek' AND mapel_id='$mapel_id'")->first();
+						if(!empty($get_nilai)){
+							array_push($arr_nilai,$get_nilai->nilai);
+						}else{
+							array_push($arr_nilai,'');
+						}
+					}
+				}
+
+				$s->nilai = $arr_nilai;
+			}
+		}
 
 		$data = [
 			'siswa'=>$siswa,
@@ -730,34 +802,39 @@ class IsianController extends Controller
 		$id_siswa = $request->id_siswa;
 		$kategori = $request->kategori;
 		$nilai = $request->nilai;
+		$id_kd = $request->id_kd;
+		$no_ki = $request->no_ki;
 		$mapel_id = Session::get('mapel_id_wk');
 		$nama_schema = Session::get('nama_schema');
 		$kelas = Session::get('kelas_wk');
 		$rombel = Session::get('rombel_wk');
+		$id_rombel = Session::get('id_rombel');
+		$mapel_id = Session::get('mapel_id');
 		$npsn = Session::get('npsn');
 
 		$request->jenjang = Session::get('jenjang');
 		$conn = Setkoneksi::set_koneksi($request);
 
-		$data_insert = [];
-		for ($i=0; $i < count($nilai); $i++) { 
-			$data_insert = array_merge($data_insert,[
-				$kategori.'_'.($i+1) => $nilai[$i],
-			]);
-		}
-
-		$nilai_db = DB::connection($conn)->table($nama_schema.'.nilai')->whereRaw("npsn='$npsn' AND id_siswa='$id_siswa' AND mapel_id='$mapel_id' AND kelas='$kelas' AND rombel='$rombel'")->first();
-		if(!empty($nilai_db)){
-			$simpan = DB::connection($conn)->table($nama_schema.'.nilai')->whereRaw("npsn='$npsn' AND id_siswa='$id_siswa' AND mapel_id='$mapel_id' AND kelas='$kelas' AND rombel='$rombel'")->update($data_insert);
-		}else{
-			$data_insert = array_merge($data_insert,[
+		for ($i=0; $i < count($nilai); $i++) {
+			$data = [
+				'siswa_id'=>$id_siswa,
+				'rombel_id'=>$id_rombel,
+				'uraian'=>$kategori,
+				'no_ki'=>$no_ki,
+				'nilai'=>$nilai[$i],
 				'mapel_id'=>$mapel_id,
-				'kelas'=>$kelas,
-				'rombel'=>$rombel,
-				'npsn'=>$npsn,
-				'id_siswa'=>$id_siswa,
-			]);
-			$simpan = DB::connection($conn)->table($nama_schema.'.nilai')->insert($data_insert);
+				'kd_id'=>$id_kd[$i],
+			];
+
+			$where = $data;
+			unset($where['nilai']);
+
+			$get_nilai = DB::connection($conn)->table($this->schema.'.nilai')->where($where)->first();
+			if(!empty($get_nilai)){
+				$simpan = DB::connection($conn)->table($this->schema.'.nilai')->where($where)->update($data);
+			}else{
+				$simpan = DB::connection($conn)->table($this->schema.'.nilai')->insert($data);
+			}
 		}
 
 		if($simpan){

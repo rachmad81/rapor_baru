@@ -125,8 +125,12 @@
     });
   }
 
-  function set_ta(){
-    var ta = $('select[name=tahun_ajaran]').val();
+  function set_ta(form=null){
+    if(form==null){
+      var ta = $('select[name=tahun_ajaran]').val();
+    }else{
+      var ta = $('#tahun_ajaran').val();
+    }
     $.post("{{route('set_ta')}}",{ta:ta},function(data){
       var selectnya = '<option value="">..:: Pilih Kelas Rombel ::..</option>';
       if(data.code=='200'){

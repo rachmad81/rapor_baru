@@ -168,6 +168,26 @@ class IsianwkController extends Controller
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
 		->whereRaw("rombongan_belajar_id='$id_rombel'")->get();
 
+		if($siswa->count()!=0){
+			foreach($siswa as $s){
+				$get_nilai = DB::connection($conn)->table($this->schema.'.nilai')->whereRaw("siswa_id='$s->id_siswa' AND rombel_id='$id_rombel' AND no_ki='3' AND uraian like 'ibadah_%'")->get();
+				$arr_nilai = [];
+				$uraian = ['xxxxx'];
+				$nilai = ['xxxxx'];
+
+				if($get_nilai->count()!=0){
+					foreach($get_nilai as $n){
+						array_push($uraian,$n->uraian);
+						array_push($nilai,$n->nilai);
+					}
+
+					array_push($arr_nilai, ['uraian'=>$uraian,'nilai'=>$nilai]);
+				}
+
+				$s->nilai = $arr_nilai;
+			}
+		}
+
 		$data = [
 			'siswa'=>$siswa,
 		];
@@ -191,6 +211,26 @@ class IsianwkController extends Controller
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
 		->whereRaw("rombongan_belajar_id='$id_rombel'")->get();
+
+		if($siswa->count()!=0){
+			foreach($siswa as $s){
+				$get_nilai = DB::connection($conn)->table($this->schema.'.nilai')->whereRaw("siswa_id='$s->id_siswa' AND rombel_id='$id_rombel' AND no_ki='3' AND uraian like 'syukur_%'")->get();
+				$arr_nilai = [];
+				$uraian = ['xxxxx'];
+				$nilai = ['xxxxx'];
+
+				if($get_nilai->count()!=0){
+					foreach($get_nilai as $n){
+						array_push($uraian,$n->uraian);
+						array_push($nilai,$n->nilai);
+					}
+
+					array_push($arr_nilai, ['uraian'=>$uraian,'nilai'=>$nilai]);
+				}
+
+				$s->nilai = $arr_nilai;
+			}
+		}
 
 		$data = [
 			'siswa'=>$siswa,
@@ -216,6 +256,26 @@ class IsianwkController extends Controller
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
 		->whereRaw("rombongan_belajar_id='$id_rombel'")->get();
 
+		if($siswa->count()!=0){
+			foreach($siswa as $s){
+				$get_nilai = DB::connection($conn)->table($this->schema.'.nilai')->whereRaw("siswa_id='$s->id_siswa' AND rombel_id='$id_rombel' AND no_ki='3' AND uraian like 'berdoa_%'")->get();
+				$arr_nilai = [];
+				$uraian = ['xxxxx'];
+				$nilai = ['xxxxx'];
+
+				if($get_nilai->count()!=0){
+					foreach($get_nilai as $n){
+						array_push($uraian,$n->uraian);
+						array_push($nilai,$n->nilai);
+					}
+
+					array_push($arr_nilai, ['uraian'=>$uraian,'nilai'=>$nilai]);
+				}
+
+				$s->nilai = $arr_nilai;
+			}
+		}
+
 		$data = [
 			'siswa'=>$siswa,
 		];
@@ -239,6 +299,26 @@ class IsianwkController extends Controller
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
 		->whereRaw("rombongan_belajar_id='$id_rombel'")->get();
+
+		if($siswa->count()!=0){
+			foreach($siswa as $s){
+				$get_nilai = DB::connection($conn)->table($this->schema.'.nilai')->whereRaw("siswa_id='$s->id_siswa' AND rombel_id='$id_rombel' AND no_ki='3' AND uraian like 'toleransi_%'")->get();
+				$arr_nilai = [];
+				$uraian = ['xxxxx'];
+				$nilai = ['xxxxx'];
+
+				if($get_nilai->count()!=0){
+					foreach($get_nilai as $n){
+						array_push($uraian,$n->uraian);
+						array_push($nilai,$n->nilai);
+					}
+
+					array_push($arr_nilai, ['uraian'=>$uraian,'nilai'=>$nilai]);
+				}
+
+				$s->nilai = $arr_nilai;
+			}
+		}
 
 		$data = [
 			'siswa'=>$siswa,
@@ -300,6 +380,26 @@ class IsianwkController extends Controller
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
 		->whereRaw("rombongan_belajar_id='$id_rombel'")->get();
 
+		if($siswa->count()!=0){
+			foreach($siswa as $s){
+				$get_nilai = DB::connection($conn)->table($this->schema.'.nilai')->whereRaw("siswa_id='$s->id_siswa' AND rombel_id='$id_rombel' AND no_ki='4' AND uraian like 'jujur_%'")->get();
+				$arr_nilai = [];
+				$uraian = ['xxxxx'];
+				$nilai = ['xxxxx'];
+
+				if($get_nilai->count()!=0){
+					foreach($get_nilai as $n){
+						array_push($uraian,$n->uraian);
+						array_push($nilai,$n->nilai);
+					}
+
+					array_push($arr_nilai, ['uraian'=>$uraian,'nilai'=>$nilai]);
+				}
+
+				$s->nilai = $arr_nilai;
+			}
+		}
+
 		$data = [
 			'siswa'=>$siswa,
 		];
@@ -323,6 +423,26 @@ class IsianwkController extends Controller
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
 		->whereRaw("rombongan_belajar_id='$id_rombel'")->get();
+
+		if($siswa->count()!=0){
+			foreach($siswa as $s){
+				$get_nilai = DB::connection($conn)->table($this->schema.'.nilai')->whereRaw("siswa_id='$s->id_siswa' AND rombel_id='$id_rombel' AND no_ki='4' AND uraian like 'disiplin_%'")->get();
+				$arr_nilai = [];
+				$uraian = ['xxxxx'];
+				$nilai = ['xxxxx'];
+
+				if($get_nilai->count()!=0){
+					foreach($get_nilai as $n){
+						array_push($uraian,$n->uraian);
+						array_push($nilai,$n->nilai);
+					}
+
+					array_push($arr_nilai, ['uraian'=>$uraian,'nilai'=>$nilai]);
+				}
+
+				$s->nilai = $arr_nilai;
+			}
+		}
 
 		$data = [
 			'siswa'=>$siswa,
@@ -348,6 +468,26 @@ class IsianwkController extends Controller
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
 		->whereRaw("rombongan_belajar_id='$id_rombel'")->get();
 
+		if($siswa->count()!=0){
+			foreach($siswa as $s){
+				$get_nilai = DB::connection($conn)->table($this->schema.'.nilai')->whereRaw("siswa_id='$s->id_siswa' AND rombel_id='$id_rombel' AND no_ki='4' AND uraian like 'tanggungjawab_%'")->get();
+				$arr_nilai = [];
+				$uraian = ['xxxxx'];
+				$nilai = ['xxxxx'];
+
+				if($get_nilai->count()!=0){
+					foreach($get_nilai as $n){
+						array_push($uraian,$n->uraian);
+						array_push($nilai,$n->nilai);
+					}
+
+					array_push($arr_nilai, ['uraian'=>$uraian,'nilai'=>$nilai]);
+				}
+
+				$s->nilai = $arr_nilai;
+			}
+		}
+
 		$data = [
 			'siswa'=>$siswa,
 		];
@@ -371,6 +511,26 @@ class IsianwkController extends Controller
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
 		->whereRaw("rombongan_belajar_id='$id_rombel'")->get();
+
+		if($siswa->count()!=0){
+			foreach($siswa as $s){
+				$get_nilai = DB::connection($conn)->table($this->schema.'.nilai')->whereRaw("siswa_id='$s->id_siswa' AND rombel_id='$id_rombel' AND no_ki='4' AND uraian like 'sopansantun_%'")->get();
+				$arr_nilai = [];
+				$uraian = ['xxxxx'];
+				$nilai = ['xxxxx'];
+
+				if($get_nilai->count()!=0){
+					foreach($get_nilai as $n){
+						array_push($uraian,$n->uraian);
+						array_push($nilai,$n->nilai);
+					}
+
+					array_push($arr_nilai, ['uraian'=>$uraian,'nilai'=>$nilai]);
+				}
+
+				$s->nilai = $arr_nilai;
+			}
+		}
 
 		$data = [
 			'siswa'=>$siswa,
@@ -396,6 +556,26 @@ class IsianwkController extends Controller
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
 		->whereRaw("rombongan_belajar_id='$id_rombel'")->get();
 
+		if($siswa->count()!=0){
+			foreach($siswa as $s){
+				$get_nilai = DB::connection($conn)->table($this->schema.'.nilai')->whereRaw("siswa_id='$s->id_siswa' AND rombel_id='$id_rombel' AND no_ki='4' AND uraian like 'percayadiri_%'")->get();
+				$arr_nilai = [];
+				$uraian = ['xxxxx'];
+				$nilai = ['xxxxx'];
+
+				if($get_nilai->count()!=0){
+					foreach($get_nilai as $n){
+						array_push($uraian,$n->uraian);
+						array_push($nilai,$n->nilai);
+					}
+
+					array_push($arr_nilai, ['uraian'=>$uraian,'nilai'=>$nilai]);
+				}
+
+				$s->nilai = $arr_nilai;
+			}
+		}
+
 		$data = [
 			'siswa'=>$siswa,
 		];
@@ -420,6 +600,26 @@ class IsianwkController extends Controller
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
 		->whereRaw("rombongan_belajar_id='$id_rombel'")->get();
 
+		if($siswa->count()!=0){
+			foreach($siswa as $s){
+				$get_nilai = DB::connection($conn)->table($this->schema.'.nilai')->whereRaw("siswa_id='$s->id_siswa' AND rombel_id='$id_rombel' AND no_ki='4' AND uraian like 'peduli_%'")->get();
+				$arr_nilai = [];
+				$uraian = ['xxxxx'];
+				$nilai = ['xxxxx'];
+
+				if($get_nilai->count()!=0){
+					foreach($get_nilai as $n){
+						array_push($uraian,$n->uraian);
+						array_push($nilai,$n->nilai);
+					}
+
+					array_push($arr_nilai, ['uraian'=>$uraian,'nilai'=>$nilai]);
+				}
+
+				$s->nilai = $arr_nilai;
+			}
+		}
+
 		$data = [
 			'siswa'=>$siswa,
 		];
@@ -443,6 +643,26 @@ class IsianwkController extends Controller
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
 		->whereRaw("rombongan_belajar_id='$id_rombel'")->get();
+
+		if($siswa->count()!=0){
+			foreach($siswa as $s){
+				$get_nilai = DB::connection($conn)->table($this->schema.'.nilai')->whereRaw("siswa_id='$s->id_siswa' AND rombel_id='$id_rombel' AND no_ki='4' AND uraian like 'kerjasama_%'")->get();
+				$arr_nilai = [];
+				$uraian = ['xxxxx'];
+				$nilai = ['xxxxx'];
+
+				if($get_nilai->count()!=0){
+					foreach($get_nilai as $n){
+						array_push($uraian,$n->uraian);
+						array_push($nilai,$n->nilai);
+					}
+
+					array_push($arr_nilai, ['uraian'=>$uraian,'nilai'=>$nilai]);
+				}
+
+				$s->nilai = $arr_nilai;
+			}
+		}
 
 		$data = [
 			'siswa'=>$siswa,
@@ -1035,30 +1255,35 @@ class IsianwkController extends Controller
 	}
 
 	function simpan_nilai(Request $request){
-		return $request->all();
 		$id_siswa = $request->id_siswa;
 		$kolom = $request->kolom;
 		$nilai = $request->nilai;
-		$nama_schema = Session::get('nama_schema');
 		$npsn = Session::get('npsn');
+		$id_rombel = Session::get('id_rombel');
+		$no_ki = $request->no_ki;
 
 		$request->jenjang = Session::get('jenjang');
 
 		$conn = Setkoneksi::set_koneksi($request);
 
-		$cari_nilai = DB::connection($conn)->table($nama_schema.'.nilai')->whereRaw("npsn='$npsn' AND id_siswa='$id_siswa'")->get();
-		if($cari_nilai->count()!=0){
-			$update = DB::connection($conn)->table($nama_schema.'.nilai')->whereRaw("npsn='$npsn' AND id_siswa='$id_siswa'")->update([$kolom=>$nilai]);
+		$data = [
+			'siswa_id'=>$id_siswa,
+			'rombel_id'=>$id_rombel,
+			'uraian'=>$kolom,
+			'no_ki'=>$no_ki,
+			'nilai'=>$nilai,
+			'mapel_id'=>null,
+		];
+
+		$where = $data;
+		unset($where['nilai']);
+		unset($where['mapel_id']);
+
+		$cari_nilai = DB::connection($conn)->table($this->schema.'.nilai')->where($where)->first();
+		if(!empty($cari_nilai)){
+			$update = DB::connection($conn)->table($this->schema.'.nilai')->where($where)->update($data);
 		}else{
-			$insert = [
-				'npsn'=>$npsn,
-				'id_siswa'=>$id_siswa,
-				'mapel_id'=>'1',
-				'kelas'=>Session::get('kelas_wk'),
-				'rombel'=>Session::get('rombel_wk'),
-				$kolom=>$nilai,
-			];
-			$update = DB::connection($conn)->table($nama_schema.'.nilai')->insert($insert);
+			$update = DB::connection($conn)->table($this->schema.'.nilai')->insert($data);
 		}
 
 		if($update){
@@ -1715,12 +1940,12 @@ class IsianwkController extends Controller
 		$rombel = Session::get('rombel_wk');
 		$id_rombel = Session::get('id_rombel');
 
-		$siswa = DB::connection($conn)->table('public.siswa')->whereRaw("npsn='$npsn' AND kelas='$kelas' AND rombel='$rombel' AND status_siswa='Aktif' AND alumni is not true")->get();
+		$siswa = DB::connection($conn)->table('public.siswa')->whereRaw("npsn='$npsn' AND kelas='$kelas' AND rombel='$rombel' AND status_siswa='Aktif' AND alumni is not true")->orderBy('nama','ASC')->get();
 		$siswa_ta = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.rombongan_belajar as rb','rb.id_rombongan_belajar','ar.rombongan_belajar_id')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
 		->selectRaw("rb.*,s.nama")
-		->whereRaw("rb.id_rombongan_belajar='$id_rombel'")->get();
+		->whereRaw("rb.id_rombongan_belajar='$id_rombel'")->orderBy('s.nama','ASC')->get();
 
 		$data = [
 			'siswa_skrg'=>$siswa,

@@ -39,11 +39,33 @@
 	@for($j=1;$j<=6;$j++)
 	<?php $kolom = 'berdoa_'.$j;?>
 	<td>
-		<select class="form-control" name="{{$kolom}}" onblur="simpan_nilai('{{$kolom}}','{{$s->id_siswa}}',this)">
+		@if(count($s->nilai)!=0)
+		@php
+		$uraian = $s->nilai[0]['uraian'];
+		$nilai = $s->nilai[0]['nilai'];
+		$key = array_search($kolom, $uraian);
+		if($key){
+			$nilai_pakai = $nilai[$key];
+		}else{
+			$nilai_pakai = 0;
+		}
+		@endphp
+		<select class="form-control" name="{{$kolom}}" onblur="simpan_nilai('{{$kolom}}','{{$s->id_siswa}}',this,'3')">
+			@for($i=0;$i<count($options);$i++)
+			@if($nilai_pakai==$options[$i]['value'])
+			<option value="{{$options[$i]['value']}}" selected>{{$options[$i]['text']}}</option>
+			@else
+			<option value="{{$options[$i]['value']}}">{{$options[$i]['text']}}</option>
+			@endif
+			@endfor
+		</select>
+		@else
+		<select class="form-control" name="{{$kolom}}" onblur="simpan_nilai('{{$kolom}}','{{$s->id_siswa}}',this,'3')">
 			@for($i=0;$i<count($options);$i++)
 			<option value="{{$options[$i]['value']}}">{{$options[$i]['text']}}</option>
 			@endfor
 		</select>
+		@endif
 	</td>
 	@endfor
 </tr>

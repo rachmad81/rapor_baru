@@ -115,7 +115,7 @@ class IsianwkController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
 
 		$data = [
 			'siswa'=>$siswa,
@@ -166,7 +166,7 @@ class IsianwkController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
 
 		if($siswa->count()!=0){
 			foreach($siswa as $s){
@@ -210,7 +210,7 @@ class IsianwkController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
 
 		if($siswa->count()!=0){
 			foreach($siswa as $s){
@@ -254,7 +254,7 @@ class IsianwkController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
 
 		if($siswa->count()!=0){
 			foreach($siswa as $s){
@@ -298,7 +298,7 @@ class IsianwkController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
 
 		if($siswa->count()!=0){
 			foreach($siswa as $s){
@@ -378,7 +378,7 @@ class IsianwkController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
 
 		if($siswa->count()!=0){
 			foreach($siswa as $s){
@@ -422,7 +422,7 @@ class IsianwkController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
 
 		if($siswa->count()!=0){
 			foreach($siswa as $s){
@@ -466,7 +466,7 @@ class IsianwkController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
 
 		if($siswa->count()!=0){
 			foreach($siswa as $s){
@@ -510,7 +510,7 @@ class IsianwkController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
 
 		if($siswa->count()!=0){
 			foreach($siswa as $s){
@@ -554,7 +554,7 @@ class IsianwkController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
 
 		if($siswa->count()!=0){
 			foreach($siswa as $s){
@@ -598,7 +598,7 @@ class IsianwkController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
 
 		if($siswa->count()!=0){
 			foreach($siswa as $s){
@@ -642,7 +642,7 @@ class IsianwkController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
 
 		if($siswa->count()!=0){
 			foreach($siswa as $s){
@@ -1134,7 +1134,7 @@ class IsianwkController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
 
 		$ekskul = DB::connection($conn)->table($this->schema.'.master_ekskul')->orderBy('nama_ekskul','asc')->get();
 
@@ -1163,7 +1163,7 @@ class IsianwkController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
 
 
 		$data = [
@@ -1190,7 +1190,7 @@ class IsianwkController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
 
 		$data = [
 			'siswa'=>$siswa,
@@ -1216,7 +1216,7 @@ class IsianwkController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
 
 		$data = [
 			'siswa'=>$siswa,
@@ -1242,7 +1242,7 @@ class IsianwkController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
 
 		$data = [
 			'siswa'=>$siswa,
@@ -1940,12 +1940,12 @@ class IsianwkController extends Controller
 		$rombel = Session::get('rombel_wk');
 		$id_rombel = Session::get('id_rombel');
 
-		$siswa = DB::connection($conn)->table('public.siswa')->whereRaw("npsn='$npsn' AND kelas='$kelas' AND rombel='$rombel' AND status_siswa='Aktif' AND alumni is not true")->orderBy('nama','ASC')->get();
+		$siswa = DB::connection($conn)->table('public.siswa')->whereRaw("npsn='$npsn' AND kelas='$kelas' AND rombel='$rombel' AND (status_siswa='Aktif' AND alumni is not true)")->orderBy('nama','ASC')->get();
 		$siswa_ta = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.rombongan_belajar as rb','rb.id_rombongan_belajar','ar.rombongan_belajar_id')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
 		->selectRaw("rb.*,s.nama")
-		->whereRaw("rb.id_rombongan_belajar='$id_rombel'")->orderBy('s.nama','ASC')->get();
+		->whereRaw("rb.id_rombongan_belajar='$id_rombel' AND s.npsn='$npsn'")->orderBy('s.nama','ASC')->get();
 
 		$data = [
 			'siswa_skrg'=>$siswa,
@@ -1965,7 +1965,9 @@ class IsianwkController extends Controller
 		$kelas = Session::get('kelas_wk');
 		$rombel = Session::get('rombel_wk');
 
-		$siswa = DB::connection($conn)->table('public.siswa')->whereRaw("npsn='$npsn' AND kelas='$kelas' AND rombel='$rombel' AND status_siswa='Aktif' AND alumni is not true")->get();
+		$siswa = DB::connection($conn)->table('public.siswa')->whereRaw("npsn='$npsn' AND kelas='$kelas' AND rombel='$rombel' AND (status_siswa='Aktif' AND alumni is not true)")->get();
+
+		return $siswa;
 
 		if($siswa->count()!=0){
 			foreach($siswa as $s){

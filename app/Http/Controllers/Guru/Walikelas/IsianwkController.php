@@ -19,10 +19,10 @@ class IsianwkController extends Controller
 {
 	protected $schema;
 
-    public function __construct() 
-    {
-        $this->schema = env('CURRENT_SCHEMA','production');
-    }
+	public function __construct() 
+	{
+		$this->schema = env('CURRENT_SCHEMA','production');
+	}
 
 	function main(Request $request){
 		$id_rombel = $request->id_rombel;
@@ -115,7 +115,7 @@ class IsianwkController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->orderBy('s.nama')->get();
 
 		$data = [
 			'siswa'=>$siswa,
@@ -166,19 +166,21 @@ class IsianwkController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->orderBy('s.nama')->get();
 
 		if($siswa->count()!=0){
 			foreach($siswa as $s){
-				$get_nilai = DB::connection($conn)->table($this->schema.'.nilai')->whereRaw("siswa_id='$s->id_siswa' AND rombel_id='$id_rombel' AND no_ki='3' AND uraian like 'ibadah_%'")->get();
+				$get_nilai = DB::connection($conn)->table($this->schema.'.detail_nilai_perilaku as dp')
+				->join($this->schema.'.nilai_perilaku as np','np.id_nilai_perilaku','dp.nilai_perilaku_id')
+				->whereRaw("np.anggota_rombel_id='$s->id_anggota_rombel'")->get();
 				$arr_nilai = [];
 				$uraian = ['xxxxx'];
 				$nilai = ['xxxxx'];
 
 				if($get_nilai->count()!=0){
-					foreach($get_nilai as $n){
-						array_push($uraian,$n->uraian);
-						array_push($nilai,$n->nilai);
+					foreach($get_nilai as $v){
+						array_push($uraian, $v->bulan);
+						array_push($nilai, $v->ibadah);
 					}
 
 					array_push($arr_nilai, ['uraian'=>$uraian,'nilai'=>$nilai]);
@@ -210,19 +212,21 @@ class IsianwkController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->orderBy('s.nama')->get();
 
 		if($siswa->count()!=0){
 			foreach($siswa as $s){
-				$get_nilai = DB::connection($conn)->table($this->schema.'.nilai')->whereRaw("siswa_id='$s->id_siswa' AND rombel_id='$id_rombel' AND no_ki='3' AND uraian like 'syukur_%'")->get();
+				$get_nilai = DB::connection($conn)->table($this->schema.'.detail_nilai_perilaku as dp')
+				->join($this->schema.'.nilai_perilaku as np','np.id_nilai_perilaku','dp.nilai_perilaku_id')
+				->whereRaw("np.anggota_rombel_id='$s->id_anggota_rombel'")->get();
 				$arr_nilai = [];
 				$uraian = ['xxxxx'];
 				$nilai = ['xxxxx'];
 
 				if($get_nilai->count()!=0){
-					foreach($get_nilai as $n){
-						array_push($uraian,$n->uraian);
-						array_push($nilai,$n->nilai);
+					foreach($get_nilai as $v){
+						array_push($uraian, $v->bulan);
+						array_push($nilai, $v->syukur);
 					}
 
 					array_push($arr_nilai, ['uraian'=>$uraian,'nilai'=>$nilai]);
@@ -254,19 +258,21 @@ class IsianwkController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->orderBy('s.nama')->get();
 
 		if($siswa->count()!=0){
 			foreach($siswa as $s){
-				$get_nilai = DB::connection($conn)->table($this->schema.'.nilai')->whereRaw("siswa_id='$s->id_siswa' AND rombel_id='$id_rombel' AND no_ki='3' AND uraian like 'berdoa_%'")->get();
+				$get_nilai = DB::connection($conn)->table($this->schema.'.detail_nilai_perilaku as dp')
+				->join($this->schema.'.nilai_perilaku as np','np.id_nilai_perilaku','dp.nilai_perilaku_id')
+				->whereRaw("np.anggota_rombel_id='$s->id_anggota_rombel'")->get();
 				$arr_nilai = [];
 				$uraian = ['xxxxx'];
 				$nilai = ['xxxxx'];
 
 				if($get_nilai->count()!=0){
-					foreach($get_nilai as $n){
-						array_push($uraian,$n->uraian);
-						array_push($nilai,$n->nilai);
+					foreach($get_nilai as $v){
+						array_push($uraian, $v->bulan);
+						array_push($nilai, $v->berdoa);
 					}
 
 					array_push($arr_nilai, ['uraian'=>$uraian,'nilai'=>$nilai]);
@@ -298,19 +304,21 @@ class IsianwkController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->orderBy('s.nama')->get();
 
 		if($siswa->count()!=0){
 			foreach($siswa as $s){
-				$get_nilai = DB::connection($conn)->table($this->schema.'.nilai')->whereRaw("siswa_id='$s->id_siswa' AND rombel_id='$id_rombel' AND no_ki='3' AND uraian like 'toleransi_%'")->get();
+				$get_nilai = DB::connection($conn)->table($this->schema.'.detail_nilai_perilaku as dp')
+				->join($this->schema.'.nilai_perilaku as np','np.id_nilai_perilaku','dp.nilai_perilaku_id')
+				->whereRaw("np.anggota_rombel_id='$s->id_anggota_rombel'")->get();
 				$arr_nilai = [];
 				$uraian = ['xxxxx'];
 				$nilai = ['xxxxx'];
 
 				if($get_nilai->count()!=0){
-					foreach($get_nilai as $n){
-						array_push($uraian,$n->uraian);
-						array_push($nilai,$n->nilai);
+					foreach($get_nilai as $v){
+						array_push($uraian, $v->bulan);
+						array_push($nilai, $v->toleransi);
 					}
 
 					array_push($arr_nilai, ['uraian'=>$uraian,'nilai'=>$nilai]);
@@ -378,19 +386,21 @@ class IsianwkController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->orderBy('s.nama')->get();
 
 		if($siswa->count()!=0){
 			foreach($siswa as $s){
-				$get_nilai = DB::connection($conn)->table($this->schema.'.nilai')->whereRaw("siswa_id='$s->id_siswa' AND rombel_id='$id_rombel' AND no_ki='4' AND uraian like 'jujur_%'")->get();
+				$get_nilai = DB::connection($conn)->table($this->schema.'.detail_nilai_perilaku as dp')
+				->join($this->schema.'.nilai_perilaku as np','np.id_nilai_perilaku','dp.nilai_perilaku_id')
+				->whereRaw("np.anggota_rombel_id='$s->id_anggota_rombel'")->get();
 				$arr_nilai = [];
 				$uraian = ['xxxxx'];
 				$nilai = ['xxxxx'];
 
 				if($get_nilai->count()!=0){
-					foreach($get_nilai as $n){
-						array_push($uraian,$n->uraian);
-						array_push($nilai,$n->nilai);
+					foreach($get_nilai as $v){
+						array_push($uraian, $v->bulan);
+						array_push($nilai, $v->jujur);
 					}
 
 					array_push($arr_nilai, ['uraian'=>$uraian,'nilai'=>$nilai]);
@@ -422,19 +432,21 @@ class IsianwkController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->orderBy('s.nama')->get();
 
 		if($siswa->count()!=0){
 			foreach($siswa as $s){
-				$get_nilai = DB::connection($conn)->table($this->schema.'.nilai')->whereRaw("siswa_id='$s->id_siswa' AND rombel_id='$id_rombel' AND no_ki='4' AND uraian like 'disiplin_%'")->get();
+				$get_nilai = DB::connection($conn)->table($this->schema.'.detail_nilai_perilaku as dp')
+				->join($this->schema.'.nilai_perilaku as np','np.id_nilai_perilaku','dp.nilai_perilaku_id')
+				->whereRaw("np.anggota_rombel_id='$s->id_anggota_rombel'")->get();
 				$arr_nilai = [];
 				$uraian = ['xxxxx'];
 				$nilai = ['xxxxx'];
 
 				if($get_nilai->count()!=0){
-					foreach($get_nilai as $n){
-						array_push($uraian,$n->uraian);
-						array_push($nilai,$n->nilai);
+					foreach($get_nilai as $v){
+						array_push($uraian, $v->bulan);
+						array_push($nilai, $v->disiplin);
 					}
 
 					array_push($arr_nilai, ['uraian'=>$uraian,'nilai'=>$nilai]);
@@ -466,19 +478,21 @@ class IsianwkController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->orderBy('s.nama')->get();
 
 		if($siswa->count()!=0){
 			foreach($siswa as $s){
-				$get_nilai = DB::connection($conn)->table($this->schema.'.nilai')->whereRaw("siswa_id='$s->id_siswa' AND rombel_id='$id_rombel' AND no_ki='4' AND uraian like 'tanggungjawab_%'")->get();
+				$get_nilai = DB::connection($conn)->table($this->schema.'.detail_nilai_perilaku as dp')
+				->join($this->schema.'.nilai_perilaku as np','np.id_nilai_perilaku','dp.nilai_perilaku_id')
+				->whereRaw("np.anggota_rombel_id='$s->id_anggota_rombel'")->get();
 				$arr_nilai = [];
 				$uraian = ['xxxxx'];
 				$nilai = ['xxxxx'];
 
 				if($get_nilai->count()!=0){
-					foreach($get_nilai as $n){
-						array_push($uraian,$n->uraian);
-						array_push($nilai,$n->nilai);
+					foreach($get_nilai as $v){
+						array_push($uraian, $v->bulan);
+						array_push($nilai, $v->tanggung_jawab);
 					}
 
 					array_push($arr_nilai, ['uraian'=>$uraian,'nilai'=>$nilai]);
@@ -510,19 +524,21 @@ class IsianwkController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->orderBy('s.nama')->get();
 
 		if($siswa->count()!=0){
 			foreach($siswa as $s){
-				$get_nilai = DB::connection($conn)->table($this->schema.'.nilai')->whereRaw("siswa_id='$s->id_siswa' AND rombel_id='$id_rombel' AND no_ki='4' AND uraian like 'sopansantun_%'")->get();
+				$get_nilai = DB::connection($conn)->table($this->schema.'.detail_nilai_perilaku as dp')
+				->join($this->schema.'.nilai_perilaku as np','np.id_nilai_perilaku','dp.nilai_perilaku_id')
+				->whereRaw("np.anggota_rombel_id='$s->id_anggota_rombel'")->get();
 				$arr_nilai = [];
 				$uraian = ['xxxxx'];
 				$nilai = ['xxxxx'];
 
 				if($get_nilai->count()!=0){
-					foreach($get_nilai as $n){
-						array_push($uraian,$n->uraian);
-						array_push($nilai,$n->nilai);
+					foreach($get_nilai as $v){
+						array_push($uraian, $v->bulan);
+						array_push($nilai, $v->sopan_santun);
 					}
 
 					array_push($arr_nilai, ['uraian'=>$uraian,'nilai'=>$nilai]);
@@ -554,19 +570,21 @@ class IsianwkController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->orderBy('s.nama')->get();
 
 		if($siswa->count()!=0){
 			foreach($siswa as $s){
-				$get_nilai = DB::connection($conn)->table($this->schema.'.nilai')->whereRaw("siswa_id='$s->id_siswa' AND rombel_id='$id_rombel' AND no_ki='4' AND uraian like 'percayadiri_%'")->get();
+				$get_nilai = DB::connection($conn)->table($this->schema.'.detail_nilai_perilaku as dp')
+				->join($this->schema.'.nilai_perilaku as np','np.id_nilai_perilaku','dp.nilai_perilaku_id')
+				->whereRaw("np.anggota_rombel_id='$s->id_anggota_rombel'")->get();
 				$arr_nilai = [];
 				$uraian = ['xxxxx'];
 				$nilai = ['xxxxx'];
 
 				if($get_nilai->count()!=0){
-					foreach($get_nilai as $n){
-						array_push($uraian,$n->uraian);
-						array_push($nilai,$n->nilai);
+					foreach($get_nilai as $v){
+						array_push($uraian, $v->bulan);
+						array_push($nilai, $v->peduli);
 					}
 
 					array_push($arr_nilai, ['uraian'=>$uraian,'nilai'=>$nilai]);
@@ -598,19 +616,21 @@ class IsianwkController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->orderBy('s.nama')->get();
 
 		if($siswa->count()!=0){
 			foreach($siswa as $s){
-				$get_nilai = DB::connection($conn)->table($this->schema.'.nilai')->whereRaw("siswa_id='$s->id_siswa' AND rombel_id='$id_rombel' AND no_ki='4' AND uraian like 'peduli_%'")->get();
+				$get_nilai = DB::connection($conn)->table($this->schema.'.detail_nilai_perilaku as dp')
+				->join($this->schema.'.nilai_perilaku as np','np.id_nilai_perilaku','dp.nilai_perilaku_id')
+				->whereRaw("np.anggota_rombel_id='$s->id_anggota_rombel'")->get();
 				$arr_nilai = [];
 				$uraian = ['xxxxx'];
 				$nilai = ['xxxxx'];
 
 				if($get_nilai->count()!=0){
-					foreach($get_nilai as $n){
-						array_push($uraian,$n->uraian);
-						array_push($nilai,$n->nilai);
+					foreach($get_nilai as $v){
+						array_push($uraian, $v->bulan);
+						array_push($nilai, $v->percaya_diri);
 					}
 
 					array_push($arr_nilai, ['uraian'=>$uraian,'nilai'=>$nilai]);
@@ -642,19 +662,21 @@ class IsianwkController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->orderBy('s.nama')->get();
 
 		if($siswa->count()!=0){
 			foreach($siswa as $s){
-				$get_nilai = DB::connection($conn)->table($this->schema.'.nilai')->whereRaw("siswa_id='$s->id_siswa' AND rombel_id='$id_rombel' AND no_ki='4' AND uraian like 'kerjasama_%'")->get();
+				$get_nilai = DB::connection($conn)->table($this->schema.'.detail_nilai_perilaku as dp')
+				->join($this->schema.'.nilai_perilaku as np','np.id_nilai_perilaku','dp.nilai_perilaku_id')
+				->whereRaw("np.anggota_rombel_id='$s->id_anggota_rombel'")->get();
 				$arr_nilai = [];
 				$uraian = ['xxxxx'];
 				$nilai = ['xxxxx'];
 
 				if($get_nilai->count()!=0){
-					foreach($get_nilai as $n){
-						array_push($uraian,$n->uraian);
-						array_push($nilai,$n->nilai);
+					foreach($get_nilai as $v){
+						array_push($uraian, $v->bulan);
+						array_push($nilai, $v->kerjasama);
 					}
 
 					array_push($arr_nilai, ['uraian'=>$uraian,'nilai'=>$nilai]);
@@ -699,364 +721,37 @@ class IsianwkController extends Controller
 		$npsn = Session::get('npsn');
 		$kelas = Session::get('kelas_wk');
 		$rombel = Session::get('rombel_wk');
-		$nama_schema = Session::get('nama_schema');
+		$id_rombel = Session::get('id_rombel');
 		$jenjang = Session::get('jenjang');
-		$mapel_id	= 1;
 		$jumkd		= 6;
 
 		$coni->jenjang = $jenjang;
 		$conn = Setkoneksi::set_koneksi($coni);
 
-		if($jenjang=='SD'){
-			$tahun_ajaran = substr($nama_schema,9,4);
-			$semester = substr($nama_schema,14);
-		}else{
-			$tahun_ajaran = substr($nama_schema,10,4);
-			$semester = substr($nama_schema,15);
-		}
-
-		$hapus_nilai_kahir = DB::connection($conn)->table($nama_schema.'.nilai_akhir')->whereRaw("npsn='$npsn' AND kelas='$kelas' AND rombel='$rombel' AND mapel_id='$mapel_id'")->delete();
-
-		$mapel = DB::connection($conn)->table('public.rapor_mapel')->whereRaw("mapel_id='$mapel_id'")->first();
-
-		$get_siswa = DB::connection($conn)->table('public.siswa as s')
-		->leftjoin($nama_schema.'.nilai as n',function($join){
-			return $join->on(function($jj){
-				return $jj->on('s.npsn','=','n.npsn')->orOn('s.npsn_asal','=','n.npsn');
-			})->on('s.id_siswa','=','n.id_siswa');
-		},'left outer')
-		->selectRaw("s.nama ,s.id_siswa as idsiswa ,n.*")
-		->whereRaw("n.npsn='$npsn' and n.kelas='$kelas' and n.mapel_id='$mapel_id' and n.rombel='$rombel'")
+		$get_siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
+		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
+		->join('public.rombongan_belajar as rb','rb.id_rombongan_belajar','ar.rombongan_belajar_id')
+		->selectRaw("s.nama ,s.id_siswa as idsiswa")
+		->whereRaw("rb.npsn='$npsn' and ar.rombongan_belajar_id='$id_rombel'")
 		->orderBy('s.nama')->get();
 
 		$tampil = [];
 
 		$id=1;
 		foreach($get_siswa as $k=>$v){
-			/* --- KI-1 --- */
-			if($jenjang=='SD'){
-				$aspek_kata=array("ketaatan beribadah","berperilaku syukur","berdoa sebelum dan sesudah melakukan kegiatan","toleransi dalam beribadah");
-				$aspek=array("ibadah","syukur","berdoa","toleransi");
-			}else{
-				$aspek_kata=array("ketaatan beribadah","berperilaku syukur");
-				$aspek=array("ibadah","syukur");
-			}
+			$sikap = Hitung_sikap::nilai_sikap_sd($v->idsiswa);
 
-			//utk meghitung modus keseluruhan
-			$tot_nilai_1=0;
-			$tot_nilai_2=0;
-			$tot_nilai_3=0;
-			$tot_nilai_4=0;
-			$arr_nilai=array();
-			for($a=0;$a<count($aspek);$a++){
-				//utk meghitung modus per sikap
-				$nilai_1=0;
-				$nilai_2=0;
-				$nilai_3=0;
-				$nilai_4=0;
-				for($i=1;$i<=$jumkd;$i++){
-					for($j=0;$j<=2;$j++){
-						$kolom = $aspek[$a] ."_".$i;
-						if($v->$kolom==1 ) {
-							$nilai_1++;
-							$tot_nilai_1++;
-						}
-						if($v->$kolom==2 ) {
-							$nilai_2++;
-							$tot_nilai_2++;
-						}
-						if($v->$kolom==3 ) {
-							$nilai_3++;
-							$tot_nilai_3++;
-						}
-						if($v->$kolom==4 ) {
-							$nilai_4++;
-							$tot_nilai_4++;
-						}
-					}
-				}
+			$baris = [
+				'id'=>$id,
+				'nama'=>$v->nama,
+				'hurufk1'=>(!empty($sikap)) ? $sikap['hurufk1'] : '',
+				'catatan1'=>(!empty($sikap)) ? $sikap['catatan1'] : '',
+				'hurufk2'=>(!empty($sikap)) ? $sikap['hurufk2'] : '',
+				'catatan2'=>(!empty($sikap)) ? $sikap['catatan2'] : '',
+			];
 
-				//hitung modus pada aspek
-				$paling_besar=0;
-				$mod_paling_besar=0;
-				if($mod_paling_besar<$nilai_1) {
-					$paling_besar=1;	
-					$mod_paling_besar=$nilai_1;
-				}
-				if($mod_paling_besar<$nilai_2) {
-					$paling_besar=2;	
-					$mod_paling_besar=$nilai_2;
-				}
-				if($mod_paling_besar<$nilai_3) {
-					$paling_besar=3;	
-					$mod_paling_besar=$nilai_3;
-				}
-				if($mod_paling_besar<$nilai_4) {
-					$paling_besar=4;	
-					$mod_paling_besar=$nilai_4;
-				}
-				array_push($arr_nilai,$paling_besar);
-			}				
-
-			//hitung modus pada total
-			$paling_besar=0;
-			$mod_paling_besar=0;
-			if($mod_paling_besar<$tot_nilai_1) {
-				$paling_besar=1;	
-				$mod_paling_besar=$tot_nilai_1;
-			}
-			if($mod_paling_besar<$tot_nilai_2) {
-				$paling_besar=2;	
-				$mod_paling_besar=$tot_nilai_2;
-			}
-			if($mod_paling_besar<$tot_nilai_3) {
-				$paling_besar=3;	
-				$mod_paling_besar=$tot_nilai_3;
-			}
-			if($mod_paling_besar<$tot_nilai_4) {
-				$paling_besar=4;	
-				$mod_paling_besar=$tot_nilai_4;
-			}
-
-			if($paling_besar==1){ 
-				$hurufk1='K';							
-				$sikap_modus_1="";
-				for($a=0;$a<count($aspek);$a++){
-					if($arr_nilai[$a]==1) $sikap_modus_1.= ", ".$aspek_kata[$a];
-				}
-				$sikap_modus_1=substr($sikap_modus_1,1);
-				$catatan1="Dengan bimbingan dan pendampingan yang lebih, peserta didik mampu ". $sikap_modus_1;
-			}
-			if($paling_besar==2){
-				$hurufk1='C';
-				$sikap_modus_2="";
-				for($a=0;$a<count($aspek);$a++){
-					if($arr_nilai[$a]==2) $sikap_modus_2.= ", ".$aspek_kata[$a];
-				}
-				$sikap_modus_2=substr($sikap_modus_2,1);
-				$sikap_modus_kurang="";
-				for($a=0;$a<count($aspek);$a++){
-					if(($arr_nilai[$a]<2) and $arr_nilai[$a]>0) $sikap_modus_kurang.= ", ".$aspek[$a];
-				}
-				$sikap_modus_kurang=substr($sikap_modus_kurang,1);
-				$catatan1="Dengan bimbingan dan pendampingan yang lebih, peserta didik mampu $sikap_modus_2 ";
-											#if($sikap_modus_kurang<>"") $catatan1.=", dan perlu ditingkatkan dalam sikap $sikap_modus_kurang.";
-			}
-			if($paling_besar==3){ 
-				$hurufk1='B';
-				$sikap_modus_3="";
-				for($a=0;$a<count($aspek);$a++){
-					if($arr_nilai[$a]==3) $sikap_modus_3.= ", ".$aspek_kata[$a];
-				}
-				$sikap_modus_3=substr($sikap_modus_3,1);
-				$sikap_modus_kurang="";
-				for($a=0;$a<count($aspek);$a++){
-					if(($arr_nilai[$a]<3) and ($arr_nilai[$a]>0)) $sikap_modus_kurang.= ", ".$aspek[$a];
-				}
-				$sikap_modus_kurang=substr($sikap_modus_kurang,1);
-				$catatan1="Peserta didik baik dalam sikap spiritual $sikap_modus_3";
-				if($sikap_modus_kurang<>"") $catatan1.=", dengan bimbingan dan pendampingan yang lebih, peserta didik akan mampu $sikap_modus_kurang.";
-
-			}
-			if($paling_besar==4) {
-				$hurufk1='SB';
-				$sikap_modus_4="";
-				for($a=0;$a<count($aspek);$a++){
-					if($arr_nilai[$a]==4) $sikap_modus_4.= ", ".$aspek_kata[$a];
-				}
-				$sikap_modus_4=substr($sikap_modus_4,1);
-				$sikap_modus_kurang="";
-				for($a=0;$a<count($aspek);$a++){
-					if(($arr_nilai[$a]<4) and ($arr_nilai[$a]>0)) $sikap_modus_kurang.= ", ".$aspek[$a];
-				}
-				$sikap_modus_kurang=substr($sikap_modus_kurang,1);
-				$catatan1="Peserta didik Sangat Baik dalam sikap spiritual $sikap_modus_4";
-				if($sikap_modus_kurang<>"") $catatan1.=", dengan bimbingan dan pendampingan yang lebih, peserta didik akan mampu $sikap_modus_kurang.";
-			}
-			/*if($paling_besar==0){
-				$hurufk1="&nbsp";
-				$catatan1="&nbsp";
-			}*/
-			/* --- END KI-1 --- */
-			
-			
-			/* --- KI-2 --- */
-			if($jenjang=='SD'){
-				$aspek_kata=array("Jujur","Disiplin","Tanggungjawab","Sopansantun","Peduli","Percayadiri");
-				$aspek=array("jujur","disiplin","tanggungjawab","sopansantun","peduli","percayadiri");
-			}else{
-				$aspek_kata=array("Jujur","Disiplin","Tanggungjawab","Sopansantun","Peduli","Percayadiri","Kerja Sama");
-				$aspek=array("kejujuran","disiplin","tanggungjawab","sopansantun","kepedulian","percayadiri","kerjasama");
-			}																			
-
-			//utk meghitung modus keseluruhan
-			$tot_nilai_1=0;
-			$tot_nilai_2=0;
-			$tot_nilai_3=0;
-			$tot_nilai_4=0;
-			$arr_nilai=array();
-			for($a=0;$a<count($aspek);$a++){
-				//utk meghitung modus per sikap
-				$nilai_1=0;
-				$nilai_2=0;
-				$nilai_3=0;
-				$nilai_4=0;
-				for($i=1;$i<=$jumkd;$i++){
-					for($j=0;$j<=2;$j++){
-						$kolom = $aspek[$a] ."_".$i;
-						if($v->$kolom==1 ) {
-							$nilai_1++;
-							$tot_nilai_1++;
-						}
-						if($v->$kolom==2 ) {
-							$nilai_2++;
-							$tot_nilai_2++;
-						}
-						if($v->$kolom==3 ) {
-							$nilai_3++;
-							$tot_nilai_3++;
-						}
-						if($v->$kolom==4 ) {
-							$nilai_4++;
-							$tot_nilai_4++;
-						}
-					}
-				}
-
-				//hitung modus pada aspek
-				$paling_besar=0;
-				//$mod_paling_besar=$nilai_1;
-				$mod_paling_besar=0;
-				if($mod_paling_besar<$nilai_1) {
-					$paling_besar=1;	
-					$mod_paling_besar=$nilai_1;
-				}
-				if($mod_paling_besar<$nilai_2) {
-					$paling_besar=2;	
-					$mod_paling_besar=$nilai_2;
-				}
-				if($mod_paling_besar<$nilai_3) {
-					$paling_besar=3;	
-					$mod_paling_besar=$nilai_3;
-				}
-				if($mod_paling_besar<$nilai_4) {
-					$paling_besar=4;	
-					$mod_paling_besar=$nilai_4;
-				}
-				array_push($arr_nilai,$paling_besar);
-			}				
-
-			//hitung modus pada total
-			$paling_besar=0;
-			//$mod_paling_besar=$tot_nilai_1;
-			$mod_paling_besar=0;
-			if($mod_paling_besar<$tot_nilai_1) {
-				$paling_besar=1;	
-				$mod_paling_besar=$tot_nilai_1;
-			}
-			if($mod_paling_besar<$tot_nilai_2) {
-				$paling_besar=2;	
-				$mod_paling_besar=$tot_nilai_2;
-			}
-			if($mod_paling_besar<$tot_nilai_3) {
-				$paling_besar=3;	
-				$mod_paling_besar=$tot_nilai_3;
-			}
-			if($mod_paling_besar<$tot_nilai_4) {
-				$paling_besar=4;	
-				$mod_paling_besar=$tot_nilai_4;
-			}
-
-			if($paling_besar==1){ 
-				$hurufk2='K';							
-				$sikap_modus_1="";
-				for($a=0;$a<count($aspek);$a++){
-					if($arr_nilai[$a]==1) $sikap_modus_1.= ", ".$aspek[$a];
-				}
-				$sikap_modus_1=substr($sikap_modus_1,1);
-				$catatan2="Dengan bimbingan dan pendampingan yang lebih, peserta didik mampu ". $sikap_modus_1;
-			}
-			if($paling_besar==2){
-				$hurufk2='C';
-				$sikap_modus_2="";
-				for($a=0;$a<count($aspek);$a++){
-					if($arr_nilai[$a]==2) $sikap_modus_2.= ", ".$aspek[$a];
-				}
-				$sikap_modus_2=substr($sikap_modus_2,1);
-				$sikap_modus_kurang="";
-				for($a=0;$a<count($aspek);$a++){
-					if(($arr_nilai[$a]<2) and $arr_nilai[$a]>0) $sikap_modus_kurang.= ", ".$aspek[$a];
-				}
-				$sikap_modus_kurang=substr($sikap_modus_kurang,1);
-				$catatan2="Dengan bimbingan dan pendampingan yang lebih, peserta didik mampu $sikap_modus_2";
-											#if($sikap_modus_kurang<>"") $catatan2.=", dan perlu ditingkatkan dalam sikap $sikap_modus_kurang.";
-			}
-			if($paling_besar==3){ 
-				$hurufk2='B';
-				$sikap_modus_3="";
-				for($a=0;$a<count($aspek);$a++){
-					if($arr_nilai[$a]==3) $sikap_modus_3.= ", ".$aspek[$a];
-				}
-				$sikap_modus_3=substr($sikap_modus_3,1);
-				$sikap_modus_kurang="";
-				for($a=0;$a<count($aspek);$a++){
-					if(($arr_nilai[$a]<3) and ($arr_nilai[$a]>0)) $sikap_modus_kurang.= ", ".$aspek[$a];
-				}
-				$sikap_modus_kurang=substr($sikap_modus_kurang,1);
-				$catatan2="Peserta didik Baik dalam sikap sosial $sikap_modus_3";
-				if($sikap_modus_kurang<>"") $catatan2.=", dengan bimbingan dan pendampingan yang lebih, peserta didik akan mampu $sikap_modus_kurang.";
-
-			}
-			if($paling_besar==4) {
-				$hurufk2='SB';
-				$sikap_modus_4="";
-				for($a=0;$a<count($aspek);$a++){
-					if($arr_nilai[$a]==4) $sikap_modus_4.= ", ".$aspek[$a];
-				}
-				$sikap_modus_4=substr($sikap_modus_4,1);
-				$sikap_modus_kurang="";
-				for($a=0;$a<count($aspek);$a++){
-					if(($arr_nilai[$a]<4) and ($arr_nilai[$a]>0)) $sikap_modus_kurang.= ", ".$aspek[$a];
-				}
-				$sikap_modus_kurang=substr($sikap_modus_kurang,1);
-				$catatan2="Peserta didik Sangat Baik dalam sikap sosial $sikap_modus_4";
-				if($sikap_modus_kurang<>"") $catatan2.=", dengan bimbingan dan pendampingan yang lebih, peserta didik akan mampu $sikap_modus_kurang.";
-			}
-			/* --- END KI-2 --- */
-			if($paling_besar > 0){
-				$baris = [
-					'id'=>$id,
-					'nama'=>$v->nama,
-					'hurufk1'=>$hurufk1,
-					'catatan1'=>$catatan1,
-					'hurufk2'=>$hurufk2,
-					'catatan2'=>$catatan2,
-				];
-
-				array_push($tampil,$baris);
-
-				$namasiswa	= str_replace("'", "&apos;", $v->nama);
-				$dta_insert = [
-					'npsn'=>$npsn,
-					'id_siswa'=>$v->id_siswa,
-					'nama'=>$namasiswa,
-					'kelas'=>$kelas,
-					'rombel'=>$rombel,
-					'mapel_id'=>$mapel_id,
-					'mapel'=>(!empty($mapel)) ? $mapel->nama : '',
-					'kategori'=>(!empty($mapel)) ? $mapel->kategori_baru : '',
-					'semester'=>'1',
-					'predikat_ki1'=>$hurufk1,
-					'deskripsi_ki1'=>$catatan1,
-					'predikat_ki2'=>$hurufk2,
-					'deskripsi_ki2'=>$catatan2,
-					'urutan'=>'0'.(!empty($mapel)) ? $mapel->urutan : '',
-					'tapel'=>'Ganjil 2021/2022',
-					'last_update'=>date('Y-m-d H:i:s'),
-				];
-				$simpan = DB::connection($conn)->table($nama_schema.'.nilai_akhir')->insert($dta_insert);
-				$id++;
-			}
+			array_push($tampil,$baris);
+			$id++;
 		}
 
 		return $tampil;
@@ -1068,49 +763,33 @@ class IsianwkController extends Controller
 		$npsn = Session::get('npsn');
 		$kelas = Session::get('kelas_wk');
 		$rombel = Session::get('rombel_wk');
-		$nama_schema = Session::get('nama_schema');
+		$id_rombel = Session::get('id_rombel');
 		$jenjang = Session::get('jenjang');
-		$mapel_id	= 1;
 		$jumkd		= 6;
 
 		$coni->jenjang = $jenjang;
 		$conn = Setkoneksi::set_koneksi($coni);
 
-		if($jenjang=='SD'){
-			$tahun_ajaran = substr($nama_schema,9,4);
-			$semester = substr($nama_schema,14);
-		}else{
-			$tahun_ajaran = substr($nama_schema,10,4);
-			$semester = substr($nama_schema,15);
-		}
-
-		$hapus_nilai_kahir = DB::connection($conn)->table($nama_schema.'.nilai_akhir')->whereRaw("npsn='$npsn' AND kelas='$kelas' AND rombel='$rombel' AND mapel_id='$mapel_id'")->delete();
-
-		$mapel = DB::connection($conn)->table('public.rapor_mapel')->whereRaw("mapel_id='$mapel_id'")->first();
-
-		$get_siswa = DB::connection($conn)->table('public.siswa as s')
-		->leftjoin($nama_schema.'.nilai as n',function($join){
-			return $join->on(function($jj){
-				return $jj->on('s.npsn','=','n.npsn')->orOn('s.npsn_asal','=','n.npsn');
-			})->on('s.id_siswa','=','n.id_siswa');
-		},'left outer')
-		->selectRaw("s.nama ,s.id_siswa as idsiswa ,n.*")
-		->whereRaw("n.npsn='$npsn' and n.kelas='$kelas' and n.mapel_id='$mapel_id' and n.rombel='$rombel'")
+		$get_siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
+		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
+		->join('public.rombongan_belajar as rb','rb.id_rombongan_belajar','ar.rombongan_belajar_id')
+		->selectRaw("s.nama ,s.id_siswa as idsiswa")
+		->whereRaw("rb.npsn='$npsn' and ar.rombongan_belajar_id='$id_rombel'")
 		->orderBy('s.nama')->get();
 
 		$tampil = [];
 
 		$id=1;
 		foreach($get_siswa as $k=>$v){
-			$sikap = Hitung_sikap::nilai_sikap($v->id_siswa,$kelas,$rombel,$nama_schema,$npsn);
+			$sikap = Hitung_sikap::nilai_sikap($v->idsiswa);
 
 			$baris = [
 				'id'=>$id,
 				'nama'=>$v->nama,
-				'hurufk1'=>(!empty($sikap)) ? $sikap['huruf_ki1'] : '',
-				'catatan1'=>(!empty($sikap)) ? $sikap['catatan_1'] : '',
-				'hurufk2'=>(!empty($sikap)) ? $sikap['huruf_ki2'] : '',
-				'catatan2'=>(!empty($sikap)) ? $sikap['catatan_2'] : '',
+				'hurufk1'=>(!empty($sikap)) ? $sikap['hurufk1'] : '',
+				'catatan1'=>(!empty($sikap)) ? $sikap['catatan1'] : '',
+				'hurufk2'=>(!empty($sikap)) ? $sikap['hurufk2'] : '',
+				'catatan2'=>(!empty($sikap)) ? $sikap['catatan2'] : '',
 			];
 
 			array_push($tampil,$baris);
@@ -1134,7 +813,7 @@ class IsianwkController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->orderBy('s.nama')->get();
 
 		$ekskul = DB::connection($conn)->table($this->schema.'.master_ekskul')->orderBy('nama_ekskul','asc')->get();
 
@@ -1163,7 +842,7 @@ class IsianwkController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->orderBy('s.nama')->get();
 
 
 		$data = [
@@ -1190,7 +869,7 @@ class IsianwkController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->orderBy('s.nama')->get();
 
 		$data = [
 			'siswa'=>$siswa,
@@ -1216,7 +895,7 @@ class IsianwkController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->orderBy('s.nama')->get();
 
 		$data = [
 			'siswa'=>$siswa,
@@ -1242,7 +921,7 @@ class IsianwkController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->orderBy('s.nama')->get();
 
 		$data = [
 			'siswa'=>$siswa,
@@ -1256,8 +935,8 @@ class IsianwkController extends Controller
 
 	function simpan_nilai(Request $request){
 		$id_siswa = $request->id_siswa;
-		$kolom = $request->kolom;
-		$nilai = $request->nilai;
+		$kolom = explode('_',$request->kolom);
+		$data_nilai = $request->nilai;
 		$npsn = Session::get('npsn');
 		$id_rombel = Session::get('id_rombel');
 		$no_ki = $request->no_ki;
@@ -1266,30 +945,111 @@ class IsianwkController extends Controller
 
 		$conn = Setkoneksi::set_koneksi($request);
 
-		$data = [
-			'siswa_id'=>$id_siswa,
-			'rombel_id'=>$id_rombel,
-			'uraian'=>$kolom,
-			'no_ki'=>$no_ki,
-			'nilai'=>$nilai,
-			'mapel_id'=>null,
-		];
-
-		$where = $data;
-		unset($where['nilai']);
-		unset($where['mapel_id']);
-
-		$cari_nilai = DB::connection($conn)->table($this->schema.'.nilai')->where($where)->first();
-		if(!empty($cari_nilai)){
-			$update = DB::connection($conn)->table($this->schema.'.nilai')->where($where)->update($data);
-		}else{
-			$update = DB::connection($conn)->table($this->schema.'.nilai')->insert($data);
+		$anggota = DB::connection($conn)->table('public.anggota_rombel')->whereRaw("siswa_id='$id_siswa' AND rombongan_belajar_id='$id_rombel'")->first();
+		$id_anggota = '';
+		if(!empty($anggota)){
+			$id_anggota = $anggota->id_anggota_rombel;
 		}
 
-		if($update){
-			$return = ['code'=>'200','title'=>'Success','message'=>'Berhasil disimpan','type'=>'success'];
+		$data_nilai_perilaku = [
+			'anggota_rombel_id'=>$id_anggota,
+			'npsn'=>$npsn,
+		];
+
+		if($id_anggota!=''){
+			$id_nilai_perilaku='';
+			while($id_nilai_perilaku=='') {
+				$get_nilai_perilaku = DB::connection($conn)->table($this->schema.'.nilai_perilaku')->where($data_nilai_perilaku)->first();
+				if(!empty($get_nilai_perilaku)){
+					$id_nilai_perilaku = $get_nilai_perilaku->id_nilai_perilaku;
+				}else{
+					$simpan = DB::connection($conn)->table($this->schema.'.nilai_perilaku')->insert($data_nilai_perilaku);
+					$get_nilai_perilaku = DB::connection($conn)->table($this->schema.'.nilai_perilaku')->where($data_nilai_perilaku)->first();
+					$id_nilai_perilaku = $get_nilai_perilaku->id_nilai_perilaku;
+				}
+			};
+		}
+
+
+		if($id_nilai_perilaku!=''){			
+			$data_detail = [
+				'nilai_perilaku_id'=>$id_nilai_perilaku,
+				'bulan'=>$kolom[1],
+			];
+
+			$where = $data_detail;
+
+			$cari_nilai = DB::connection($conn)->table($this->schema.'.detail_nilai_perilaku')->where($where)->first();
+			if(!empty($cari_nilai)){
+				$nilai = new Request;
+				$nilai->ibadah = ($kolom[0]=='ibadah') ? $data_nilai : $cari_nilai->ibadah;
+				$nilai->syukur = ($kolom[0]=='syukur') ? $data_nilai : $cari_nilai->syukur;
+				$nilai->berdoa = ($kolom[0]=='berdoa') ? $data_nilai : $cari_nilai->berdoa;
+				$nilai->toleransi = ($kolom[0]=='toleransi') ? $data_nilai : $cari_nilai->toleransi;
+				$nilai->jujur = ($kolom[0]=='jujur') ? $data_nilai : $cari_nilai->jujur;
+				$nilai->disiplin = ($kolom[0]=='disiplin') ? $data_nilai : $cari_nilai->disiplin;
+				$nilai->tanggung_jawab = ($kolom[0]=='tanggung_jawab') ? $data_nilai : $cari_nilai->tanggung_jawab;
+				$nilai->sopan_santun = ($kolom[0]=='sopan_santun') ? $data_nilai : $cari_nilai->sopan_santun;
+				$nilai->peduli = ($kolom[0]=='peduli') ? $data_nilai : $cari_nilai->peduli;
+				$nilai->percaya_diri = ($kolom[0]=='percaya_diri') ? $data_nilai : $cari_nilai->percaya_diri;
+				$nilai->kerjasama = ($kolom[0]=='kerjasama') ? $data_nilai : $cari_nilai->kerjasama;
+
+				$data_detail = array_merge($data_detail,[
+					'ibadah'=>$nilai->ibadah,
+					'syukur'=>$nilai->syukur,
+					'berdoa'=>$nilai->berdoa,
+					'toleransi'=>$nilai->toleransi,
+					'jujur'=>$nilai->jujur,
+					'disiplin'=>$nilai->disiplin,
+					'tanggung_jawab'=>$nilai->tanggung_jawab,
+					'sopan_santun'=>$nilai->sopan_santun,
+					'peduli'=>$nilai->peduli,
+					'percaya_diri'=>$nilai->percaya_diri,
+					'kerjasama'=>$nilai->kerjasama,
+					'created_at'=>date('Y-m-d H:i:s'),
+					'updated_at'=>date('Y-m-d H:i:s'),
+				]);
+
+				$update = DB::connection($conn)->table($this->schema.'.detail_nilai_perilaku')->where($where)->update($data_detail);
+			}else{
+				$nilai = new Request;
+				$nilai->ibadah = ($kolom[0]=='ibadah') ? $data_nilai : 0;
+				$nilai->syukur = ($kolom[0]=='syukur') ? $data_nilai : 0;
+				$nilai->berdoa = ($kolom[0]=='berdoa') ? $data_nilai : 0;
+				$nilai->toleransi = ($kolom[0]=='toleransi') ? $data_nilai : 0;
+				$nilai->jujur = ($kolom[0]=='jujur') ? $data_nilai : 0;
+				$nilai->disiplin = ($kolom[0]=='disiplin') ? $data_nilai : 0;
+				$nilai->tanggung_jawab = ($kolom[0]=='tanggung_jawab') ? $data_nilai : 0;
+				$nilai->sopan_santun = ($kolom[0]=='sopan_santun') ? $data_nilai : 0;
+				$nilai->peduli = ($kolom[0]=='peduli') ? $data_nilai : 0;
+				$nilai->percaya_diri = ($kolom[0]=='percaya_diri') ? $data_nilai : 0;
+				$nilai->kerjasama = ($kolom[0]=='kerjasama') ? $data_nilai : 0;
+
+				$data_detail = array_merge($data_detail,[
+					'ibadah'=>$nilai->ibadah,
+					'syukur'=>$nilai->syukur,
+					'berdoa'=>$nilai->berdoa,
+					'toleransi'=>$nilai->toleransi,
+					'jujur'=>$nilai->jujur,
+					'disiplin'=>$nilai->disiplin,
+					'tanggung_jawab'=>$nilai->tanggung_jawab,
+					'sopan_santun'=>$nilai->sopan_santun,
+					'peduli'=>$nilai->peduli,
+					'percaya_diri'=>$nilai->percaya_diri,
+					'kerjasama'=>$nilai->kerjasama,
+					'created_at'=>date('Y-m-d H:i:s'),
+					'updated_at'=>date('Y-m-d H:i:s'),
+				]);
+				$update = DB::connection($conn)->table($this->schema.'.detail_nilai_perilaku')->insert($data_detail);
+			}
+
+			if($update){
+				$return = ['code'=>'200','title'=>'Success','message'=>'Berhasil disimpan','type'=>'success'];
+			}else{
+				$return = ['code'=>'250','title'=>'Whooops','message'=>'Gagal disimpan','type'=>'error'];
+			}
 		}else{
-			$return = ['code'=>'250','title'=>'Whooops','message'=>'Gagal disimpan','type'=>'error'];
+			$return = ['code'=>'250','title'=>'Whooops','message'=>'ID nilai Perilaku gagal digenerate','type'=>'error'];
 		}
 
 		return $return;
@@ -1966,8 +1726,6 @@ class IsianwkController extends Controller
 		$rombel = Session::get('rombel_wk');
 
 		$siswa = DB::connection($conn)->table('public.siswa')->whereRaw("npsn='$npsn' AND kelas='$kelas' AND rombel='$rombel' AND (status_siswa='Aktif' AND alumni is not true)")->get();
-
-		return $siswa;
 
 		if($siswa->count()!=0){
 			foreach($siswa as $s){

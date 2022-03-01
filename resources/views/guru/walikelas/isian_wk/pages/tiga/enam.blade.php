@@ -42,7 +42,7 @@
 				@php
 				$uraian = $s->nilai[0]['uraian'];
 				$nilai = $s->nilai[0]['nilai'];
-				$key = array_search($kolom, $uraian);
+				$key = array_search($j, $uraian);
 				if($key){
 					$nilai_pakai = $nilai[$key];
 				}else{

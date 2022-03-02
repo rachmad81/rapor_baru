@@ -487,6 +487,7 @@ class IsianController extends Controller
 		return $content;
 	}
 
+	// PAGE 5
 	function show5(){
 		$coni = new Request;
 
@@ -524,6 +525,7 @@ class IsianController extends Controller
 		$kd_pengetahuan_terendah3	= 0;
 
 		$tampil = [];
+		$id=1;
 
 		if($siswa->count()!=0){
 			foreach($siswa as $s){
@@ -664,7 +666,6 @@ class IsianController extends Controller
 
 				}
 
-				$id=1;
 				if($nilai_ki3 != 0){
 					$show_hurufk1 = number_format($nilai_ki3,0)." (".$huruf_ki3.")";
 				}else{
@@ -687,31 +688,25 @@ class IsianController extends Controller
 
 				array_push($tampil,$baris);
 
-				// if($nilai_ki3> 0 OR $nr_ki4 > 0){
-				// 	$namasiswa	= str_replace("'", "&apos;", $s->nama);
-				// 	$dta_insert = [
-				// 		'npsn'=>$npsn,
-				// 		'id_siswa'=>$s->id_siswa,
-				// 		'nama'=>$namasiswa,
-				// 		'kelas'=>$kelas,
-				// 		'rombel'=>$rombel,
-				// 		'mapel_id'=>$mapel_id,
-				// 		'mapel'=>(!empty($mapel)) ? $mapel->nama : '',
-				// 		'kategori'=>(!empty($mapel)) ? $mapel->kategori_baru : '',
-				// 		'semester'=>'1',
-				// 		'nilai_ki3'=>$nilai_ki3,
-				// 		'predikat_ki3'=>$huruf_ki3,
-				// 		'deskripsi_ki3'=>$catatan3,
-				// 		'nilai_ki4'=>$nr_ki4,
-				// 		'predikat_ki4'=>$huruf_nr_ki4,
-				// 		'deskripsi_ki4'=>$catatan4,
-				// 		'urutan'=>'0'.(!empty($mapel)) ? $mapel->urutan : '',
-				// 		'tapel'=>'Ganjil 2021/2022',
-				// 		'last_update'=>date('Y-m-d H:i:s'),
-				// 	];
-				// 	// $simpan = DB::connection($conn)->table($nama_schema.'.nilai_akhir')->insert($dta_insert);
-				// 	$id++;
-				// }
+				if($nilai_ki3> 0 OR $nr_ki4 > 0){
+					$namasiswa	= str_replace("'", "&apos;", $s->nama);
+					$dta_insert = [
+						'nilai_ki3'=>$nilai_ki3,
+						'predikat_ki3'=>$huruf_ki3,
+						'deskripsi_ki3'=>$catatan3,
+						'nilai_ki4'=>$nr_ki4,
+						'predikat_ki4'=>$huruf_nr_ki4,
+						'deskripsi_ki4'=>$catatan4,
+					];
+
+					$get_nilai_mapel = DB::connection($conn)->table($this->schema.'.nilai_mapel as np')
+					->whereRaw("np.anggota_rombel_id='$s->id_anggota_rombel' AND np.mapel_id='$mapel_id'")->first();
+					if(!empty($get_nilai_mapel)){
+						$get_nilai_mapel = DB::connection($conn)->table($this->schema.'.nilai_mapel as np')
+						->whereRaw("np.anggota_rombel_id='$s->id_anggota_rombel' AND np.mapel_id='$mapel_id'")->update($dta_insert);
+					}
+					$id++;
+				}
 			}
 		}
 

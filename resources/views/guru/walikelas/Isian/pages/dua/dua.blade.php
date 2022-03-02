@@ -26,7 +26,7 @@
 		@foreach($kd as $k=>$v)
 		<td>
 			<input type="hidden" name="id_kd_{{$s->id_siswa}}[]" value="{{$v->id_kd}}">
-			<input type="number" name="npts_{{$s->id_siswa}}[]" value="{{$s->nilai[$k]}}">
+			<input type="number" name="npts_{{$s->id_siswa}}[]" value="{{$s->nilai[$v->id_kd]}}">
 		</td>
 		@endforeach
 		@else

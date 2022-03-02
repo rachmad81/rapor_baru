@@ -4,9 +4,9 @@
 		<th class="headcol">Nama</th>
 		@if($kd->count()!=0)
 		@foreach($kd as $k=>$v)
-		<th onclick="nama_kolom('bg-lime','KD {{$k+1}}','{{$v->isi}}','praktek_{{$k+1}}')">
+		<th onclick="nama_kolom('bg-lime','KD {{$k+1}}','{{$v->isi}}','keterampilan_{{$k+1}}')">
 			<i class="fa fa-comment"></i> KD {{($k+1)}}
-			<div style="display: none;border: 1px solid black;margin: 5px;padding: 5px;font-size: 12px;" class="tooltip123 bg-dark" id="praktek_{{$k+1}}">
+			<div style="display: none;border: 1px solid black;margin: 5px;padding: 5px;font-size: 12px;" class="tooltip123 bg-dark" id="keterampilan_{{$k+1}}">
 				{{$v->isi}}
 			</div>
 		</th>
@@ -26,21 +26,21 @@
 		@foreach($kd as $k=>$v)
 		<td>
 			<input type="hidden" name="id_kd_{{$s->id_siswa}}[]" value="{{$v->id_kd}}">
-			<input type="number" name="praktek_{{$s->id_siswa}}[]" value="{{$s->nilai[$k]}}">
+			<input type="number" name="keterampilan_{{$s->id_siswa}}[]" value="{{$s->nilai[$v->id_kd]}}">
 		</td>
 		@endforeach
 		@else
 		@foreach($kd as $k=>$v)
 		<td>
 			<input type="hidden" name="id_kd_{{$s->id_siswa}}[]" value="{{$v->id_kd}}">
-			<input type="number" name="praktek_{{$s->id_siswa}}[]" value="">
+			<input type="number" name="keterampilan_{{$s->id_siswa}}[]" value="">
 		</td>
 		@endforeach
 		@endif
 		@else
 		<td>..:: KD tidak disetting ::..</td>
 		@endif
-		<td><a href="javascript:void(0)" class="btn btn-sm btn-primary" onclick="simpan_nilai('{{$s->id_siswa}}','praktek','4')">Simpan</a></td>
+		<td><a href="javascript:void(0)" class="btn btn-sm btn-primary" onclick="simpan_nilai('{{$s->id_siswa}}','keterampilan','4')">Simpan</a></td>
 	</tr>
 	@endforeach
 	@else

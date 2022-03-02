@@ -24,13 +24,13 @@
 					<tr>
 						<td>1</td>
 						<td>Tinggi</td>
-						<td><input type="number" name="tinggi_modal[]" value=""> Cm</td>
+						<td><input type="number" name="tinggi_modal[]" value="{{($nilai!='')?$nilai->tinggi_badan:''}}"> Cm</td>
 						<td><input type="number" name="tinggi_modal[]" value=""> Cm</td>
 					</tr>
 					<tr>
 						<td>2</td>
 						<td>Berat Badan</td>
-						<td><input type="number" name="beratbadan_modal[]" value=""> Kg</td>
+						<td><input type="number" name="beratbadan_modal[]" value="{{($nilai!='')?$nilai->berat_badan:''}}"> Kg</td>
 						<td><input type="number" name="beratbadan_modal[]" value=""> Kg</td>
 					</tr>
 				</table>
@@ -50,25 +50,25 @@
 					<tr>
 						<td>1</td>
 						<td>Pendengaran</td>
-						<td><input type="text" name="dengar_modal[]" value=""></td>
+						<td><input type="text" name="dengar_modal[]" value="{{($nilai!='')?$nilai->pendengaran:''}}"></td>
 						<td><input type="text" name="dengar_modal[]" value=""></td>
 					</tr>
 					<tr>
 						<td>2</td>
 						<td>Penglihatan</td>
-						<td><input type="text" name="lihat_modal[]" value=""></td>
+						<td><input type="text" name="lihat_modal[]" value="{{($nilai!='')?$nilai->penglihatan:''}}"></td>
 						<td><input type="text" name="lihat_modal[]" value=""></td>
 					</tr>
 					<tr>
 						<td>3</td>
 						<td>Gigi</td>
-						<td><input type="text" name="gigi_modal[]" value=""></td>
+						<td><input type="text" name="gigi_modal[]" value="{{($nilai!='')?$nilai->gizi:''}}"></td>
 						<td><input type="text" name="gigi_modal[]" value=""></td>
 					</tr>
 					<tr>
 						<td>4</td>
 						<td>Lainnya</td>
-						<td><input type="text" name="lainnya_modal[]" value=""></td>
+						<td><input type="text" name="lainnya_modal[]" value="{{($nilai!='')?$nilai->lainnya:''}}"></td>
 						<td><input type="text" name="lainnya_modal[]" value=""></td>
 					</tr>
 				</table>

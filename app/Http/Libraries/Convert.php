@@ -6,6 +6,11 @@ use Session,DB;
 
 class Convert
 {
+	public static function schema_func(){
+		$schema = env('CURRENT_SCHEMA','production');
+		return $schema;
+	}
+
 	public static function penyebut($nilai) {
 		$nilai = abs($nilai);
 		$huruf = array("", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas");
@@ -96,15 +101,15 @@ class Convert
 	}
 
 	public static function catatan_ki3($mapel_id, $kelas, $huruf, $kd_terendah, $kd_terendah2, $kd_terendah3, $kd_tertinggi){
-		$schema		= Session::get('nama_schema');	
+		$schema = Convert::schema_func();
 		$coni = new Request;
 		$coni->jenjang = Session::get('jenjang');
 		$conn = Setkoneksi::set_koneksi($coni);
 
 		$catatan	='';
 		
-		$kd = DB::connection($conn)->table($schema.'.master_kd')->whereRaw("mapel_id='$mapel_id' AND no_ki='3' and kd_id='$kd_tertinggi' and kelas='$kelas'")->first();
-		$hasil_kd = (!empty($kd)) ? $kd->kd_isi : 'nothing';
+		$kd = DB::connection($conn)->table($schema.'.kd')->whereRaw("mapel_id='$mapel_id' AND no_ki='4' and kelas='$kelas'")->orderBy('id_kd','ASC')->offset($kd_tertinggi)->limit(1)->first();
+		$hasil_kd = (!empty($kd)) ? $kd->isi : 'nothing';
 		
 		if($huruf == 'A'){
 			$catatan	= "Sangat Baik, menguasai dan memahami semua kompetensi, terutama ";
@@ -129,15 +134,15 @@ class Convert
 	}
 
 	public static function catatan_ki4($mapel_id, $kelas, $huruf, $kd_terendah, $kd_terendah2, $kd_terendah3, $kd_tertinggi){
-		$schema		= Session::get('nama_schema');	
+		$schema = Convert::schema_func();
 		$coni = new Request;
 		$coni->jenjang = Session::get('jenjang');
 		$conn = Setkoneksi::set_koneksi($coni);
 
 		$catatan	= '';
 		
-		$kd = DB::connection($conn)->table($schema.'.master_kd')->whereRaw("mapel_id='$mapel_id' AND no_ki='4' and kd_id='$kd_tertinggi' and kelas='$kelas'")->first();
-		$hasil_kd = (!empty($kd)) ? $kd->kd_isi : 'nothing';
+		$kd = DB::connection($conn)->table($schema.'.kd')->whereRaw("mapel_id='$mapel_id' AND no_ki='4' and kelas='$kelas'")->orderBy('id_kd','ASC')->offset($kd_tertinggi)->limit(1)->first();
+		$hasil_kd = (!empty($kd)) ? $kd->isi : 'nothing';
 		if($huruf == 'A'){
 			$catatan 	= "Sangat baik, terampil dan mahir dalam semua kompetensi, terutama ";
 

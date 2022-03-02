@@ -242,8 +242,8 @@
 		});
 	}
 
-	function simpan_catatan(id_siswa,schema,absen,kolom='catatan'){
-		if(kolom=='catatan'){
+	function simpan_catatan(id_siswa,schema,absen,kolom='catatan_siswa'){
+		if(kolom=='catatan_siswa'){
 			var catatan = $("input[name="+absen+"]").val();
 		}else{
 			var catatan = $("select[name="+absen+"]").val();

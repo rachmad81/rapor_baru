@@ -13,9 +13,9 @@
 		<tr>
 			<td>{{($k+1)}}</td>
 			<td style="white-space: nowrap;">{!!$s->nama!!}</td>
-			<td><input type="number" name="absen_{{$k+1}}[]" value="" class="form-control"></td>
-			<td><input type="number" name="absen_{{$k+1}}[]" value="" class="form-control"></td>
-			<td><input type="number" name="absen_{{$k+1}}[]" value="" class="form-control"></td>
+			<td><input type="number" name="absen_{{$k+1}}[]" value="{{$s->sakit}}" class="form-control"></td>
+			<td><input type="number" name="absen_{{$k+1}}[]" value="{{$s->izin}}" class="form-control"></td>
+			<td><input type="number" name="absen_{{$k+1}}[]" value="{{$s->tanpa_keterangan}}" class="form-control"></td>
 			<td><a href="javascript:void(0)" class="btn btn-sm btn-primary" onclick="simpan_absen('{{$s->id_siswa}}','{{$nama_schema}}','absen_{{$k+1}}')">Simpan</a></td>
 		</tr>
 		@endforeach

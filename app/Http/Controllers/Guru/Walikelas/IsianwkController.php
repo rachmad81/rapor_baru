@@ -844,6 +844,27 @@ class IsianwkController extends Controller
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
 		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->orderBy('s.nama')->get();
 
+		if($siswa->count()!=0){
+			foreach($siswa as $s){
+				$anggota = DB::connection($conn)->table('public.anggota_rombel')->whereRaw("siswa_id='$s->id_siswa' AND rombongan_belajar_id='$id_rombel'")->first();
+				if(!empty($anggota)){
+					$nilai = DB::connection($conn)->table($this->schema.'.nilai_perilaku')->selectRaw("*,COALESCE(sakit,0) as sakit,COALESCE(izin,0) as izin,COALESCE(tanpa_keterangan,0) as tanpa_keterangan")->whereRaw("anggota_rombel_id='$anggota->id_anggota_rombel' AND npsn='$npsn'")->first();
+					if(!empty($nilai)){
+						$s->izin = $nilai->izin;
+						$s->sakit = $nilai->sakit;
+						$s->tanpa_keterangan = $nilai->tanpa_keterangan;
+					}else{
+						$s->izin = '0';
+						$s->sakit = '0';
+						$s->tanpa_keterangan = '0';
+					}
+				}else{
+					$s->izin = '0';
+					$s->sakit = '0';
+					$s->tanpa_keterangan = '0';
+				}
+			}
+		}
 
 		$data = [
 			'siswa'=>$siswa,
@@ -870,6 +891,22 @@ class IsianwkController extends Controller
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
 		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->orderBy('s.nama')->get();
+
+		if($siswa->count()!=0){
+			foreach($siswa as $s){
+				$anggota = DB::connection($conn)->table('public.anggota_rombel')->whereRaw("siswa_id='$s->id_siswa' AND rombongan_belajar_id='$id_rombel'")->first();
+				if(!empty($anggota)){
+					$nilai = DB::connection($conn)->table($this->schema.'.nilai_perilaku')->selectRaw("*,COALESCE(sakit,0) as sakit,COALESCE(izin,0) as izin,COALESCE(tanpa_keterangan,0) as tanpa_keterangan")->whereRaw("anggota_rombel_id='$anggota->id_anggota_rombel' AND npsn='$npsn'")->first();
+					if(!empty($nilai)){
+						$s->catatan = $nilai->catatan_siswa;
+					}else{
+						$s->catatan = '';
+					}
+				}else{
+					$s->catatan = '';
+				}
+			}
+		}
 
 		$data = [
 			'siswa'=>$siswa,
@@ -1424,48 +1461,49 @@ class IsianwkController extends Controller
 	}
 
 	function simpan_absen(Request $request){
-		return $request->all();
 		$absen = $request->absen; // ["Ngaji", "pramuka", null]
 		$id_siswa = $request->id_siswa; // "35451514"
-		$schema = $request->schema; // "rapor_sd_2021_ganjil"
 		$npsn = Session::get('npsn');
 		$kelas = Session::get('kelas_wk');
 		$rombel = Session::get('rombel_wk');
+		$id_rombel = Session::get('id_rombel');
 
 		$request->jenjang = Session::get('jenjang');
 		$conn = Setkoneksi::set_koneksi($request);
 
-		$get_ekskul = DB::connection($conn)->table($schema.'.ekskul_absen')->whereRaw("npsn='$npsn' AND kelas='$kelas' AND rombel='$rombel' AND id_siswa='$id_siswa'")->first();
+		$anggota = DB::connection($conn)->table('public.anggota_rombel')->whereRaw("siswa_id='$id_siswa' AND rombongan_belajar_id='$id_rombel'")->first();
+		if(!empty($anggota)){
+			$get_ekskul = DB::connection($conn)->table($this->schema.'.nilai_perilaku')->whereRaw("npsn='$npsn' AND anggota_rombel_id='$anggota->id_anggota_rombel'")->first();
 
-		$data_insert = [
-			'sakit'=>$absen[0],
-			'ijin'=>$absen[1],
-			'tanpa_keterangan'=>$absen[2],
-		];
+			$data_insert = [
+				'sakit'=>$absen[0],
+				'izin'=>$absen[1],
+				'tanpa_keterangan'=>$absen[2],
+			];
 
-		if(!empty($get_ekskul)){
-			$simpan = DB::connection($conn)->table($schema.'.ekskul_absen')->whereRaw("npsn='$npsn' AND kelas='$kelas' AND rombel='$rombel' AND id_siswa='$id_siswa'")->update($data_insert);
+			if(!empty($get_ekskul)){
+				$simpan = DB::connection($conn)->table($this->schema.'.nilai_perilaku')->whereRaw("npsn='$npsn' AND anggota_rombel_id='$anggota->id_anggota_rombel'")->update($data_insert);
+			}else{
+				$data_insert = array_merge($data_insert,[
+					'anggota_rombel_id'=>$anggota->id_anggota_rombel,
+					'npsn'=>$npsn,
+				]);
+				$simpan = DB::connection($conn)->table($this->schema.'.nilai_perilaku')->insert($data_insert);
+			}
+
+			if($simpan){
+				$return = ['code'=>'200','title'=>'Success','message'=>'Berhasil disimpan','type'=>'success'];
+			}else{
+				$return = ['code'=>'250','title'=>'Whooops','message'=>'Gagal disimpan','type'=>'error'];
+			}
 		}else{
-			$data_insert = array_merge($data_insert,[
-				'id_siswa'=>$id_siswa,
-				'kelas'=>$kelas,
-				'rombel'=>$rombel,
-				'npsn'=>$npsn,
-			]);
-			$simpan = DB::connection($conn)->table($schema.'.ekskul_absen')->insert($data_insert);
-		}
-
-		if($simpan){
-			$return = ['code'=>'200','title'=>'Success','message'=>'Berhasil disimpan','type'=>'success'];
-		}else{
-			$return = ['code'=>'250','title'=>'Whooops','message'=>'Gagal disimpan','type'=>'error'];
+			$return = ['code'=>'250','title'=>'Whooops','message'=>'Siswa tidak termasuk dalam anggota rombel','type'=>'error'];			
 		}
 
 		return $return;
 	}
 
 	function simpan_catatan(Request $request){
-		return $request->all();
 		$catatan = $request->catatan; // ["Ngaji", "pramuka", null]
 		$id_siswa = $request->id_siswa; // "35451514"
 		$schema = $request->schema; // "rapor_sd_2021_ganjil"
@@ -1473,32 +1511,36 @@ class IsianwkController extends Controller
 		$npsn = Session::get('npsn');
 		$kelas = Session::get('kelas_wk');
 		$rombel = Session::get('rombel_wk');
+		$id_rombel = Session::get('id_rombel');
 
 		$request->jenjang = Session::get('jenjang');
 		$conn = Setkoneksi::set_koneksi($request);
-
-		$get_ekskul = DB::connection($conn)->table($schema.'.ekskul_absen')->whereRaw("npsn='$npsn' AND kelas='$kelas' AND rombel='$rombel' AND id_siswa='$id_siswa'")->first();
 
 		$data_insert = [
 			$kolom=>$catatan,
 		];
 
-		if(!empty($get_ekskul)){
-			$simpan = DB::connection($conn)->table($schema.'.ekskul_absen')->whereRaw("npsn='$npsn' AND kelas='$kelas' AND rombel='$rombel' AND id_siswa='$id_siswa'")->update($data_insert);
-		}else{
-			$data_insert = array_merge($data_insert,[
-				'id_siswa'=>$id_siswa,
-				'kelas'=>$kelas,
-				'rombel'=>$rombel,
-				'npsn'=>$npsn,
-			]);
-			$simpan = DB::connection($conn)->table($schema.'.ekskul_absen')->insert($data_insert);
-		}
+		$anggota = DB::connection($conn)->table('public.anggota_rombel')->whereRaw("siswa_id='$id_siswa' AND rombongan_belajar_id='$id_rombel'")->first();
+		if(!empty($anggota)){
+			$get_ekskul = DB::connection($conn)->table($this->schema.'.nilai_perilaku')->whereRaw("npsn='$npsn' AND anggota_rombel_id='$anggota->id_anggota_rombel'")->first();
 
-		if($simpan){
-			$return = ['code'=>'200','title'=>'Success','message'=>'Berhasil disimpan','type'=>'success'];
+			if(!empty($get_ekskul)){
+				$simpan = DB::connection($conn)->table($this->schema.'.nilai_perilaku')->whereRaw("npsn='$npsn' AND anggota_rombel_id='$anggota->id_anggota_rombel'")->update($data_insert);
+			}else{
+				$data_insert = array_merge($data_insert,[
+					'anggota_rombel_id'=>$anggota->id_anggota_rombel,
+					'npsn'=>$npsn,
+				]);
+				$simpan = DB::connection($conn)->table($this->schema.'.nilai_perilaku')->insert($data_insert);
+			}
+
+			if($simpan){
+				$return = ['code'=>'200','title'=>'Success','message'=>'Berhasil disimpan','type'=>'success'];
+			}else{
+				$return = ['code'=>'250','title'=>'Whooops','message'=>'Gagal disimpan','type'=>'error'];
+			}
 		}else{
-			$return = ['code'=>'250','title'=>'Whooops','message'=>'Gagal disimpan','type'=>'error'];
+			$return = ['code'=>'250','title'=>'Whooops','message'=>'Siswa tidak termasuk dalam anggota rombel','type'=>'error'];			
 		}
 
 		return $return;
@@ -1510,6 +1552,7 @@ class IsianwkController extends Controller
 		$npsn = Session::get('npsn');
 		$kelas = Session::get('kelas_wk');
 		$rombel = Session::get('rombel_wk');
+		$id_rombel = Session::get('id_rombel');
 		$schema = $request->schema;
 
 		$coni->jenjang = Session::get('jenjang');
@@ -1517,11 +1560,18 @@ class IsianwkController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("id_anggota_rombel='$id_siswa'")->first();
+		->whereRaw("ar.siswa_id='$id_siswa' AND ar.rombongan_belajar_id='$id_rombel'")->first();
+
+		if(!empty($siswa)){
+			$nilai = DB::connection($conn)->table($this->schema.'.nilai_perilaku')->whereRaw("npsn='$npsn' AND anggota_rombel_id='$siswa->id_anggota_rombel'")->first();
+		}else{
+			$nilai = '';
+		}
 
 		$data = [
 			'siswa'=>$siswa,
 			'nama_schema'=>$schema,
+			'nilai'=>$nilai,
 		];
 
 		$content = view('guru.walikelas.isian_wk.pages.delapan.modal',$data)->render();
@@ -1530,7 +1580,6 @@ class IsianwkController extends Controller
 	}
 
 	function simpan_kesehatan(Request $request){
-		return $request->all();
 		$tinggi = $request->tinggi;
 		$beratbadan = $request->beratbadan;
 		$lihat = $request->lihat;
@@ -1543,41 +1592,43 @@ class IsianwkController extends Controller
 		$npsn = Session::get('npsn');
 		$kelas = Session::get('kelas_wk');
 		$rombel = Session::get('rombel_wk');
+		$id_rombel = Session::get('id_rombel');
 
 		$request->jenjang = Session::get('jenjang');
 		$conn = Setkoneksi::set_koneksi($request);
 
-		$get_ekskul = DB::connection($conn)->table($schema.'.ekskul_absen')->whereRaw("npsn='$npsn' AND kelas='$kelas' AND rombel='$rombel' AND id_siswa='$id_siswa'")->first();
-
 		$data_insert = [];
 
-		for ($i=0; $i < count($tinggi); $i++) { 
-			$data_insert = array_merge($data_insert,[
-				'tinggi_semester'.($i+1) => $tinggi[$i],
-				'beratbadan_semester'.($i+1) => $beratbadan[$i],
-				'pendengaran_semester'.($i+1) => $dengar[$i],
-				'penglihatan_semester'.($i+1) => $lihat[$i],
-				'gigi_semester'.($i+1) => $gigi[$i],
-				'lainnya_semester'.($i+1) => $lainnya[$i],
-			]);	
-		}
+		$data_insert = array_merge($data_insert,[
+			'tinggi_badan' => $tinggi[0],
+			'berat_badan' => $beratbadan[0],
+			'pendengaran' => $dengar[0],
+			'penglihatan' => $lihat[0],
+			'gizi' => $gigi[0],
+			'lainnya' => $lainnya[0],
+		]);	
 
-		if(!empty($get_ekskul)){
-			$simpan = DB::connection($conn)->table($schema.'.ekskul_absen')->whereRaw("npsn='$npsn' AND kelas='$kelas' AND rombel='$rombel' AND id_siswa='$id_siswa'")->update($data_insert);
-		}else{
-			$data_insert = array_merge($data_insert,[
-				'id_siswa'=>$id_siswa,
-				'kelas'=>$kelas,
-				'rombel'=>$rombel,
-				'npsn'=>$npsn,
-			]);
-			$simpan = DB::connection($conn)->table($schema.'.ekskul_absen')->insert($data_insert);
-		}
+		$anggota = DB::connection($conn)->table('public.anggota_rombel')->whereRaw("siswa_id='$id_siswa' AND rombongan_belajar_id='$id_rombel'")->first();
+		if(!empty($anggota)){
+			$get_ekskul = DB::connection($conn)->table($this->schema.'.nilai_perilaku')->whereRaw("npsn='$npsn' AND anggota_rombel_id='$anggota->id_anggota_rombel'")->first();
 
-		if($simpan){
-			$return = ['code'=>'200','title'=>'Success','message'=>'Berhasil disimpan','type'=>'success'];
+			if(!empty($get_ekskul)){
+				$simpan = DB::connection($conn)->table($this->schema.'.nilai_perilaku')->whereRaw("npsn='$npsn' AND anggota_rombel_id='$anggota->id_anggota_rombel'")->update($data_insert);
+			}else{
+				$data_insert = array_merge($data_insert,[
+					'anggota_rombel_id'=>$anggota->id_anggota_rombel,
+					'npsn'=>$npsn,
+				]);
+				$simpan = DB::connection($conn)->table($this->schema.'.nilai_perilaku')->insert($data_insert);
+			}
+
+			if($simpan){
+				$return = ['code'=>'200','title'=>'Success','message'=>'Berhasil disimpan','type'=>'success'];
+			}else{
+				$return = ['code'=>'250','title'=>'Whooops','message'=>'Gagal disimpan','type'=>'error'];
+			}
 		}else{
-			$return = ['code'=>'250','title'=>'Whooops','message'=>'Gagal disimpan','type'=>'error'];
+			$return = ['code'=>'250','title'=>'Whooops','message'=>'Siswa tidak termasuk dalam anggota rombel','type'=>'error'];			
 		}
 
 		return $return;

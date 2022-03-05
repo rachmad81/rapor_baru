@@ -131,7 +131,9 @@
 			$('#custom-tabs-four-home').show();
 			$('#custom-tabs-four-home').html(data.content);
 			$('.overlay').hide();
-		});
+		}).fail(function(){
+			swal('Whooops','Terjadi kesalahan pada aplikasi','error');
+		});;
 	}
 
 	function nama_kolom(bg,title,pesan) {
@@ -153,7 +155,9 @@
 		$.post("{{route('guru-isian_wk-pages2')}}",{i:i},function(data){
 			$('#pages2').html(data.content);
 			$('.overlay1').hide();
-		});
+		}).fail(function(){
+			swal('Whooops','Terjadi kesalahan pada aplikasi','error');
+		});;
 	}
 
 	function pages3(i){
@@ -165,7 +169,9 @@
 		$.post("{{route('guru-isian_wk-pages3')}}",{i:i},function(data){
 			$('#pages3').html(data.content);
 			$('.overlay1').hide();
-		});
+		}).fail(function(){
+			swal('Whooops','Terjadi kesalahan pada aplikasi','error');
+		});;
 	}
 
 	function generate_nilai_akhir(){
@@ -267,7 +273,9 @@
 		$.post("{{route('guru-isian_wk-modal_kesehatan')}}",{id_siswa:id_siswa,schema:schema},function(data){
 			$('.modal_page').html(data.content);
 			$('#modal-default').modal('show');
-		});
+		}).fail(function(){
+			swal('Whooops','Terjadi kesalahan pada aplikasi','error');
+		});;
 	}
 
 	function simpan_kesehatan(id_siswa,schema){

@@ -194,7 +194,7 @@ class IsianController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->orderBy('s.nama')->get();
 
 		$kd = DB::connection($conn)->table($this->schema.'.kd')->whereRaw("kelas='$kelas' AND mapel_id='$mapel_id' AND no_ki='3'")->orderBy('id_kd','ASC')->get();
 
@@ -242,7 +242,7 @@ class IsianController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->orderBy('s.nama')->get();
 
 		$kd = DB::connection($conn)->table($this->schema.'.kd')->whereRaw("kelas='$kelas' AND mapel_id='$mapel_id' AND no_ki='3'")->orderBy('id_kd','ASC')->get();
 
@@ -290,7 +290,7 @@ class IsianController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->orderBy('s.nama')->get();
 
 		$kd = DB::connection($conn)->table($this->schema.'.kd')->whereRaw("kelas='$kelas' AND mapel_id='$mapel_id' AND no_ki='3'")->orderBy('id_kd','ASC')->get();
 
@@ -365,7 +365,7 @@ class IsianController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->orderBy('s.nama')->get();
 
 		$kd = DB::connection($conn)->table($this->schema.'.kd')->whereRaw("kelas='$kelas' AND mapel_id='$mapel_id' AND no_ki='4'")->orderBy('id_kd','ASC')->get();
 
@@ -413,7 +413,7 @@ class IsianController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->orderBy('s.nama')->get();
 
 		$kd = DB::connection($conn)->table($this->schema.'.kd')->whereRaw("kelas='$kelas' AND mapel_id='$mapel_id' AND no_ki='4'")->orderBy('id_kd','ASC')->get();
 
@@ -443,7 +443,7 @@ class IsianController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->orderBy('s.nama')->get();
 
 		$kd = DB::connection($conn)->table($this->schema.'.kd')->whereRaw("kelas='$kelas' AND mapel_id='$mapel_id' AND no_ki='4'")->orderBy('id_kd','ASC')->get();
 
@@ -473,7 +473,7 @@ class IsianController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->orderBy('s.nama')->get();
 
 		$kd = DB::connection($conn)->table($this->schema.'.kd')->whereRaw("kelas='$kelas' AND mapel_id='$mapel_id' AND no_ki='4'")->orderBy('id_kd','ASC')->get();
 
@@ -504,7 +504,7 @@ class IsianController extends Controller
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->orderBy('s.nama','ASC')->get();
 
 		$kd3 = DB::connection($conn)->table($this->schema.'.kd')->whereRaw("kelas='$kelas' AND mapel_id='$mapel_id' AND no_ki='3'")->orderBy('id_kd','ASC')->get();
 		$kd4 = DB::connection($conn)->table($this->schema.'.kd')->whereRaw("kelas='$kelas' AND mapel_id='$mapel_id' AND no_ki='4'")->orderBy('id_kd','ASC')->get();
@@ -515,7 +515,6 @@ class IsianController extends Controller
 		$b	  = $c + ($temp);
 		$a    = 100 - $temp;
 
-		$pembagi_kd = 4;
 		$adanilai=false;
 		$kd_pengetahuan_tertinggi	= 1;
 		$nilai_pengetahuan_tertinggi= 0;
@@ -527,6 +526,7 @@ class IsianController extends Controller
 		$tampil = [];
 		$id=1;
 
+		$pembagi_kd = 4;
 		if($siswa->count()!=0){
 			foreach($siswa as $s){
 				$huruf_ki3 = '';
@@ -556,7 +556,11 @@ class IsianController extends Controller
 							}
 
 							if($adanilai==true){
-								$nilai_kd = ((2*$get_nilai->nph)+($get_nilai->npts)+($get_nilai->npas))/$pembagi_kd;
+								if($pembagi_kd>0){
+									$nilai_kd = ((2*$get_nilai->nph)+($get_nilai->npts)+($get_nilai->npas))/$pembagi_kd;
+								}else{
+									$nilai_kd = 0;
+								}
 							}else{
 								$nilai_kd = 0;
 							}

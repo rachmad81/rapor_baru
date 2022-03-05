@@ -14,13 +14,13 @@
 			Surabaya, 
 			<?php 
 			if(!empty($rapor_semester)){
-				if($kelas->kelas=='6'){
-					echo '15 Juni '.substr($tahun_ajaran,0,3);
+				if($siswa->kelas=='6'){
+					echo '15 Juni '.date('Y',strtotime($siswa->tgl_setting_akhir));
 				}else{
-					echo App\Http\Libraries\Convert::tgl_indo($rapor_semester->akhir_semester);
+					echo App\Http\Libraries\Convert::tgl_indo(date('Y-m-d',strtotime($siswa->tgl_setting_akhir)));
 				}
 			}else{
-				echo '15 Juni '.substr($tahun_ajaran,0,3);
+				echo '15 Juni '.date('Y',strtotime($siswa->tgl_setting_akhir));
 			}
 		?>
 		<br>

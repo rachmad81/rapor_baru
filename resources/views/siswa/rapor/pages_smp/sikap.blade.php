@@ -7,7 +7,7 @@
 		<td>Nama</td>
 		<td>: {!!$siswa->nama_siswa!!}</td>
 		<td>Kelas</td>
-		<td>: {{$kelas->kelas}}.{{$kelas->rombel}}</td>
+		<td>: {{$siswa->kelas}}.{{$siswa->rombel}}</td>
 	</tr>
 	<tr>
 		<td>NISN/NIS</td>
@@ -38,13 +38,13 @@
 	</tr>
 	<tr>
 		<td style="width: 20%">Spiritual</td>
-		<td>{{(!empty($sikap)) ? $sikap['huruf_ki1'] : ''}}</td>
-		<td>{{(!empty($sikap)) ? $sikap['catatan_1'] : ''}}</td>
+		<td>{{(!empty($sikap)) ? $sikap->predikat_ki1 : ''}}</td>
+		<td>{{(!empty($sikap)) ? $sikap->deskripsi_ki1 : ''}}</td>
 	</tr>
 	<tr>
 		<td>Sosial</td>
-		<td>{{(!empty($sikap)) ? $sikap['huruf_ki2'] : ''}}</td>
-		<td>{{(!empty($sikap)) ? $sikap['catatan_2'] : ''}}</td>
+		<td>{{(!empty($sikap)) ? $sikap->predikat_ki2 : ''}}</td>
+		<td>{{(!empty($sikap)) ? $sikap->deskripsi_ki2 : ''}}</td>
 	</tr>
 </table>
 <?php

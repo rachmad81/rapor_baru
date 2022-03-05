@@ -15,7 +15,7 @@
 		<td>Nama</td>
 		<td>: {!!$siswa->nama_siswa!!}</td>
 		<td>Kelas</td>
-		<td>: {{$kelas->kelas}}.{{$kelas->rombel}}</td>
+		<td>: {{$siswa->kelas}}.{{$siswa->rombel}}</td>
 	</tr>
 	<tr>
 		<td>NISN/NIS</td>

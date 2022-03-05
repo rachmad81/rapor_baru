@@ -68,7 +68,7 @@
 			<tr style="vertical-align: top;">
 				<td></td>
 				<td>Pada Tanggal</td>
-				<td>: 15 Juli {{($kelas->kelas=='1' || $kelas->kelas=='7') ? substr($tahun_ajaran, 0,4) : (substr($tahun_ajaran, 0,4)-3) ;}}</td>
+				<td>: 15 Juli {{($siswa->kelas=='1' || $siswa->kelas=='7') ? date('Y',strtotime($siswa->tgl_setting_awal)) : date('Y',strtotime($siswa->tgl_setting_awal))-3 ;}}</td>
 			</tr>
 			<tr style="vertical-align: top;">
 				<td>12</td>
@@ -151,13 +151,13 @@
 					Surabaya,
 					<?php
 					if(!empty($rapor_semester)){
-						if($kelas->kelas=='6'){
-							echo '15 Desember '.substr($tahun_ajaran,0,3);
+						if($siswa->kelas=='6'){
+							echo '15 Desember '.date('Y',strtotime($siswa->tgl_setting_akhir));
 						}else{
-							echo App\Http\Libraries\Convert::tgl_indo($rapor_semester->awal_semester);
+							echo App\Http\Libraries\Convert::tgl_indo(date('Y-m-d',strtotime($siswa->tgl_setting_akhir)));
 						}
 					}else{
-						echo '15 Desember '.substr($tahun_ajaran,0,3);
+						echo '15 Desember '.date('Y',strtotime($siswa->tgl_setting_akhir));
 					}
 				?>
 				<br>

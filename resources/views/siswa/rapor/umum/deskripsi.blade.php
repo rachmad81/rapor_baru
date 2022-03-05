@@ -3,7 +3,7 @@
 		<td>Nama</td>
 		<td>: {{Session::get('nama')}}</td>
 		<td>Kelas</td>
-		<td>: {{$sikap->kelas}} - {{$sikap->rombel}}</td>
+		<td>: {{$siswa->kelas}} - {{$siswa->rombel}}</td>
 	</tr>
 	<tr>
 		<td>NISN/NIS</td>

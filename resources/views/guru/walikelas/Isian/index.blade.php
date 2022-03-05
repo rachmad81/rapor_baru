@@ -137,7 +137,9 @@
 			$('#custom-tabs-four-home').show();
 			$('#custom-tabs-four-home').html(data.content);
 			$('.overlay').hide();
-		});
+		}).fail(function(){
+			swal('Whooops','Terjadi kesalahan pada aplikasi','error');
+		});;
 	}
 
 	function nama_kolom(bg,title,pesan,kategori) {
@@ -178,7 +180,9 @@
 			$('#pages2').show();
 			$('#pages2').html(data.content);
 			$('.loading-page').hide();
-		});
+		}).fail(function(){
+			swal('Whooops','Terjadi kesalahan pada aplikasi','error');
+		});;
 	}
 
 	function pages3(id){
@@ -191,7 +195,9 @@
 			$('#pages3').show();
 			$('#pages3').html(data.content);
 			$('.loading-page').hide();
-		});
+		}).fail(function(){
+			swal('Whooops','Terjadi kesalahan pada aplikasi','error');
+		});;
 	}
 
 	function pages6(id){
@@ -204,7 +210,9 @@
 			$('#pages6').show();
 			$('#pages6').html(data.content);
 			$('.loading-page').hide();
-		});
+		}).fail(function(){
+			swal('Whooops','Terjadi kesalahan pada aplikasi','error');
+		});;
 	}
 
 	function generate_nilai_akhir(){

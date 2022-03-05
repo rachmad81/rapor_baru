@@ -22,7 +22,7 @@
 	}
 </style>
 @if(isset($sisipan) && ($sisipan=='' || $sisipan=='null'))
-@if($kelas->kelas=='1' || $kelas->kelas=='4' || $kelas->kelas=='7')
+@if($siswa->kelas=='1' || $siswa->kelas=='4' || $siswa->kelas=='7')
 @include('siswa.rapor.cover.cover')
 <div class="page_break">&nbsp;</div>
 @include('siswa.rapor.cover.cover1')

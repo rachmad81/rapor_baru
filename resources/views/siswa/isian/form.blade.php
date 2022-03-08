@@ -45,7 +45,7 @@
 							</tr>
 							<tr>
 								<td style="text-align: right;">Kelas</td>
-								<td>: {{$mengajar->kelas}}.{{$mengajar->rombel}}</td>
+								<td>: {{Session::get('kelas_rombel')}}</td>
 							</tr>
 							<tr>
 								<td style="text-align: right;">Semester</td>
@@ -65,10 +65,10 @@
 									<tr>
 										@if($kd3->count()!=0)
 										@foreach($kd3 as $k=>$v)
-										<th style="cursor: pointer;vertical-align: top" onclick="nama_kolom('bg-lime','KD {{$k+1}}','{{$v->kd_isi}}','NPH_{{$k+1}}')">
+										<th style="cursor: pointer;vertical-align: top" onclick="nama_kolom('bg-lime','KD {{$k+1}}','{{$v->isi}}','NPH_{{$k+1}}')">
 											<i class="fa fa-comment"></i> KD {{($k+1)}}
 											<div style="display: none;border: 1px solid black;margin: 5px;padding: 5px;font-size: 12px;" class="tooltip123" id="NPH_{{$k+1}}">
-												{{$v->kd_isi}}
+												{{$v->isi}}
 											</div>
 										</th>
 										@endforeach
@@ -78,12 +78,27 @@
 										<td style="white-space: nowrap;">{!!Session::get('nama')!!}</td>
 										@if($kd3->count()!=0)
 										@foreach($kd3 as $k=>$v)
-										<?php $kolom = 'nph_'.($k+1);?>
-										<td><input type="number" name="nph[]" value="{{$mengajar->$kolom}}" @if($mengajar->islock_uts==true) readonly @endif></td>
+										<td>
+											<input type="hidden" class="form-control" name="id_uh[]" value="{{$v->id_kd}}" @if($nilai_mapel->is_kunci==true) readonly @endif>
+											@php
+											$nilai = DB::connection($conn)->table($schema.'.nilai_mapel as nm')
+											->join($schema.'.detail_nilai_mapel as dm','dm.nilai_mapel_id','nm.id_nilai_mapel')
+											->whereRaw("mapel_id='".Session::get('id_mapel')."' AND anggota_rombel_id='".Session::get('id_anggota_rombel')."' AND kd_id='$v->id_kd'")->first();						
+											@endphp
+											@if(!empty($nilai))
+											@if($nilai->kd_id==$v->id_kd)
+											<input type="number" class="form-control" name="uh[]" value="{{$nilai->nph}}" @if($nilai->is_kunci==true) readonly @endif>
+											@else
+											<input type="number" class="form-control" name="uh[]" value="" @if($nilai->is_kunci==true) readonly @endif>
+											@endif
+											@else
+											<input type="number" class="form-control" name="uh[]" value="" @if($nilai->is_kunci==true) readonly @endif>
+											@endif
+										</td>
 										@endforeach
 										@endif
 										<td>
-											<a href="javascript:void(0)" class="btn btn-sm btn-primary" @if($mengajar->islock_uts==true) onclick="alert('Pengisian nilai sudah dikunci')" @else onclick="simpansd('nph')" @endif>Simpan</a>
+											<a href="javascript:void(0)" class="btn btn-sm btn-primary" @if($nilai_mapel->is_kunci==true) onclick="alert('Pengisian nilai sudah dikunci')" @else onclick="simpankd('uh','nph')" @endif>Simpan</a>
 										</td>
 									</tr>
 								</table>
@@ -101,10 +116,10 @@
 									<tr>
 										@if($kd3->count()!=0)
 										@foreach($kd3 as $k=>$v)
-										<th style="cursor: pointer;vertical-align: top" onclick="nama_kolom('bg-lime','KD {{$k+1}}','{{$v->kd_isi}}','NPTS_{{$k+1}}')">
+										<th style="cursor: pointer;vertical-align: top" onclick="nama_kolom('bg-lime','KD {{$k+1}}','{{$v->isi}}','NPTS_{{$k+1}}')">
 											<i class="fa fa-comment"></i> KD {{($k+1)}}
 											<div style="display: none;border: 1px solid black;margin: 5px;padding: 5px;font-size: 12px;" class="tooltip123" id="NPTS_{{$k+1}}">
-												{{$v->kd_isi}}
+												{{$v->isi}}
 											</div>
 										</th>
 										@endforeach
@@ -114,12 +129,27 @@
 										<td style="white-space: nowrap;">{!!Session::get('nama')!!}</td>
 										@if($kd3->count()!=0)
 										@foreach($kd3 as $k=>$v)
-										<?php $kolom = 'npts_'.($k+1);?>
-										<td><input type="number" name="npts[]" value="{{$mengajar->$kolom}}" @if($mengajar->islock_uts==true) readonly @endif></td>
+										<td>
+											<input type="hidden" class="form-control" name="id_npts[]" value="{{$v->id_kd}}" @if($nilai_mapel->is_kunci==true) readonly @endif>
+											@php
+											$nilai = DB::connection($conn)->table($schema.'.nilai_mapel as nm')
+											->join($schema.'.detail_nilai_mapel as dm','dm.nilai_mapel_id','nm.id_nilai_mapel')
+											->whereRaw("mapel_id='".Session::get('id_mapel')."' AND anggota_rombel_id='".Session::get('id_anggota_rombel')."' AND kd_id='$v->id_kd'")->first();						
+											@endphp
+											@if(!empty($nilai))
+											@if($nilai->kd_id==$v->id_kd)
+											<input type="number" class="form-control" name="npts[]" value="{{$nilai->npts}}" @if($nilai->is_kunci==true) readonly @endif>
+											@else
+											<input type="number" class="form-control" name="npts[]" value="" @if($nilai->is_kunci==true) readonly @endif>
+											@endif
+											@else
+											<input type="number" class="form-control" name="npts[]" value="" @if($nilai->is_kunci==true) readonly @endif>
+											@endif
+										</td>
 										@endforeach
 										@endif
 										<td>
-											<a href="javascript:void(0)" class="btn btn-sm btn-primary" @if($mengajar->islock_uts==true) onclick="alert('Pengisian nilai sudah dikunci')" @else onclick="simpansd('npts')" @endif>Simpan</a>
+											<a href="javascript:void(0)" class="btn btn-sm btn-primary" @if($nilai_mapel->is_kunci==true) onclick="alert('Pengisian nilai sudah dikunci')" @else onclick="simpankd('npts','npts')" @endif>Simpan</a>
 										</td>
 									</tr>
 								</table>
@@ -137,10 +167,10 @@
 									<tr>
 										@if($kd3->count()!=0)
 										@foreach($kd3 as $k=>$v)
-										<th style="cursor: pointer;vertical-align: top" onclick="nama_kolom('bg-lime','KD {{$k+1}}','{{$v->kd_isi}}','NPAS_{{$k+1}}')">
+										<th style="cursor: pointer;vertical-align: top" onclick="nama_kolom('bg-lime','KD {{$k+1}}','{{$v->isi}}','NPAS_{{$k+1}}')">
 											<i class="fa fa-comment"></i> KD {{($k+1)}}
 											<div style="display: none;border: 1px solid black;margin: 5px;padding: 5px;font-size: 12px;" class="tooltip123" id="NPAS_{{$k+1}}">
-												{{$v->kd_isi}}
+												{{$v->isi}}
 											</div>
 										</th>
 										@endforeach
@@ -150,12 +180,27 @@
 										<td style="white-space: nowrap;">{!!Session::get('nama')!!}</td>
 										@if($kd3->count()!=0)
 										@foreach($kd3 as $k=>$v)
-										<?php $kolom = 'npas_'.($k+1);?>
-										<td><input type="number" name="npas[]" value="{{$mengajar->$kolom}}" @if($mengajar->islock_uts==true) readonly @endif></td>
+										<td>
+											<input type="hidden" class="form-control" name="id_npas[]" value="{{$v->id_kd}}" @if($nilai_mapel->is_kunci==true) readonly @endif>
+											@php
+											$nilai = DB::connection($conn)->table($schema.'.nilai_mapel as nm')
+											->join($schema.'.detail_nilai_mapel as dm','dm.nilai_mapel_id','nm.id_nilai_mapel')
+											->whereRaw("mapel_id='".Session::get('id_mapel')."' AND anggota_rombel_id='".Session::get('id_anggota_rombel')."' AND kd_id='$v->id_kd'")->first();						
+											@endphp
+											@if(!empty($nilai))
+											@if($nilai->kd_id==$v->id_kd)
+											<input type="number" class="form-control" name="npas[]" value="{{$nilai->npas}}" @if($nilai->is_kunci==true) readonly @endif>
+											@else
+											<input type="number" class="form-control" name="npas[]" value="" @if($nilai->is_kunci==true) readonly @endif>
+											@endif
+											@else
+											<input type="number" class="form-control" name="npas[]" value="" @if($nilai->is_kunci==true) readonly @endif>
+											@endif
+										</td>
 										@endforeach
 										@endif
 										<td>
-											<a href="javascript:void(0)" class="btn btn-sm btn-primary" @if($mengajar->islock_uts==true) onclick="alert('Pengisian nilai sudah dikunci')" @else onclick="simpansd('npas')" @endif>Simpan</a>
+											<a href="javascript:void(0)" class="btn btn-sm btn-primary" @if($nilai_mapel->is_kunci==true) onclick="alert('Pengisian nilai sudah dikunci')" @else onclick="simpankd('npas','npas')" @endif>Simpan</a>
 										</td>
 									</tr>
 								</table>
@@ -169,16 +214,16 @@
 								<table style="width: 100%;border-collapse: collapse;" border="1">
 									<tr>
 										<th rowspan="2">Nama</th>
-										<th colspan="{{$kd3->count()}}">Praktek</th>
+										<th colspan="{{$kd4->count()}}">Praktek</th>
 										<th rowspan="2">#</th>
 									</tr>
 									<tr>
-										@if($kd3->count()!=0)
-										@foreach($kd3 as $k=>$v)
-										<th style="cursor: pointer;vertical-align: top" onclick="nama_kolom('bg-dark','KD {{$k+1}}','{{$v->kd_isi}}','Praktek_{{$k+1}}')">
+										@if($kd4->count()!=0)
+										@foreach($kd4 as $k=>$v)
+										<th style="cursor: pointer;vertical-align: top" onclick="nama_kolom('bg-dark','KD {{$k+1}}','{{$v->isi}}','Praktek_{{$k+1}}')">
 											<i class="fa fa-comment"></i> KD {{($k+1)}}
 											<div style="display: none;border: 1px solid black;margin: 5px;padding: 5px;font-size: 12px;" class="tooltip123" id="Praktek_{{$k+1}}">
-												{{$v->kd_isi}}
+												{{$v->isi}}
 											</div>
 										</th>
 										@endforeach
@@ -186,14 +231,29 @@
 									</tr>
 									<tr>
 										<td style="white-space: nowrap;">{!!Session::get('nama')!!}</td>
-										@if($kd3->count()!=0)
-										@foreach($kd3 as $k=>$v)
-										<?php $kolom = 'praktek_'.($k+1);?>
-										<td><input type="number" name="praktek[]" value="{{$mengajar->$kolom}}" @if($mengajar->islock_uts==true) readonly @endif></td>
+										@if($kd4->count()!=0)
+										@foreach($kd4 as $k=>$v)
+										<td>
+											<input type="hidden" class="form-control" name="id_keterampilan[]" value="{{$v->id_kd}}" @if($nilai_mapel->is_kunci==true) readonly @endif>
+											@php
+											$nilai = DB::connection($conn)->table($schema.'.nilai_mapel as nm')
+											->join($schema.'.detail_nilai_mapel as dm','dm.nilai_mapel_id','nm.id_nilai_mapel')
+											->whereRaw("mapel_id='".Session::get('id_mapel')."' AND anggota_rombel_id='".Session::get('id_anggota_rombel')."' AND kd_id='$v->id_kd'")->first();						
+											@endphp
+											@if(!empty($nilai))
+											@if($nilai->kd_id==$v->id_kd)
+											<input type="number" class="form-control" name="keterampilan[]" value="{{$nilai->keterampilan}}" @if($nilai->is_kunci==true) readonly @endif>
+											@else
+											<input type="number" class="form-control" name="keterampilan[]" value="" @if($nilai->is_kunci==true) readonly @endif>
+											@endif
+											@else
+											<input type="number" class="form-control" name="keterampilan[]" value="" @if($nilai->is_kunci==true) readonly @endif>
+											@endif
+										</td>
 										@endforeach
 										@endif
 										<td>
-											<a href="javascript:void(0)" class="btn btn-sm btn-primary" @if($mengajar->islock_uts==true) onclick="alert('Pengisian nilai sudah dikunci')" @else onclick="simpansd('praktek')" @endif>Simpan</a>
+											<a href="javascript:void(0)" class="btn btn-sm btn-primary" @if($nilai_mapel->is_kunci==true) onclick="alert('Pengisian nilai sudah dikunci')" @else onclick="simpankd('keterampilan','keterampilan')" @endif>Simpan</a>
 										</td>
 									</tr>
 								</table>
@@ -232,14 +292,17 @@
 		}
 	}
 
-	function simpansd(name){
-		var nilai = $("input[name='"+name+"[]']").map(function(){return $(this).val();}).get();
+	function simpankd(name,kolom){
+		var nilai = $("input[name='"+name+"[]']").map(function(){return $(this).val();}).get();;
+		var id_kd = $("input[name='id_"+name+"[]']").map(function(){return $(this).val();}).get();;
 		var data = {
 			namenya:name,
 			nilai:nilai,
+			id_kd:id_kd,
+			kolom:kolom,
 		};
 
-		$.post("{{route('simpan_nilai_siswa_sd')}}",data,function(data){
+		$.post("{{route('simpan_nilai_siswa_kd')}}",data,function(data){
 			swal(data.title,data.message,data.type);
 		}).fail(function(){
 			swal('Whooops','Terjadi kesalahan pada aplikasi','error');

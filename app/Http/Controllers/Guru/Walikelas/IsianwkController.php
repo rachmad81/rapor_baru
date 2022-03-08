@@ -730,10 +730,8 @@ class IsianwkController extends Controller
 
 		$get_siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->join('public.rombongan_belajar as rb','rb.id_rombongan_belajar','ar.rombongan_belajar_id')
-		->selectRaw("s.nama ,s.id_siswa as idsiswa")
-		->whereRaw("rb.npsn='$npsn' and ar.rombongan_belajar_id='$id_rombel'")
-		->orderBy('s.nama')->get();
+		->selectRaw("s.nama,s.id_siswa as idsiswa")
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->orderBy('s.nama')->get();
 
 		$tampil = [];
 
@@ -772,10 +770,8 @@ class IsianwkController extends Controller
 
 		$get_siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->join('public.rombongan_belajar as rb','rb.id_rombongan_belajar','ar.rombongan_belajar_id')
-		->selectRaw("s.nama ,s.id_siswa as idsiswa")
-		->whereRaw("rb.npsn='$npsn' and ar.rombongan_belajar_id='$id_rombel'")
-		->orderBy('s.nama')->get();
+		->selectRaw("s.nama,s.id_siswa as idsiswa")
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->orderBy('s.nama')->get();
 
 		$tampil = [];
 

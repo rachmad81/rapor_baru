@@ -24,7 +24,7 @@
 						PTS
 					</div>
 					<div class="card-body" style="background: #ccc">
-						<input type="number" class="form-control" name="uts" value="{{(!empty($mengajar)) ? $mengajar->uts : ''}}" @if($mengajar->islock_uts==true) readonly @endif>
+						<input type="number" class="form-control" name="uts" value="{{(!empty($mengajar)) ? $mengajar->pts : ''}}" @if($mengajar->is_kunci==true) readonly @endif>
 					</div>
 				</div>
 			</div>
@@ -34,7 +34,7 @@
 						PAS
 					</div>
 					<div class="card-body" style="background: #ccc">
-						<input type="number" class="form-control" name="uas" value="{{(!empty($mengajar)) ? $mengajar->uas : ''}}" @if($mengajar->islock_uts==true) readonly @endif>
+						<input type="number" class="form-control" name="uas" value="{{(!empty($mengajar)) ? $mengajar->pas : ''}}" @if($mengajar->is_kunci==true) readonly @endif>
 					</div>
 				</div>
 			</div>
@@ -42,6 +42,6 @@
 	</div>
 
 	<div style="width: 100%">
-		<a style="width: 100%" href="javascript:void(0)" class="btn btn-primary btn-lg" @if($mengajar->islock_uts==true) onclick="alert('Pengisian nilai sudah dikunci')" @else onclick="simpan11()" @endif>Simpan</a>
+		<a style="width: 100%" href="javascript:void(0)" class="btn btn-primary btn-lg" @if($mengajar->is_kunci==true) onclick="alert('Pengisian nilai sudah dikunci')" @else onclick="simpan11()" @endif>Simpan</a>
 	</div>
 </div>

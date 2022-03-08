@@ -45,7 +45,7 @@
 							</tr>
 							<tr>
 								<td style="text-align: right;">Kelas</td>
-								<td>: {{$mengajar->kelas}}.{{$mengajar->rombel}}</td>
+								<td>: {{Session::get('kelas_rombel')}}</td>
 							</tr>
 							<tr>
 								<td style="text-align: right;">Semester</td>
@@ -160,11 +160,14 @@
 		});
 	}
 
-	function simpankd(name){
+	function simpankd(name,kolom){
 		var nilai = $("input[name='"+name+"[]']").map(function(){return $(this).val();}).get();;
+		var id_kd = $("input[name='id_kd[]']").map(function(){return $(this).val();}).get();;
 		var data = {
 			namenya:name,
 			nilai:nilai,
+			id_kd:id_kd,
+			kolom:kolom,
 		};
 
 		$.post("{{route('simpan_nilai_siswa_kd')}}",data,function(data){

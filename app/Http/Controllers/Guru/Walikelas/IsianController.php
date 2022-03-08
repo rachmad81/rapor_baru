@@ -548,12 +548,9 @@ class IsianController extends Controller
 						->whereRaw("dp.kd_id='$k->id_kd' AND np.anggota_rombel_id='$s->id_anggota_rombel' AND np.mapel_id='$mapel_id'")->first();
 						if(!empty($get_nilai)){
 							if($get_nilai->nph>0 && $get_nilai->npas>0){
-								$np_pembagi++;
 								$adanilai=true;
 							}
-							if($get_nilai->npts>0){
-								$pembagi_kd--;
-							}
+							$np_pembagi++;
 
 							if($adanilai==true){
 								if($pembagi_kd>0){

@@ -1232,31 +1232,6 @@ class IsianwkController extends Controller
 		$content = view('siswa.rapor.data',$data)->render();
 		
 		return $content;
-
-
-		$data = [
-			'siswa'=>$siswa,
-			'sikap'=>$sikap,
-			'kelas'=>$kelas,
-			'semester'=>($semester=='genap') ? 'II (Dua)' : 'I (Satu)',
-			'tahun_ajaran'=>$tahun_ajaran.'/'.($tahun_ajaran+1),
-			'walikelas'=>$walikelas,
-			'nilaia'=>$nilaia,
-			'nilaib'=>$nilaib,
-			'nilai_agama'=>$nilai_agama,
-			'ekskul'=>$ekskul,
-			'qrcode'=>$qrcode,
-			'pagesnya'=>$pagesnya,
-			'prestasi'=>$prestasi,
-			'rapor_semester'=>$rapor_semester,
-			'ks'=>$ks,
-			'foto'=>'https://profilsekolah.dispendik.surabaya.go.id/profilsekolahlama/foto/siswa/'.$siswa->foto,
-			'sisipan'=>$request->sisipan,
-		];
-
-		$content = view('siswa.rapor.data',$data);
-
-		return $content;
 	}
 
 	function simpan_ekskul(Request $request){

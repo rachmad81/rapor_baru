@@ -28,9 +28,9 @@
 			<div class="col-lg-8 col-md-8">
 				<select class="form-control" name="tahun_ajaran" onchange="get_data()">
 					<option value="">..:: Tahun Ajaran ::..</option>
-					@for($i=0;$i<count($tahun_ajaran);$i++)
-					<option value="{{$tahun_ajaran[$i]['nama_db']}}">{{$tahun_ajaran[$i]['nama']}}</option>
-					@endfor
+					@foreach($tahun_ajaran as $ta)
+					<option value="{{$ta->id_anggota_rombel}}">{{$ta->nama_tahun_ajaran}} ({{$ta->nama_semester}})</option>
+					@endforeach
 				</select>
 			</div>
 		</div>

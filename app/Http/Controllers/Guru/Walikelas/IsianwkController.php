@@ -36,12 +36,14 @@ class IsianwkController extends Controller
 			Session::put('kelas_wk',$rombongan_belajar->kelas);
 			Session::put('rombel_wk',$rombongan_belajar->rombel);
 			Session::put('ta_wk',$rombongan_belajar->nama_tahun_ajaran);
-			Session::put('semester_wk',($rombongan_belajar->semester==1) ? 'Semester Ganjil' : 'Semester Genap');
+			Session::put('rombel_semester',$rombongan_belajar->semester);
 			$semester = ($rombongan_belajar->semester==1) ? 'Semester Ganjil' : 'Semester Genap';
+			Session::put('semester_wk',$semester);
 		}else{
 			Session::put('kelas_wk','0xx');
 			Session::put('rombel_wk','0xx');
 			Session::put('ta_wk','0xx');
+			Session::put('rombel_semester','0xx');
 			Session::put('semester_wk','0xx');
 			$semester = '';
 		}
@@ -700,7 +702,7 @@ class IsianwkController extends Controller
 		$nama_schema = Session::get('nama_schema');
 		$jenjang = Session::get('jenjang');
 		if($jenjang=='SD'){
-			$tampil = $this->page4sd();
+			$tampil = $this->page4smp();
 		}else{
 			$tampil = $this->page4smp();
 		}
@@ -713,46 +715,6 @@ class IsianwkController extends Controller
 		$content = view('guru.walikelas.isian_wk.pages.empat',$data)->render();
 
 		return $content;
-	}
-
-	function page4sd(){
-		$coni = new Request;
-
-		$npsn = Session::get('npsn');
-		$kelas = Session::get('kelas_wk');
-		$rombel = Session::get('rombel_wk');
-		$id_rombel = Session::get('id_rombel');
-		$jenjang = Session::get('jenjang');
-		$jumkd		= 6;
-
-		$coni->jenjang = $jenjang;
-		$conn = Setkoneksi::set_koneksi($coni);
-
-		$get_siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
-		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-		->selectRaw("s.nama,s.id_siswa as idsiswa")
-		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->orderBy('s.nama')->get();
-
-		$tampil = [];
-
-		$id=1;
-		foreach($get_siswa as $k=>$v){
-			$sikap = Hitung_sikap::nilai_sikap_sd($v->idsiswa);
-
-			$baris = [
-				'id'=>$id,
-				'nama'=>$v->nama,
-				'hurufk1'=>(!empty($sikap)) ? $sikap['hurufk1'] : '',
-				'catatan1'=>(!empty($sikap)) ? $sikap['catatan1'] : '',
-				'hurufk2'=>(!empty($sikap)) ? $sikap['hurufk2'] : '',
-				'catatan2'=>(!empty($sikap)) ? $sikap['catatan2'] : '',
-			];
-
-			array_push($tampil,$baris);
-			$id++;
-		}
-
-		return $tampil;
 	}
 
 	function page4smp(){
@@ -1106,12 +1068,14 @@ class IsianwkController extends Controller
 		$id_siswa = $request->id_siswa;
 		$nama_schema = $request->schema;
 		$id_rombel = Session::get('id_rombel');
-		$semester = Session::get('semester_wk');
+		$semester = substr(Session::get('semester_wk'),9);
 		$tahun_ajaran = Session::get('ta_wk');
 		$npsn = Session::get('npsn');
 		$coni = new Request;
 		$coni->jenjang = $jenjang;
 		$conn = Setkoneksi::set_koneksi($coni);
+		$kelas = Session::get('kelas_wk');
+		$rombel = Session::get('rombel_wk');
 
 		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
 		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
@@ -1143,6 +1107,7 @@ class IsianwkController extends Controller
 		$qrcode = QrCode::size(50)->generate($request->url());
 
 		$sikap = DB::connection($conn)->table($this->schema.'.nilai_perilaku')
+		->selectRaw("*,COALESCE(sakit,0) as sakit,COALESCE(izin,0) as izin, COALESCE(tanpa_keterangan,0) as tanpa_keterangan")
 		->whereRaw("anggota_rombel_id='$siswa->id_anggota_rombel' AND npsn='$npsn'")->first();
 		
 		$nilaia = DB::connection($conn)->table($this->schema.'.nilai_mapel as na')
@@ -1207,10 +1172,39 @@ class IsianwkController extends Controller
 
 		//$ekskul = DB::connection($conn)->table($nama_schema.'.ekskul_absen')->whereRaw("npsn='".Session::get('npsn')."' AND id_siswa='$siswa_id' AND kelas='$kelas->kelas' AND rombel='$kelas->rombel'")->first();
 
-		// $kenaikan = "Berdasarkan pencapaian kompetensi pada semester ke-1 dan ke-2, peserta didik *) <br>Tidak Naik dan tetap di kelas ".$kelas->kelas.' ('.Convert::terbilang($kelas->kelas).')';
-		// if(isset($ekskul->kenaikan_kelas) && $ekskul->kenaikan_kelas==true){
-		// 	$kenaikan = "Berdasarkan pencapaian kompetensi pada semester ke-1 dan ke-2, peserta didik *) <br>Naik ke kelas ".($kelas->kelas+1).' ('.Convert::terbilang(($kelas->kelas+1)).')';
-		// }
+		$kenaikan = 'Tidak naik kelas';
+		if(!empty($sikap)){
+			if(is_null($sikap->kenaikan_kelas) || $sikap->kenaikan_kelas==true){
+				$kenaikan = 'Naik ke kelas '.($kelas+1);
+			}
+		}
+
+		$kesehatan1 = new Request;
+		$kesehatan2 = new Request;
+		
+		$smt1 = DB::connection($conn)->table('public.rombongan_belajar as rb')
+		->join('public.anggota_rombel as ar','ar.rombongan_belajar_id','rb.id_rombongan_belajar')
+		->join($this->schema.'.nilai_perilaku as np','np.anggota_rombel_id','ar.id_anggota_rombel')
+		->whereRaw("rb.kelas='$kelas' AND rb.rombel='$rombel' AND rb.semester='1' AND rb.npsn='$npsn' AND ar.siswa_id='$id_siswa'")->first();
+		
+		$smt2 = DB::connection($conn)->table('public.rombongan_belajar as rb')
+		->join('public.anggota_rombel as ar','ar.rombongan_belajar_id','rb.id_rombongan_belajar')
+		->join($this->schema.'.nilai_perilaku as np','np.anggota_rombel_id','ar.id_anggota_rombel')
+		->whereRaw("rb.kelas='$kelas' AND rb.rombel='$rombel' AND rb.semester='2' AND rb.npsn='$npsn' AND ar.siswa_id='$id_siswa'")->first();
+
+		$kesehatan1->tinggi = (!empty($smt1)) ? $smt1->tinggi_badan : '';
+		$kesehatan1->berat = (!empty($smt1)) ? $smt1->berat_badan : '';
+		$kesehatan1->dengar = (!empty($smt1)) ? $smt1->pendengaran : '';
+		$kesehatan1->lihat = (!empty($smt1)) ? $smt1->penglihatan : '';
+		$kesehatan1->gigi = (!empty($smt1)) ? $smt1->gizi : '';
+		$kesehatan1->lain = (!empty($smt1)) ? $smt1->lainnya : '';
+
+		$kesehatan2->tinggi = (!empty($smt2)) ? $smt2->tinggi_badan : '';
+		$kesehatan2->berat = (!empty($smt2)) ? $smt2->berat_badan : '';
+		$kesehatan2->dengar = (!empty($smt2)) ? $smt2->pendengaran : '';
+		$kesehatan2->lihat = (!empty($smt2)) ? $smt2->penglihatan : '';
+		$kesehatan2->gigi = (!empty($smt2)) ? $smt2->gizi : '';
+		$kesehatan2->lain = (!empty($smt2)) ? $smt2->lainnya : '';
 
 		$data = [
 			'qrcode'=>$qrcode,
@@ -1227,7 +1221,9 @@ class IsianwkController extends Controller
 			'prestasi'=>$prestasi,
 			'walikelas'=>$walikelas,
 			'sisipan'=>$request->sisipan,
-			'kenaikan'=>'$kenaikan',
+			'kenaikan'=>$kenaikan,
+			'kesehatan1'=>$kesehatan1,
+			'kesehatan2'=>$kesehatan2,
 		];
 		$content = view('siswa.rapor.data',$data)->render();
 		
@@ -1459,42 +1455,33 @@ class IsianwkController extends Controller
 		$npsn = Session::get('npsn');
 		$kelas = Session::get('kelas_wk');
 		$rombel = Session::get('rombel_wk');
-		$nama_schema = Session::get('nama_schema');
+		$id_rombel = Session::get('id_rombel');
+		$nama_schema = $this->schema;
 		$jenjang = Session::get('jenjang');
 
 		$coni->jenjang = $jenjang;
 		$conn = Setkoneksi::set_koneksi($coni);
 
-		if($jenjang=='SD'){
-			$tahun_ajaran = substr($nama_schema,9,4);
-			$semester = substr($nama_schema,14);
-		}else{
-			$tahun_ajaran = substr($nama_schema,10,4);
-			$semester = substr($nama_schema,15);
-		}
-
 		$sekolah = DB::connection($conn)->table('public.sekolah as a')
 		->whereRaw("a.npsn='$npsn'")
 		->first();
 
-		$tampil = [];
-
 		// COLSPAN KOLOM KELOMPOK
 		if($npsn=='20533172' or $npsn=='20533148'){
-			$where_mapel = "mapel_id not in ( 11, 12, 13, 14, 15) and npsn = '".$npsn."' and kelas = '".$kelas."' and rombel = '".$rombel."'";
+			$where_mapel = "nm.mapel_id not in ( 11, 12, 13, 14, 15) and nm.anggota_rombel_id = '".$npsn."'";
 		}elseif ($npsn=='20532825' and $kelas=='4' and $rombel=='D') {
-			$where_mapel = "mapel_id not in ( 12, 13, 14, 15) and npsn = '".$npsn."' and kelas = '".$kelas."' and rombel = '".$rombel."'";
+			$where_mapel = "nm.mapel_id not in ( 12, 13, 14, 15) and nm.anggota_rombel_id = '".$npsn."'";
 		}else{
-			$where_mapel = "mapel_id not in (10, 11, 12, 13, 14, 15) and npsn = '".$npsn."' and kelas = '".$kelas."' and rombel = '".$rombel."'";
+			$where_mapel = "nm.mapel_id not in (10, 11, 12, 13, 14, 15) and nm.anggota_rombel_id = '".$npsn."'";
 		}
 
 		// DATA MAPEL
 		if($npsn=='20533172' or $npsn=='20533148' or $npsn=='20533510'){
-			$where_nama = "mapel_id not in (10,11, 12, 13, 14, 15) and npsn = '".$npsn."' and kelas = '".$kelas."' and rombel = '".$rombel."'";
+			$where_nama = "mapel_id not in (10,11, 12, 13, 14, 15)";
 		}elseif ($npsn=='20532825' and $kelas=='4' and $rombel=='D') {
-			$where_nama = "mapel_id not in (10, 12, 13, 14, 15) and npsn = '".$npsn."' and kelas = '".$kelas."' and rombel = '".$rombel."'";
+			$where_nama = "mapel_id not in (10, 12, 13, 14, 15)";
 		}else{
-			$where_nama = "mapel_id not in (10, 11, 12, 13, 14, 15) and npsn = '".$npsn."' and kelas = '".$kelas."' and rombel = '".$rombel."'";
+			$where_nama = "mapel_id not in (10, 11, 12, 13, 14, 15)";
 		}
 
 		// DATA SISWA
@@ -1510,27 +1497,62 @@ class IsianwkController extends Controller
 			$where_siswa = "(n.npsn=s.npsn OR n.npsn=npsn_asal) AND n.id_siswa=s.id_siswa AND n.npsn='".$npsn."' AND n.kelas='".$kelas."' AND n.rombel='".$rombel."' AND n.mapel_id!=1";
 		}
 
-		// $qkwali=pg_fetch_assoc(pg_query("SELECT gelar, gelar2, nip, nuptk,
-		// 	(SELECT kode as kode_gelar_depan FROM gelar_akademik WHERE gelar_akademik_id::text=gelar) AS gelar_dpn_wali,
-		// 	(SELECT kode as kode_gelar_belakang FROM gelar_akademik WHERE gelar_akademik_id::text=gelar2) AS gelar_bkl_wali
-		// 	FROM pegawai 
-		// 	WHERE npsn='$tampnpsn' and user_rapor='$nip_wali'"));
+		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
+		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
+		->join('public.rombongan_belajar as rb','rb.id_rombongan_belajar','ar.rombongan_belajar_id')
+		->selectRaw("ar.id_anggota_rombel,s.nama,rb.kelas,rb.rombel,s.id_siswa")
+		->whereRaw("ar.rombongan_belajar_id='$id_rombel'")->orderBy('s.nama','ASC')->get();
 
+		$rombel_genap = DB::connection($conn)->table('public.rombongan_belajar')->where('id_rombongan_belajar',$id_rombel)->first();
+		$rombel_ganjil = DB::connection($conn)->table('public.rombongan_belajar')->whereRaw("kelas='$rombel_genap->kelas' AND rombel='$rombel_genap->rombel' AND npsn='$npsn' AND semester='1'")->first();
+		$id_rombel_ganjil = $rombel_ganjil->id_rombongan_belajar;
 
-		$ht_mapel = DB::connection($conn)->table($nama_schema.'.nilai_akhir')->selectRaw("COUNT(DISTINCT(mapel_id)) as jml, kategori")->whereRaw("$where_mapel")->groupBy('mapel_id','kategori')->orderBy('kategori');
-		$mapel = DB::connection($conn)->table(DB::raw("({$ht_mapel->toSql()}) as budi"))->selectRaw("COUNT(kategori) as jml,kategori")->groupBy("kategori")->get();
-		$nama_mapel = DB::connection($conn)->table($nama_schema.'.nilai_akhir as n')->selectRaw("distinct(mapel) AS nama_mapel,kategori, urutan AS urutan_mapel,n.mapel_id")->whereRaw("$where_nama")->groupByRaw("mapel,kategori,urutan,mapel_id")->orderBy('kategori','asc','urutan','asc')->get();
+		$kategori = DB::connection($conn)->table($this->schema.'.mengajar as nm')
+		->join('public.rapor_mapel as m','m.mapel_id','nm.mapel_id')
+		->selectRaw("m.kategori_baru")
+		->whereRaw("nm.rombel_id IN ('$id_rombel','$id_rombel_ganjil')")
+		->groupBy('m.kategori_baru')->get();
 
-		$siswa = DB::connection($conn)->table($nama_schema.'.nilai_akhir as n')->leftjoin('public.siswa as s',function($join){
-			return $join->on(function($jj){
-				return $jj->on('s.npsn','=','n.npsn')->orOn('s.npsn_asal','=','n.npsn');
-			})->on('s.id_siswa','=','n.id_siswa');
+		$mapel = DB::connection($conn)->table($this->schema.'.mengajar as nm')->join('public.rapor_mapel as m','m.mapel_id','nm.mapel_id')->selectRaw("nm.mapel_id,m.nama")->whereRaw("nm.rombel_id IN ('$id_rombel','$id_rombel_ganjil')")->groupBy('nm.mapel_id','m.nama')->orderBy('m.nama','ASC')->get();
+
+		foreach($kategori as $v){
+			$jml = DB::connection($conn)->table($this->schema.'.mengajar as nm')->join('public.rapor_mapel as m','m.mapel_id','nm.mapel_id')->selectRaw("nm.mapel_id,m.nama")->whereRaw("nm.rombel_id IN ('$id_rombel','$id_rombel_ganjil') AND m.kategori_baru='$v->kategori_baru'")->groupBy('nm.mapel_id','m.nama')->orderBy('m.nama','ASC')->get();
+			$v->jml = $jml->count();
+		}
+
+		if($siswa->count()!=0){
+			foreach($siswa as $s){
+				$pengetahuan_1 = [];
+				$keterampilan_1 = [];
+				$pengetahuan_2 = [];
+				$keterampilan_2 = [];
+				foreach($mapel as $m){
+					$n_mapel_1 = DB::connection($conn)->table($nama_schema.'.nilai_mapel as np')
+					->join('public.anggota_rombel as ar','ar.id_anggota_rombel','np.anggota_rombel_id')
+					->join('public.rombongan_belajar as rb','rb.id_rombongan_belajar','ar.rombongan_belajar_id')
+					->selectRaw("COALESCE(np.nilai_ki3,0) as nilai_ki3,COALESCE(np.nilai_ki4,0) as nilai_ki4")
+					->whereRaw("ar.rombongan_belajar_id='$id_rombel_ganjil' AND rb.semester='1' AND np.mapel_id='$m->mapel_id' AND ar.siswa_id='$s->id_siswa'")->first();
+
+					$n_mapel_2 = DB::connection($conn)->table($nama_schema.'.nilai_mapel')->selectRaw("COALESCE(nilai_ki3,0) as nilai_ki3,COALESCE(nilai_ki4,0) as nilai_ki4" )->whereRaw("anggota_rombel_id='$s->id_anggota_rombel' AND mapel_id='$m->mapel_id'")->first();
+
+					array_push($pengetahuan_1,(!empty($n_mapel_1)) ? number_format($n_mapel_1->nilai_ki3,0,',','.') : '');
+					array_push($keterampilan_1,(!empty($n_mapel_1)) ? number_format($n_mapel_1->nilai_ki4,0,',','.') : '');
+
+					array_push($pengetahuan_2,(!empty($n_mapel_2)) ? number_format($n_mapel_2->nilai_ki3,0,',','.') : '');
+					array_push($keterampilan_2,(!empty($n_mapel_2)) ? number_format($n_mapel_2->nilai_ki4,0,',','.') : '');
+				}
+
+				$s->pengetahuan_1 = $pengetahuan_1;
+				$s->keterampilan_1 = $keterampilan_1;
+				$s->pengetahuan_2 = $pengetahuan_2;
+				$s->keterampilan_2 = $keterampilan_2;
+			}
+		}
+
+		$walikelas = DB::connection($conn)->table('public.rombongan_belajar as wk')
+		->leftjoin('public.pegawai as peg',function($join){
+			return $join->on('wk.wali_kelas_peg_id','=',DB::raw("CAST(peg.peg_id as varchar)"))->on('wk.nik_wk','=','peg.nik');
 		})
-		->selectRaw("DISTINCT(n.id_siswa) AS id_siswa, s.nama AS nama_siswa")
-		->whereRaw("$where_siswa")->orderBy('s.nama','asc')->get();
-
-		$walikelas = DB::connection($conn)->table($nama_schema.'.walikelas as wk')
-		->leftjoin('public.pegawai as peg','wk.nip','=','peg.user_rapor')
 		->leftjoin('public.gelar_akademik as g1',DB::raw("CAST(g1.gelar_akademik_id as varchar)"),'=','peg.gelar')
 		->leftjoin('public.gelar_akademik as g2',DB::raw("CAST(g2.gelar_akademik_id as varchar)"),'=','peg.gelar2')
 		->selectRaw("peg.gelar, peg.nama, peg.gelar2, peg.nip, peg.nuptk,g1.kode as gelar_depan,g2.kode as gelar_belakang, wk.npsn")->whereRaw("wk.npsn='$npsn' and wk.kelas='$kelas' and wk.rombel='$rombel'")->first();
@@ -1546,13 +1568,13 @@ class IsianwkController extends Controller
 			'kelas'=>$kelas,
 			'rombel'=>$rombel,
 			'npsn'=>$npsn,
-			'mapel'=>$mapel,
-			'nama_mapel'=>$nama_mapel,
+			'kategori'=>$kategori,
+			'nama_mapel'=>$mapel,
 			'siswa'=>$siswa,
 			'nama_schema'=>$nama_schema,
 			'walikelas'=>$walikelas,
 			'ks'=>$ks,
-			'semester'=>$tahun_ajaran,
+			'semester'=>Session::get('ta_wk').' '.strtoupper(Session::get('semester_wk')),
 			'excel'=>isset($request->excel) ? $request->excel : '',
 		];
 

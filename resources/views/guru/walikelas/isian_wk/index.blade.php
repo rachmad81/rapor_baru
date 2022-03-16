@@ -56,9 +56,9 @@
 							<li class="nav-item">
 								<a class="nav-link" id="tab-1" onclick="get_pages(1)">Rapor Siswa</a>
 							</li>
-							@if(!(Session::get('kelas_wk')=='6' || Session::get('kelas_wk')=='9') && $semester=='genap')
+							@if(!(Session::get('kelas_wk')=='6' || Session::get('kelas_wk')=='9') && Session::get('rombel_semester')=='2')
 							<li class="nav-item">
-								<a class="nav-link" href="{{route('cetak_dkn_wk')}}" target="_blank">Download DKN</a>
+								<a class="nav-link" href="{{route('guru-isian_wk-cetak_dkn_wk')}}" target="_blank">Download DKN</a>
 							</li>
 							@endif
 							<li class="nav-item">
@@ -82,7 +82,7 @@
 							<li class="nav-item">
 								<a class="nav-link" id="tab-8" onclick="get_pages(8)">Kesehatan</a>
 							</li>
-							@if(!(Session::get('kelas_wk')=='6' || Session::get('kelas_wk')=='9') && $semester=='genap')
+							@if(!(Session::get('kelas_wk')=='6' || Session::get('kelas_wk')=='9') && Session::get('rombel_semester')=='2')
 							<li class="nav-item">
 								<a class="nav-link" id="tab-9" onclick="get_pages(9)">Naik Kelas</a>
 							</li>

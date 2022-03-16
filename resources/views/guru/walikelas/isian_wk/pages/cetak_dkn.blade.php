@@ -17,7 +17,7 @@
 				<h3 align="center">
 					<b>DAFTAR KUMPULAN NILAI 
 						SEMESTER 1 DAN 2<br/>
-						TAHUN PELAJARAN {{$semester}}/{{($semester+1)}}<br/>
+						TAHUN PELAJARAN {{$semester}}<br/>
 						SEKOLAH DASAR <br/>
 					(SD)</b>
 				</h3><br />
@@ -48,80 +48,49 @@
 			<th width="3%" rowspan="2" align="center" style="font-size:12px;border-left: 1px solid black;border-top: 1px solid black;border-bottom: 1px solid black;">Semester</th>
 			<th width="3%" rowspan="2" align="center" style="font-size:12px;border-left: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;border-bottom: 1px solid black;">Aspek</th>
 			<?php
-			foreach($mapel as $k=>$v){ ?>
-			<th colspan="{{$v->jml}}" align="center" style="font-size:12px;border-right: 1px solid black;border-top: 1px solid black;">{{$v->kategori}}</th>
+			foreach($kategori as $k=>$v){ ?>
+			<th colspan="{{$v->jml}}" align="center" style="font-size:12px;border-right: 1px solid black;border-top: 1px solid black;">{{$v->kategori_baru}}</th>
 			<?php } ?>
 		</tr>
 		<tr valign='middle' bgcolor="#E9EAEB">
-			<?php foreach($nama_mapel as $k=>$v){ ?>
+			<?php  foreach($nama_mapel as $k=>$v){ ?>
 			<th width="6%" class="vert" align="center" style="padding-left:2px;padding-right:2px;padding-top:5px;padding-bottom:5px;font-size:12px;border-right: 1px solid black;border-bottom: 1px solid black;border-top: 1px solid black;">
-				<?php 
-				if($v->urutan_mapel==1){
-					$v->nama_mapel = 'Pendidikan Agama';
-				} ?>
-				{!! $v->nama_mapel !!} 
+				{!! $v->nama !!} 
 			</th>
 			<?php } ?>
 		</tr>
-		<?php
-		foreach($siswa as $k=>$s){
-		?>
+		@if($siswa->count()!=0)
+		@foreach($siswa as $k=>$s)
 		<tr>
-			<td rowspan="4" align="center" style="font-size:12px;border-left: 1px solid black;border-bottom: 1px solid black;">{{($k+1)}}</td>
-			<td rowspan="4" align="justify" style="padding-bottom:5px;padding-top:5px;padding-left:5px;padding-right:5px;font-size:12px;border-left: 1px solid black;border-bottom: 1px solid black;">
-				{{$s->nama_siswa}}
-			</td>
-			<td rowspan="2" style="border-left:1px solid black;border-bottom:1px solid black;font-size:12px;" align='center'>1</td>
-			<td align="justify" style="padding-bottom:5px;padding-top:5px;padding-left:5px;padding-right:5px;font-size:12px;border-left: 1px solid black;border-right: 1px solid black;border-bottom: 1px solid black;">Pengetahuan</td>
-			<?php
-			foreach($nama_mapel as $k1=>$m_smt_1){
-			?>
-			<td align="center" style="border-right:1px solid black;border-bottom:1px solid black;font-size:12px;" align='center'>
-				<?php 
-				$nilai_3 = App\Http\Libraries\Hitung_sikap::hitung_dkn_ki3_smt1($s->id_siswa,$kelas,$rombel,$nama_schema,$npsn,$m_smt_1->mapel_id); ?>
-				@if(!empty($nilai_3)) {{number_format($nilai_3->nilai_ki3,0)}} @endif
-			</td>
-			<?php } ?>
+			<td rowspan="4" align="center" style="font-size:12px;border-left: 1px solid black;border-top: 1px solid black;border-bottom: 1px solid black;">{{($k+1)}}</td>
+			<td rowspan="4" align="center" style="font-size:12px;border-left: 1px solid black;border-top: 1px solid black;border-bottom: 1px solid black;">{{$s->nama}}</td>
+			<td rowspan="2" align="center" style="font-size:12px;border-left: 1px solid black;border-top: 1px solid black;border-bottom: 1px solid black;">Ganjil</td>
+			<td align="center" style="font-size:12px;border-left: 1px solid black;border-top: 1px solid black;border-bottom: 1px solid black;">Pengetahuan</td>
+			@foreach($nama_mapel as $k=>$m)
+				<td align="center" style="font-size:12px;border-left: 1px solid black;border-top: 1px solid black;border-bottom: 1px solid black;">{{$s->pengetahuan_1[$k]}}</td>
+			@endforeach
 		</tr>
 		<tr>
-			<td align="justify" style="padding-bottom:5px;padding-top:5px;padding-left:5px;padding-right:5px;font-size:12px;border-left: 1px solid black;border-right: 1px solid black;border-bottom: 1px solid black;">Keterampilan</td>
-			<?php
-			foreach($nama_mapel as $k1=>$m_smt_1){
-			?>
-			<td align="center" style="border-right:1px solid black;border-bottom:1px solid black;font-size:12px;" align='center'>
-				<?php 
-				$nilai_3 = App\Http\Libraries\Hitung_sikap::hitung_dkn_ki3_smt1($s->id_siswa,$kelas,$rombel,$nama_schema,$npsn,$m_smt_1->mapel_id); ?>
-				@if(!empty($nilai_3)) {{number_format($nilai_3->nilai_ki4,0)}} @endif
-			</td>
-			<?php } ?>
-		</tr>
-		<!------ SEMESTER 2 -->
-		<tr>
-			<td rowspan="2" style="border-left:1px solid black;border-bottom:1px solid black;font-size:12px;" align='center'>2</td>
-			<td align="justify" style="padding-bottom:5px;padding-top:5px;padding-left:5px;padding-right:5px;font-size:12px;border-left: 1px solid black;border-right: 1px solid black;border-bottom: 1px solid black;">Pengetahuan</td>
-			<?php
-			foreach($nama_mapel as $k1=>$m_smt_1){
-			?>
-			<td align="center" style="border-right:1px solid black;border-bottom:1px solid black;font-size:12px;" align='center'>
-				<?php 
-				$nilai_3 = App\Http\Libraries\Hitung_sikap::hitung_dkn_ki3($s->id_siswa,$kelas,$rombel,$nama_schema,$npsn,$m_smt_1->mapel_id); ?>
-				@if(!empty($nilai_3)) {{number_format($nilai_3->nilai_ki3,0)}} @endif
-			</td>
-			<?php } ?>
+			<td align="center" style="font-size:12px;border-left: 1px solid black;border-top: 1px solid black;border-bottom: 1px solid black;">Keterampilan</td>
+			@foreach($nama_mapel as $k=>$m)
+				<td align="center" style="font-size:12px;border-left: 1px solid black;border-top: 1px solid black;border-bottom: 1px solid black;">{{$s->keterampilan_1[$k]}}</td>
+			@endforeach
 		</tr>
 		<tr>
-			<td align="justify" style="padding-bottom:5px;padding-top:5px;padding-left:5px;padding-right:5px;font-size:12px;border-left: 1px solid black;border-right: 1px solid black;border-bottom: 1px solid black;">Keterampilan</td>
-			<?php
-			foreach($nama_mapel as $k1=>$m_smt_1){
-			?>
-			<td align="center" style="border-right:1px solid black;border-bottom:1px solid black;font-size:12px;" align='center'>
-				<?php 
-				$nilai_3 = App\Http\Libraries\Hitung_sikap::hitung_dkn_ki3($s->id_siswa,$kelas,$rombel,$nama_schema,$npsn,$m_smt_1->mapel_id); ?>
-				@if(!empty($nilai_3)) {{number_format($nilai_3->nilai_ki4,0)}} @endif
-			</td>
-			<?php } ?>
+			<td rowspan="2" align="center" style="font-size:12px;border-left: 1px solid black;border-top: 1px solid black;border-bottom: 1px solid black;">Genap</td>
+			<td align="center" style="font-size:12px;border-left: 1px solid black;border-top: 1px solid black;border-bottom: 1px solid black;">Pengetahuan</td>
+			@foreach($nama_mapel as $k=>$m)
+				<td align="center" style="font-size:12px;border-left: 1px solid black;border-top: 1px solid black;border-bottom: 1px solid black;">{{$s->pengetahuan_2[$k]}}</td>
+			@endforeach
 		</tr>
-		<?php } ?>
+		<tr>
+			<td align="center" style="font-size:12px;border-left: 1px solid black;border-top: 1px solid black;border-bottom: 1px solid black;">Keterampilan</td>
+			@foreach($nama_mapel as $k=>$m)
+				<td align="center" style="font-size:12px;border-left: 1px solid black;border-top: 1px solid black;border-bottom: 1px solid black;">{{$s->keterampilan_2[$k]}}</td>
+			@endforeach
+		</tr>
+		@endforeach
+		@endif
 
 		<!-- WALI KELAS -->
 		<tr valign="top">

@@ -115,6 +115,7 @@ class RaporController extends Controller
 		$qrcode = QrCode::size(50)->generate($request->url());
 
 		$sikap = DB::connection($conn)->table($this->schema.'.nilai_perilaku')
+		->selectRaw("*,COALESCE(sakit,0) as sakit,COALESCE(izin,0) as izin, COALESCE(tanpa_keterangan,0) as tanpa_keterangan")
 		->whereRaw("anggota_rombel_id='$siswa->id_anggota_rombel' AND npsn='$npsn'")->first();
 		
 		$nilaia = DB::connection($conn)->table($this->schema.'.nilai_mapel as na')
@@ -128,7 +129,7 @@ class RaporController extends Controller
 			return $join->on('peg.nik','=','m.nik_pengajar')->on('peg.peg_id','=','m.peg_id');
 		})
 		->selectRaw("ma.nama as mapel,peg.nama as guru_mengajar,na.nilai_ki3,na.predikat_ki3,na.deskripsi_ki3,na.nilai_ki4,na.predikat_ki4,na.deskripsi_ki4,75 as kkm")
-		->whereRaw("na.anggota_rombel_id='$siswa->id_anggota_rombel' AND ma.kategori IN ('KELOMPOK A','WAJIB','A. MATA PELAJARAN')")
+		->whereRaw("na.anggota_rombel_id='$siswa->id_anggota_rombel' AND ma.kategori_baru IN ('KELOMPOK A','WAJIB','A. MATA PELAJARAN')")
 		->groupByRaw("ma.nama,peg.nama,na.nilai_ki3,na.predikat_ki3,na.deskripsi_ki3,na.nilai_ki4,na.predikat_ki4,na.deskripsi_ki4")
 		->orderBy('ma.nama','ASC')->get();
 
@@ -143,7 +144,7 @@ class RaporController extends Controller
 			return $join->on('peg.nik','=','m.nik_pengajar')->on('peg.peg_id','=','m.peg_id');
 		})
 		->selectRaw("ma.nama as mapel,peg.nama as guru_mengajar,na.nilai_ki3,na.predikat_ki3,na.deskripsi_ki3,na.nilai_ki4,na.predikat_ki4,na.deskripsi_ki4,75 as kkm")
-		->whereRaw("na.anggota_rombel_id='$siswa->id_anggota_rombel' AND ma.kategori IN ('KELOMPOK B','MUATAN LOKAL')")
+		->whereRaw("na.anggota_rombel_id='$siswa->id_anggota_rombel' AND ma.kategori_baru IN ('KELOMPOK B','MUATAN LOKAL')")
 		->groupByRaw("ma.nama,peg.nama,na.nilai_ki3,na.predikat_ki3,na.deskripsi_ki3,na.nilai_ki4,na.predikat_ki4,na.deskripsi_ki4")
 		->orderBy('ma.nama','ASC')->get();
 
@@ -158,7 +159,7 @@ class RaporController extends Controller
 			return $join->on('peg.nik','=','m.nik_pengajar')->on('peg.peg_id','=','m.peg_id');
 		})
 		->selectRaw("ma.nama as mapel,peg.nama as guru_mengajar,na.nilai_ki3,na.predikat_ki3,na.deskripsi_ki3,na.nilai_ki4,na.predikat_ki4,na.deskripsi_ki4,75 as kkm")
-		->whereRaw("na.anggota_rombel_id='$siswa->id_anggota_rombel' AND ma.kategori IN ('AGAMA ISLAM')")
+		->whereRaw("na.anggota_rombel_id='$siswa->id_anggota_rombel' AND ma.kategori_baru IN ('AGAMA ISLAM')")
 		->groupByRaw("ma.nama,peg.nama,na.nilai_ki3,na.predikat_ki3,na.deskripsi_ki3,na.nilai_ki4,na.predikat_ki4,na.deskripsi_ki4")
 		->orderBy('ma.nama','ASC')->get();
 
@@ -174,15 +175,44 @@ class RaporController extends Controller
 		->leftjoin('public.gelar_akademik as gb',function($join){
 			return $join->on('p.gelar2','=',DB::raw('CAST(gb.gelar_akademik_id as varchar)'));
 		})
-		->selectRaw("p.nama as nama_wk,gd.kode as gelar_depan,gb.kode as gelar_belakang,CONCAT('NIP. ',p.nip) as nip")
+		->selectRaw("p.nama as nama_wk,gd.kode as gelar_depan,gb.kode as gelar_belakang,CONCAT('NIP. ',p.nip) as nip,wk.kelas")
 		->whereRaw("wk.npsn='".Session::get('npsn')."' AND wk.id_rombongan_belajar='$id_rombel'")->first();
 
 		//$ekskul = DB::connection($conn)->table($nama_schema.'.ekskul_absen')->whereRaw("npsn='".Session::get('npsn')."' AND id_siswa='$siswa_id' AND kelas='$kelas->kelas' AND rombel='$kelas->rombel'")->first();
 
-		// $kenaikan = "Berdasarkan pencapaian kompetensi pada semester ke-1 dan ke-2, peserta didik *) <br>Tidak Naik dan tetap di kelas ".$kelas->kelas.' ('.Convert::terbilang($kelas->kelas).')';
-		// if(isset($ekskul->kenaikan_kelas) && $ekskul->kenaikan_kelas==true){
-		// 	$kenaikan = "Berdasarkan pencapaian kompetensi pada semester ke-1 dan ke-2, peserta didik *) <br>Naik ke kelas ".($kelas->kelas+1).' ('.Convert::terbilang(($kelas->kelas+1)).')';
-		// }
+		$kenaikan = 'Tidak naik kelas';
+		if(!empty($sikap)){
+			if(is_null($sikap->kenaikan_kelas) || $sikap->kenaikan_kelas==true){
+				$kenaikan = 'Naik ke kelas '.($walikelas->kelas+1);
+			}
+		}
+
+		$kesehatan1 = new Request;
+		$kesehatan2 = new Request;
+		
+		$smt1 = DB::connection($conn)->table('public.rombongan_belajar as rb')
+		->join('public.anggota_rombel as ar','ar.rombongan_belajar_id','rb.id_rombongan_belajar')
+		->join($this->schema.'.nilai_perilaku as np','np.anggota_rombel_id','ar.id_anggota_rombel')
+		->whereRaw("rb.kelas='$siswa->kelas' AND rb.rombel='$siswa->rombel' AND rb.semester='1' AND rb.npsn='$npsn' AND ar.siswa_id='$siswa->id_siswa'")->first();
+		
+		$smt2 = DB::connection($conn)->table('public.rombongan_belajar as rb')
+		->join('public.anggota_rombel as ar','ar.rombongan_belajar_id','rb.id_rombongan_belajar')
+		->join($this->schema.'.nilai_perilaku as np','np.anggota_rombel_id','ar.id_anggota_rombel')
+		->whereRaw("rb.kelas='$siswa->kelas' AND rb.rombel='$siswa->rombel' AND rb.semester='2' AND rb.npsn='$npsn' AND ar.siswa_id='$siswa->id_siswa'")->first();
+
+		$kesehatan1->tinggi = (!empty($smt1)) ? $smt1->tinggi_badan : '';
+		$kesehatan1->berat = (!empty($smt1)) ? $smt1->berat_badan : '';
+		$kesehatan1->dengar = (!empty($smt1)) ? $smt1->pendengaran : '';
+		$kesehatan1->lihat = (!empty($smt1)) ? $smt1->penglihatan : '';
+		$kesehatan1->gigi = (!empty($smt1)) ? $smt1->gizi : '';
+		$kesehatan1->lain = (!empty($smt1)) ? $smt1->lainnya : '';
+
+		$kesehatan2->tinggi = (!empty($smt2)) ? $smt2->tinggi_badan : '';
+		$kesehatan2->berat = (!empty($smt2)) ? $smt2->berat_badan : '';
+		$kesehatan2->dengar = (!empty($smt2)) ? $smt2->pendengaran : '';
+		$kesehatan2->lihat = (!empty($smt2)) ? $smt2->penglihatan : '';
+		$kesehatan2->gigi = (!empty($smt2)) ? $smt2->gizi : '';
+		$kesehatan2->lain = (!empty($smt2)) ? $smt2->lainnya : '';
 
 		$data = [
 			'qrcode'=>$qrcode,
@@ -199,7 +229,9 @@ class RaporController extends Controller
 			'prestasi'=>$prestasi,
 			'walikelas'=>$walikelas,
 			'sisipan'=>'',
-			'kenaikan'=>'$kenaikan',
+			'kenaikan'=>$kenaikan,
+			'kesehatan1'=>$kesehatan1,
+			'kesehatan2'=>$kesehatan2,
 		];
 		$content = view('siswa.rapor.data',$data)->render();
 		

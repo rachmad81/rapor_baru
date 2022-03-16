@@ -322,24 +322,25 @@ class Hitung_sikap
 				'deskripsi_ki2'=>$catatan2,
 				'tgl_perhitungan'=>date('Y-m-d H:i:s'),
 				'updated_at'=>date('Y-m-d H:i:s'),
-				'catatan_siswa'=>null,
-				'sakit'=>null,
-				'izin'=>null,
-				'tanpa_keterangan'=>null,
-				'tinggi_badan'=>null,
-				'berat_badan'=>null,
-				'pendengaran'=>null,
-				'penglihatan'=>null,
-				'gizi'=>null,
-				'lainnya'=>null,
-				'created_at'=>date('Y-m-d H:i:s'),
 			];
 
 			$nilai_perilaku = DB::connection($conn)->table($schema.'.nilai_perilaku')->whereRaw("npsn='$npsn' AND anggota_rombel_id='$anggota->id_anggota_rombel'")->first();
 			if(!empty($nilai_perilaku)){
-				unset($data_insert['created_at']);
 				$simpan = DB::connection($conn)->table($schema.'.nilai_perilaku')->whereRaw("npsn='$npsn' AND anggota_rombel_id='$anggota->id_anggota_rombel'")->update($data_insert);
 			}else{
+				$data_insert = array_merge($data_insert,[
+					'catatan_siswa'=>null,
+					'sakit'=>null,
+					'izin'=>null,
+					'tanpa_keterangan'=>null,
+					'tinggi_badan'=>null,
+					'berat_badan'=>null,
+					'pendengaran'=>null,
+					'penglihatan'=>null,
+					'gizi'=>null,
+					'lainnya'=>null,
+					'created_at'=>date('Y-m-d H:i:s'),
+				]);
 				$simpan = DB::connection($conn)->table($schema.'.nilai_perilaku')->insert($data_insert);
 			}
 		}else{
@@ -664,24 +665,25 @@ class Hitung_sikap
 				'deskripsi_ki2'=>$catatan2,
 				'tgl_perhitungan'=>date('Y-m-d H:i:s'),
 				'updated_at'=>date('Y-m-d H:i:s'),
-				'catatan_siswa'=>null,
-				'sakit'=>null,
-				'izin'=>null,
-				'tanpa_keterangan'=>null,
-				'tinggi_badan'=>null,
-				'berat_badan'=>null,
-				'pendengaran'=>null,
-				'penglihatan'=>null,
-				'gizi'=>null,
-				'lainnya'=>null,
-				'created_at'=>date('Y-m-d H:i:s'),
 			];
 
 			$nilai_perilaku = DB::connection($conn)->table($schema.'.nilai_perilaku')->whereRaw("npsn='$npsn' AND anggota_rombel_id='$anggota->id_anggota_rombel'")->first();
 			if(!empty($nilai_perilaku)){
-				unset($data_insert['created_at']);
 				$simpan = DB::connection($conn)->table($schema.'.nilai_perilaku')->whereRaw("npsn='$npsn' AND anggota_rombel_id='$anggota->id_anggota_rombel'")->update($data_insert);
 			}else{
+				$data_insert = array_merge($data_insert,[
+					'catatan_siswa'=>null,
+					'sakit'=>null,
+					'izin'=>null,
+					'tanpa_keterangan'=>null,
+					'tinggi_badan'=>null,
+					'berat_badan'=>null,
+					'pendengaran'=>null,
+					'penglihatan'=>null,
+					'gizi'=>null,
+					'lainnya'=>null,
+					'created_at'=>date('Y-m-d H:i:s'),
+				]);
 				$simpan = DB::connection($conn)->table($schema.'.nilai_perilaku')->insert($data_insert);
 			}
 		}else{

@@ -125,7 +125,7 @@ $nomor = 1;
 <table class="kontent_rapor" style="width: 100%;border-collapse: collapse;" border="1">
 	<tr>
 		<td style="height: 100px;padding: 10px;vertical-align: top;">
-			{!!$siswa->nama_siswa!!} @if(!empty($ekskul)) {{$ekskul->catatan}} @endif
+			{!!$siswa->nama_siswa!!} @if(!empty($sikap)) {{$sikap->catatan_siswa}} @endif
 		</td>
 	</tr>
 </table>
@@ -144,14 +144,14 @@ $nomor = 1;
 	<tr>
 		<td>1</td>
 		<td>Tinggi</td>
-		<td>@if(!empty($ekskul)) {{$ekskul->tinggi_semester1}} @endif Cm</td>
-		<td>@if(!empty($ekskul)) {{$ekskul->tinggi_semester2}} @endif Cm</td>
+		<td>{{$kesehatan1->tinggi_badan}} Cm</td>
+		<td>{{$kesehatan2->tinggi_badan}} Cm</td>
 	</tr>
 	<tr>
 		<td>2</td>
 		<td>Berat Badan</td>
-		<td>@if(!empty($ekskul)) {{$ekskul->beratbadan_semester1}} @endif Kg</td>
-		<td>@if(!empty($ekskul)) {{$ekskul->beratbadan_semester2}} @endif Kg</td>
+		<td>{{$kesehatan1->berat_badan}} Kg</td>
+		<td>{{$kesehatan2->berat_badan}} Kg</td>
 	</tr>
 </table>
 <label class="label_rapor">F. Kondisi Kesehatan</label>
@@ -238,17 +238,17 @@ $nomor = 1;
 						<table style="width: 100%">
 							<tr>
 								<td>Sakit</td>
-								<td>: @if(!empty($ekskul)) {{$ekskul->sakit}} @endif</td>
+								<td>: @if(!empty($sikap)) {{$sikap->sakit}} @endif</td>
 								<td>Hari</td>
 							</tr>
 							<tr>
 								<td>Izin</td>
-								<td>: @if(!empty($ekskul)) {{$ekskul->ijin}} @endif</td>
+								<td>: @if(!empty($sikap)) {{$sikap->izin}} @endif</td>
 								<td>Hari</td>
 							</tr>
 							<tr>
 								<td>Tanpa Keterangan</td>
-								<td>: @if(!empty($ekskul)) {{$ekskul->tanpa_keterangan}} @endif</td>
+								<td>: @if(!empty($sikap)) {{$sikap->tanpa_keterangan}} @endif</td>
 								<td>Hari</td>
 							</tr>
 						</table>
@@ -260,7 +260,7 @@ $nomor = 1;
 			&nbsp;
 		</td>
 		<td style="vertical-align: top">
-			@if($semester=='II (Dua)')
+			@if($semester=='Genap')
 			<table style="width: 100%;border-collapse: collapse;" border="1">
 				<tr style="padding: 5px;">
 					<td>

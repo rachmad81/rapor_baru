@@ -526,7 +526,6 @@ class IsianController extends Controller
 		$tampil = [];
 		$id=1;
 
-		$pembagi_kd = 4;
 		if($siswa->count()!=0){
 			foreach($siswa as $s){
 				$huruf_ki3 = '';
@@ -535,6 +534,7 @@ class IsianController extends Controller
 				$catatan3 = '';
 				$catatan4 = '';
 				$arr_nilai = [];
+				$pembagi_kd=4;
 
 				// KI-3
 				if($kd3->count()!=0){
@@ -710,7 +710,6 @@ class IsianController extends Controller
 				}
 			}
 		}
-
 
 		$data = [
 			'tampil'=>$tampil,

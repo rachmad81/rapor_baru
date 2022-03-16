@@ -74,6 +74,7 @@ class WalikelasController extends Controller
 		$tahun_ajaran = $request->tahun_ajaran; // "1"
 		$kurikulum = $request->kurikulum; // "ktsp"
 		$semester = $request->semester;
+		$jenjang = Session::get('jenjang');
 
 		$coni = new Request;
 		$coni->jenjang = Session::get('jenjang');
@@ -96,6 +97,27 @@ class WalikelasController extends Controller
 
 		$simpan = DB::connection($conn)->table('public.rombongan_belajar')->insert($data);
 		if($simpan){
+			$id_rombel = DB::connection($conn)->table('public.rombongan_belajar')->where($data)->first()->id_rombongan_belajar;
+
+			if($jenjang=='SD'){
+				$mapel = ['2','3','4','5','6','7','9'];
+				for ($i=0; $i < count($mapel); $i++) { 
+					$dt_mengajar = [
+						'mapel_id'=>$mapel[$i],
+						'rombel_id'=>$id_rombel,
+						'nik_pengajar'=>$nik,
+						'peg_id'=>$pegawai->peg_id,
+						'created_at'=>date('Y-m-d H:i:s'),
+						'updated_at'=>date('Y-m-d H:i:s'),
+					];
+
+					$cek_mengajar = DB::connection($conn)->table($this->schema.'.mengajar')->where($dt_mengajar)->first();
+					if(empty($cek_mengajar)){
+						DB::connection($conn)->table($this->schema.'.mengajar')->insert($dt_mengajar);
+					}
+				}
+			}
+
 			Session::flash('title','Success');
 			Session::flash('message','Berhasil disimpan');
 			Session::flash('type','success');

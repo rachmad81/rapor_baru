@@ -4,7 +4,7 @@
 		Langkah-langkah
 		<ol>
 			<li>Lihat dulu rekap nilai mapel yg anda ampu di bawah ini :</li>
-			<li>Preview Template Nilai Mapel</li>
+			<li><a href="{{route('guru-isian-template')}}" target="_blank">Preview Template Nilai Mapel</a></li>
 			<li>Jika sudah sesuai bisa unduh nilainya di bawah ini :</li>
 			<li>Unduh Template Nilai Mapel</li>
 			<li>Buka file tsb; klik OK jika muncul konfirmasi; lalu klik Enable Editing</li>

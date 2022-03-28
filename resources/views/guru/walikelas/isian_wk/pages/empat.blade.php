@@ -20,7 +20,7 @@
 				$baris = $tampil[$i];
 				?>
 				<tr>
-					<td>{!! $baris['id'] !!}</td>
+					<td>{!! ($i+1) !!}</td>
 					<td>{!! $baris['nama'] !!}</td>
 					<td>{!! $baris['hurufk1'] !!}</td>
 					<td>{!! $baris['catatan1'] !!}</td>

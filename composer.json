@@ -12,7 +12,8 @@
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
         "yajra/laravel-datatables":"^1.5",
-        "simplesoftwareio/simple-qrcode": "~4"
+        "simplesoftwareio/simple-qrcode": "~4",
+        "maatwebsite/excel":"*"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

@@ -10,7 +10,7 @@ use App\Http\Libraries\Convert;
 
 use App\Http\Controllers\Controller;
 
-use DB,Session,Redirect;
+use DB,Session,Redirect,Excel;
 
 class IsianController extends Controller
 {
@@ -34,8 +34,8 @@ class IsianController extends Controller
 			Session::put('kelas_wk',$rombongan_belajar->kelas);
 			Session::put('rombel_wk',$rombongan_belajar->rombel);
 			Session::put('ta_wk',$rombongan_belajar->nama_tahun_ajaran);
-			Session::put('semester_wk',($rombongan_belajar->semester==1) ? 'Semester Ganjil' : 'Semester Genap');
 			$semester = ($rombongan_belajar->semester==1) ? 'Semester Ganjil' : 'Semester Genap';
+			Session::put('semester_wk',$semester);
 		}else{
 			Session::put('kelas_wk','0xx');
 			Session::put('rombel_wk','0xx');
@@ -1110,5 +1110,80 @@ class IsianController extends Controller
 		}
 
 		return $return;
+	}
+
+	// template nilai excel
+	function template(Request $request){
+		$kelas = Session::get('kelas_wk');
+		$rombel = Session::get('rombel_wk');
+		$mapel_id = Session::get('mapel_id');
+		$semester = Session::get('semester_wk');
+		$id_rombel = Session::get('id_rombel');
+		$jenjang = Session::get('jenjang');
+		$npsn = Session::get('npsn');
+		
+		$coni = new Request;
+		$coni->jenjang = $jenjang;
+		$conn = Setkoneksi::set_koneksi($coni);
+
+		$rombongan_belajar = DB::connection($conn)->table('public.rombongan_belajar as rb')->join('public.tahun_ajaran as ta','ta.id_tahun_ajaran','rb.tahun_ajaran_id')->join('public.pegawai as p',function($join){
+			return $join->on('rb.wali_kelas_peg_id','=',DB::raw("CAST(p.peg_id as varchar)"))->on('rb.nik_wk','=','p.nik');
+		})->where('rb.id_rombongan_belajar',$id_rombel)->first();
+
+		$sekolah = DB::connection($conn)->table('public.sekolah')->whereRaw("npsn='$npsn'")->first();
+		
+		$mengajar = DB::connection($conn)->table($this->schema.'.mengajar as m')
+		->join('public.rapor_mapel as ma','ma.mapel_id','m.mapel_id')
+		->join('public.pegawai as p',function($join){
+			return $join->on('m.peg_id','=','p.peg_id')->on('m.nik_pengajar','=','p.nik');
+		})
+		->selectRaw("*,ma.nama as nama_mapel,p.nama as nama_pengajar")
+		->whereRaw("m.rombel_id='$id_rombel' AND m.mapel_id='$mapel_id'")->first();
+
+		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
+		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->orderBy('s.nama')->get();
+
+		$kd3 = DB::connection($conn)->table($this->schema.'.kd')->whereRaw("kelas='$kelas' AND mapel_id='$mapel_id' AND no_ki='3'")->orderBy('id_kd','ASC')->get();
+		$kd4 = DB::connection($conn)->table($this->schema.'.kd')->whereRaw("kelas='$kelas' AND mapel_id='$mapel_id' AND no_ki='4'")->orderBy('id_kd','ASC')->get();
+
+		if($siswa->count()!=0){
+			foreach($siswa as $s){
+				$arr_nilai3 = [];
+				$arr_nilai4 = [];
+				if($kd3->count()!=0){
+					foreach($kd3 as $k){
+						$get_nilai = DB::connection($conn)->table($this->schema.'.detail_nilai_mapel as dp')
+						->join($this->schema.'.nilai_mapel as np','np.id_nilai_mapel','dp.nilai_mapel_id')
+						->whereRaw("dp.kd_id='$k->id_kd' AND np.anggota_rombel_id='$s->id_anggota_rombel' AND np.mapel_id='$mapel_id'")->first();
+						
+						$arr_nilai3[$k->id_kd] = $get_nilai;
+					}
+				}
+				if($kd4->count()!=0){
+					foreach($kd4 as $k){
+						$get_nilai = DB::connection($conn)->table($this->schema.'.detail_nilai_mapel as dp')
+						->join($this->schema.'.nilai_mapel as np','np.id_nilai_mapel','dp.nilai_mapel_id')
+						->whereRaw("dp.kd_id='$k->id_kd' AND np.anggota_rombel_id='$s->id_anggota_rombel' AND np.mapel_id='$mapel_id'")->first();
+						
+						$arr_nilai4[$k->id_kd] = $get_nilai;
+					}
+				}
+				$s->nilai_kd3 = $arr_nilai3;
+				$s->nilai_kd4 = $arr_nilai4;
+			}
+		}
+
+		$data = [
+			'nama_file'=>'Nilai_mapel_'.$mapel_id.'_'.$kelas.$rombel,
+			'semester'=>$semester,
+			'rombongan_belajar'=>$rombongan_belajar,
+			'sekolah'=>$sekolah,
+			'mengajar'=>$mengajar,
+			'siswa'=>$siswa,
+			'kd3'=>$kd3,
+			'kd4'=>$kd4,
+		];
+		return view('guru.walikelas.isian.pages.template',$data);
 	}
 }

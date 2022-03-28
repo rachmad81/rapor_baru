@@ -59,7 +59,7 @@
 						<input type="number" class="form-control" name="uh[]" value="" @if($nilai->is_kunci==true) readonly @endif>
 						@endif
 						@else
-						<input type="number" class="form-control" name="uh[]" value="" @if($nilai->is_kunci==true) readonly @endif>
+						<input type="number" class="form-control" name="uh[]" value="">
 						@endif
 					</div>
 				</div>

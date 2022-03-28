@@ -41,7 +41,7 @@
 							<p>{{$w->nama_mapel}}</p>
 						</div>
 						<div class="icon">
-							<i class="fa fa-building"></i>
+							<i class="fa fa-book"></i>
 						</div>
 						<a href="{{route('guru-isian-main',['id_rombel'=>$w->id_rombongan_belajar,'mapel_id'=>$w->mapel_id])}}" class="small-box-footer">More Info <i class="fa fa-arrow-circle-right"></i></a>
 					</div>

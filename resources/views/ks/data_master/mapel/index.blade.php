@@ -62,7 +62,7 @@
       "ajax": "{{route('ks-data-master-mapel-get_data')}}",
       "columns": [
       {"data":"kategori"},
-      {"data":"kategori"},
+      {"data":"kategori_baru"},
       {"data":"mapel_id"},
       {"data":"nama"},
       ],

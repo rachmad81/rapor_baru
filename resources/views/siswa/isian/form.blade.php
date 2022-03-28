@@ -72,6 +72,8 @@
 											</div>
 										</th>
 										@endforeach
+										@else
+										<th>Belum ada KD yang disetting</th>
 										@endif
 									</tr>
 									<tr>
@@ -96,10 +98,13 @@
 											@endif
 										</td>
 										@endforeach
-										@endif
 										<td>
 											<a href="javascript:void(0)" class="btn btn-sm btn-primary" @if($nilai_mapel->is_kunci==true) onclick="alert('Pengisian nilai sudah dikunci')" @else onclick="simpankd('uh','nph')" @endif>Simpan</a>
 										</td>
+										@else
+										<td>Belum ada KD yang disetting</td>
+										<td></td>
+										@endif
 									</tr>
 								</table>
 							</div>
@@ -123,6 +128,8 @@
 											</div>
 										</th>
 										@endforeach
+										@else
+										<th>Belum ada KD yang disetting</th>
 										@endif
 									</tr>
 									<tr>
@@ -147,10 +154,13 @@
 											@endif
 										</td>
 										@endforeach
-										@endif
 										<td>
 											<a href="javascript:void(0)" class="btn btn-sm btn-primary" @if($nilai_mapel->is_kunci==true) onclick="alert('Pengisian nilai sudah dikunci')" @else onclick="simpankd('npts','npts')" @endif>Simpan</a>
 										</td>
+										@else
+										<td>Belum ada KD yang disetting</td>
+										<td></td>
+										@endif
 									</tr>
 								</table>
 							</div>
@@ -174,6 +184,8 @@
 											</div>
 										</th>
 										@endforeach
+										@else
+										<th>Belum ada KD yang disetting</th>
 										@endif
 									</tr>
 									<tr>
@@ -198,10 +210,13 @@
 											@endif
 										</td>
 										@endforeach
-										@endif
 										<td>
 											<a href="javascript:void(0)" class="btn btn-sm btn-primary" @if($nilai_mapel->is_kunci==true) onclick="alert('Pengisian nilai sudah dikunci')" @else onclick="simpankd('npas','npas')" @endif>Simpan</a>
 										</td>
+										@else
+										<td>Belum ada KD yang disetting</td>
+										<td></td>
+										@endif
 									</tr>
 								</table>
 							</div>
@@ -227,6 +242,8 @@
 											</div>
 										</th>
 										@endforeach
+										@else
+										<th>Belum ada KD yang disetting</th>
 										@endif
 									</tr>
 									<tr>
@@ -251,10 +268,13 @@
 											@endif
 										</td>
 										@endforeach
-										@endif
 										<td>
 											<a href="javascript:void(0)" class="btn btn-sm btn-primary" @if($nilai_mapel->is_kunci==true) onclick="alert('Pengisian nilai sudah dikunci')" @else onclick="simpankd('keterampilan','keterampilan')" @endif>Simpan</a>
 										</td>
+										@else
+										<td>Belum ada KD yang disetting</td>
+										<td></td>
+										@endif
 									</tr>
 								</table>
 							</div>

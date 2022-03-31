@@ -33,6 +33,7 @@ Route::group(['middleware'=>'mid_guru'],function(){
             Route::post('/pages6','Guru\Walikelas\IsianController@pages6')->name('pages6');
             Route::post('/simpan_nilai','Guru\Walikelas\IsianController@simpan_nilai')->name('simpan_nilai');
             Route::get('/template','Guru\Walikelas\IsianController@template')->name('template');
+            Route::post('/simpan_uts','Guru\Walikelas\IsianController@simpan_uts')->name('simpan_uts');
         });
 
         Route::name('isian_wk-')->prefix('isian_wk')->group(function(){

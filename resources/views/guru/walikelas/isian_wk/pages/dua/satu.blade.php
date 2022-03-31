@@ -11,7 +11,7 @@
 	$options = [
 		[
 			'value'=>'0',
-			'text'=>'0'
+			'text'=>''
 		],
 		[
 			'value'=>'4',

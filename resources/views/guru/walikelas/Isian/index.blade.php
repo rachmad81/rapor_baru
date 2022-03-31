@@ -248,5 +248,22 @@
 			swal('Whooops','Terjadi kesalahan pada aplikasi','error');
 		});
 	}
+
+	function simpan_uts(id_siswa){
+		var uts = $('input[name=uts_'+id_siswa+']').val();
+		var uas = $('input[name=uas_'+id_siswa+']').val();
+
+		var data = {
+			id_siswa:id_siswa,
+			uts:uts,
+			uas:uas,
+		};
+
+		$.post("{{route('guru-isian-simpan_uts')}}",data,function(data){
+			swal(data.title,data.message,data.type);
+		}).fail(function(){
+			swal('Whooops','Terjadi kesalahan pada aplikasi','error');
+		});
+	}
 </script>
 @endsection

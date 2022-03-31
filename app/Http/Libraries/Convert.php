@@ -108,23 +108,24 @@ class Convert
 
 		$catatan	='';
 		
-		$kd = DB::connection($conn)->table($schema.'.kd')->whereRaw("mapel_id='$mapel_id' AND no_ki='4' and kelas='$kelas'")->orderBy('id_kd','ASC')->offset($kd_tertinggi)->limit(1)->first();
+		$kd = DB::connection($conn)->table($schema.'.kd')->whereRaw("mapel_id='$mapel_id' AND no_ki='3' and kelas='$kelas'")->orderBy('id_kd','ASC')->offset($kd_tertinggi)->limit(1)->first();
 		$hasil_kd = (!empty($kd)) ? $kd->isi : 'nothing';
 		
 		if($huruf == 'A'){
 			$catatan	= "Sangat Baik, menguasai dan memahami semua kompetensi, terutama ";
 			$catatan.= $hasil_kd;
 		}elseif($huruf == 'B'){
+			$kd = DB::connection($conn)->table($schema.'.kd')->whereRaw("mapel_id='$mapel_id' AND no_ki='3' and kelas='$kelas'")->orderBy('id_kd','ASC')->offset($kd_terendah)->limit(1)->first();
+			$hasil_kd = (!empty($kd)) ? $kd->isi : 'nothing';
+
 			$catatan	= "Menguasai sebagian besar kompetensi yang dipersyaratkan dengan baik. Perlu ditingkatkan pemahaman pada kompetensi ";
 			$catatan.= $hasil_kd. " perlu ditingkatkan";	
 		}elseif($huruf == 'C'){
+			$kd = DB::connection($conn)->table($schema.'.kd')->whereRaw("mapel_id='$mapel_id' AND no_ki='3' and kelas='$kelas'")->orderBy('id_kd','ASC')->offset($kd_terendah)->limit(1)->first();
+			$hasil_kd = (!empty($kd)) ? $kd->isi : 'nothing';
+
 			$catatan	= "Beberapa kompetensi telah dikuasai dengan cukup baik. Kompetensi " ;
 			$catatan.= $hasil_kd ;
-
-			$catatan.= ", $hasil_kd ";
-			if($kd_terendah3 <> $kd_terendah2) {
-				$catatan.= " dan $hasil_kd  ";
-			}
 			$catatan.= " perlu ditingkatkan.";
 		}elseif($huruf == 'D'){
 			$catatan = "Belum menguasai sebagian besar kompetensi yang dipersyaratkan.";
@@ -148,17 +149,17 @@ class Convert
 
 			$catatan.= $hasil_kd;			
 		}elseif($huruf == 'B'){
+			$kd = DB::connection($conn)->table($schema.'.kd')->whereRaw("mapel_id='$mapel_id' AND no_ki='4' and kelas='$kelas'")->orderBy('id_kd','ASC')->offset($kd_terendah)->limit(1)->first();
+			$hasil_kd = (!empty($kd)) ? $kd->isi : 'nothing';
+
 			$catatan	= "Terampil pada sebagian besar  kompetens yang dipersyaratkani. Perlu ditingkatkan keterampilan pada kompetensi ";
-		
 			$catatan.= $hasil_kd. " perlu ditingkatkan";
 		}elseif($huruf == 'C'){
+			$kd = DB::connection($conn)->table($schema.'.kd')->whereRaw("mapel_id='$mapel_id' AND no_ki='4' and kelas='$kelas'")->orderBy('id_kd','ASC')->offset($kd_terendah)->limit(1)->first();
+			$hasil_kd = (!empty($kd)) ? $kd->isi : 'nothing';
+
 			$catatan	= "Cukup terampil dalam beberapa kompetensi. Kompetensi ";
 			$catatan.= $hasil_kd ;
-
-			$catatan.= ", $hasil_kd ";
-			if($kd_terendah3 <> $kd_terendah2){
-				$catatan.= " dan $hasil_kd ";
-			}
 			$catatan.=" perlu ditingkatkan.";
 		}elseif($huruf == 'D'){
 			$catatan = "Belum terampil pada sebagian besar kompetensi yang dipersyaratkan.";

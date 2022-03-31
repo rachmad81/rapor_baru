@@ -22,21 +22,12 @@
 		<td class="headcol">{{($k+1)}}</td>
 		<td class="headcol" style="white-space: nowrap;">{!!$s->nama!!}</td>
 		@if($kd->count()!=0)
-		@if(count($s->nilai)!=0)
 		@foreach($kd as $k=>$v)
 		<td>
 			<input type="hidden" name="id_kd_{{$s->id_siswa}}[]" value="{{$v->id_kd}}">
-			<input type="number" name="npas_{{$s->id_siswa}}[]" value="{{$s->nilai[$v->id_kd]}}">
+			<input type="number" name="npas_{{$s->id_siswa}}[]" value="{{(isset($s->nilai[$v->id_kd]) && $s->nilai[$v->id_kd]!=0) ? $s->nilai[$v->id_kd] : ''}}">
 		</td>
 		@endforeach
-		@else
-		@foreach($kd as $k=>$v)
-		<td>
-			<input type="hidden" name="id_kd_{{$s->id_siswa}}[]" value="{{$v->id_kd}}">
-			<input type="number" name="npas_{{$s->id_siswa}}[]" value="">
-		</td>
-		@endforeach
-		@endif
 		@else
 		<td>..:: KD tidak disetting ::..</td>
 		@endif

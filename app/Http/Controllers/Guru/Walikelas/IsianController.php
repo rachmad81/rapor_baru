@@ -71,6 +71,7 @@ class IsianController extends Controller
 
 	function pages(Request $request){
 		$i = $request->i;
+		$jenjang = Session::get('jenjang');
 		$content = 'Pilih Tab';
 
 		switch ($i) {
@@ -78,10 +79,18 @@ class IsianController extends Controller
 			$content = $this->show1();
 			break;
 			case '2':
-			$content = view('guru.walikelas.isian.pages.dua')->render();
+			if($jenjang=='SD'){
+				$content = view('guru.walikelas.isian.pages.dua')->render();
+			}else{
+				$content = view('guru.walikelas.isian.pages.smp.dua')->render();
+			}
 			break;
 			case '3':
-			$content = view('guru.walikelas.isian.pages.tiga')->render();
+			if($jenjang=='SD'){
+				$content = view('guru.walikelas.isian.pages.tiga')->render();
+			}else{
+				$content = view('guru.walikelas.isian.pages.smp.tiga')->render();
+			}
 			break;
 			case '4':
 			$content = view('guru.walikelas.isian.pages.empat')->render();
@@ -201,18 +210,29 @@ class IsianController extends Controller
 		$kolom = 'nph';
 
 		if($siswa->count()!=0){
-			foreach($siswa as $s){
-				$arr_nilai = [];
-				if($kd->count()!=0){
-					foreach($kd as $k){
-						$get_nilai = DB::connection($conn)->table($this->schema.'.detail_nilai_mapel as dp')
-						->join($this->schema.'.nilai_mapel as np','np.id_nilai_mapel','dp.nilai_mapel_id')
-						->whereRaw("dp.kd_id='$k->id_kd' AND np.anggota_rombel_id='$s->id_anggota_rombel' AND np.mapel_id='$mapel_id'")->first();
-						$arr_nilai[$k->id_kd] = (!empty($get_nilai)) ? $get_nilai->$kolom : '';
+			if($jenjang=='SD'){
+				foreach($siswa as $s){
+					$arr_nilai = [];
+					if($kd->count()!=0){
+						foreach($kd as $k){
+							$get_nilai = DB::connection($conn)->table($this->schema.'.detail_nilai_mapel as dp')
+							->join($this->schema.'.nilai_mapel as np','np.id_nilai_mapel','dp.nilai_mapel_id')
+							->whereRaw("dp.kd_id='$k->id_kd' AND np.anggota_rombel_id='$s->id_anggota_rombel' AND np.mapel_id='$mapel_id'")->first();
+							$arr_nilai[$k->id_kd] = (!empty($get_nilai)) ? $get_nilai->$kolom : '';
+						}
 					}
-				}
 
-				$s->nilai = $arr_nilai;
+					$s->nilai = $arr_nilai;
+				}
+			}else{
+				foreach($siswa as $s){
+					$arr_nilai = [];
+					$get_nilai = DB::connection($conn)->table($this->schema.'.nilai_mapel as np')
+					->whereRaw("np.anggota_rombel_id='$s->id_anggota_rombel' AND np.mapel_id='$mapel_id'")->first();
+
+					$s->uts = (!empty($get_nilai)) ? $get_nilai->pts : '';;
+					$s->uas = (!empty($get_nilai)) ? $get_nilai->pas : '';;
+				}
 			}
 		}
 
@@ -221,7 +241,11 @@ class IsianController extends Controller
 			'kd'=>$kd,
 		];
 
-		$content = view('guru.walikelas.isian.pages.dua.satu',$data)->render();
+		if($jenjang=='SD'){
+			$content = view('guru.walikelas.isian.pages.dua.satu',$data)->render();
+		}else{
+			$content = view('guru.walikelas.isian.pages.smp.dua.satu',$data)->render();
+		}
 
 		return $content;
 	}
@@ -246,7 +270,11 @@ class IsianController extends Controller
 
 		$kd = DB::connection($conn)->table($this->schema.'.kd')->whereRaw("kelas='$kelas' AND mapel_id='$mapel_id' AND no_ki='3'")->orderBy('id_kd','ASC')->get();
 
-		$kolom = 'npts';
+		if($jenjang=='SD'){
+			$kolom = 'npts';
+		}else{
+			$kolom = 'nph';
+		}
 
 		if($siswa->count()!=0){
 			foreach($siswa as $s){
@@ -269,7 +297,11 @@ class IsianController extends Controller
 			'kd'=>$kd,
 		];
 
-		$content = view('guru.walikelas.isian.pages.dua.dua',$data)->render();
+		if($jenjang=='SD'){
+			$content = view('guru.walikelas.isian.pages.dua.dua',$data)->render();
+		}else{
+			$content = view('guru.walikelas.isian.pages.smp.dua.dua',$data)->render();
+		}
 
 		return $content;
 	}
@@ -294,7 +326,11 @@ class IsianController extends Controller
 
 		$kd = DB::connection($conn)->table($this->schema.'.kd')->whereRaw("kelas='$kelas' AND mapel_id='$mapel_id' AND no_ki='3'")->orderBy('id_kd','ASC')->get();
 
-		$kolom = 'npas';
+		if($jenjang=='SD'){
+			$kolom = 'npas';
+		}else{
+			$kolom = 'npts';
+		}
 
 		if($siswa->count()!=0){
 			foreach($siswa as $s){
@@ -317,7 +353,11 @@ class IsianController extends Controller
 			'kd'=>$kd,
 		];
 
-		$content = view('guru.walikelas.isian.pages.dua.tiga',$data)->render();
+		if($jenjang=='SD'){
+			$content = view('guru.walikelas.isian.pages.dua.tiga',$data)->render();
+		}else{
+			$content = view('guru.walikelas.isian.pages.smp.dua.tiga',$data)->render();
+		}
 
 		return $content;
 	}
@@ -392,7 +432,11 @@ class IsianController extends Controller
 			'kd'=>$kd,
 		];
 
-		$content = view('guru.walikelas.isian.pages.tiga.satu',$data)->render();
+		if($jenjang=='SD'){
+			$content = view('guru.walikelas.isian.pages.tiga.satu',$data)->render();
+		}else{
+			$content = view('guru.walikelas.isian.pages.smp.tiga.satu',$data)->render();
+		}
 
 		return $content;
 	}
@@ -417,12 +461,34 @@ class IsianController extends Controller
 
 		$kd = DB::connection($conn)->table($this->schema.'.kd')->whereRaw("kelas='$kelas' AND mapel_id='$mapel_id' AND no_ki='4'")->orderBy('id_kd','ASC')->get();
 
+		$kolom = 'portofolio';
+
+		if($siswa->count()!=0){
+			foreach($siswa as $s){
+				$arr_nilai = [];
+				if($kd->count()!=0){
+					foreach($kd as $k){
+						$get_nilai = DB::connection($conn)->table($this->schema.'.detail_nilai_mapel as dp')
+						->join($this->schema.'.nilai_mapel as np','np.id_nilai_mapel','dp.nilai_mapel_id')
+						->whereRaw("dp.kd_id='$k->id_kd' AND np.anggota_rombel_id='$s->id_anggota_rombel' AND np.mapel_id='$mapel_id'")->first();
+						$arr_nilai[$k->id_kd] = (!empty($get_nilai)) ? $get_nilai->$kolom : '';
+					}
+				}
+
+				$s->nilai = $arr_nilai;
+			}
+		}
+
 		$data = [
 			'siswa'=>$siswa,
 			'kd'=>$kd,
 		];
 
-		$content = view('guru.walikelas.isian.pages.tiga.dua',$data)->render();
+		if($jenjang=='SD'){
+			$content = view('guru.walikelas.isian.pages.tiga.dua',$data)->render();
+		}else{
+			$content = view('guru.walikelas.isian.pages.smp.tiga.dua',$data)->render();
+		}
 
 		return $content;
 	}
@@ -447,12 +513,34 @@ class IsianController extends Controller
 
 		$kd = DB::connection($conn)->table($this->schema.'.kd')->whereRaw("kelas='$kelas' AND mapel_id='$mapel_id' AND no_ki='4'")->orderBy('id_kd','ASC')->get();
 
+		$kolom = 'proyek';
+
+		if($siswa->count()!=0){
+			foreach($siswa as $s){
+				$arr_nilai = [];
+				if($kd->count()!=0){
+					foreach($kd as $k){
+						$get_nilai = DB::connection($conn)->table($this->schema.'.detail_nilai_mapel as dp')
+						->join($this->schema.'.nilai_mapel as np','np.id_nilai_mapel','dp.nilai_mapel_id')
+						->whereRaw("dp.kd_id='$k->id_kd' AND np.anggota_rombel_id='$s->id_anggota_rombel' AND np.mapel_id='$mapel_id'")->first();
+						$arr_nilai[$k->id_kd] = (!empty($get_nilai)) ? $get_nilai->$kolom : '';
+					}
+				}
+
+				$s->nilai = $arr_nilai;
+			}
+		}
+
 		$data = [
 			'siswa'=>$siswa,
 			'kd'=>$kd,
 		];
 
-		$content = view('guru.walikelas.isian.pages.tiga.tiga',$data)->render();
+		if($jenjang=='SD'){
+			$content = view('guru.walikelas.isian.pages.tiga.tiga',$data)->render();
+		}else{
+			$content = view('guru.walikelas.isian.pages.smp.tiga.tiga',$data)->render();
+		}
 
 		return $content;
 	}
@@ -477,18 +565,51 @@ class IsianController extends Controller
 
 		$kd = DB::connection($conn)->table($this->schema.'.kd')->whereRaw("kelas='$kelas' AND mapel_id='$mapel_id' AND no_ki='4'")->orderBy('id_kd','ASC')->get();
 
+		$kolom = 'produk';
+
+		if($siswa->count()!=0){
+			foreach($siswa as $s){
+				$arr_nilai = [];
+				if($kd->count()!=0){
+					foreach($kd as $k){
+						$get_nilai = DB::connection($conn)->table($this->schema.'.detail_nilai_mapel as dp')
+						->join($this->schema.'.nilai_mapel as np','np.id_nilai_mapel','dp.nilai_mapel_id')
+						->whereRaw("dp.kd_id='$k->id_kd' AND np.anggota_rombel_id='$s->id_anggota_rombel' AND np.mapel_id='$mapel_id'")->first();
+						$arr_nilai[$k->id_kd] = (!empty($get_nilai)) ? $get_nilai->$kolom : '';
+					}
+				}
+
+				$s->nilai = $arr_nilai;
+			}
+		}
+
 		$data = [
 			'siswa'=>$siswa,
 			'kd'=>$kd,
 		];
 
-		$content = view('guru.walikelas.isian.pages.tiga.empat',$data)->render();
+		if($jenjang=='SD'){
+			$content = view('guru.walikelas.isian.pages.tiga.empat',$data)->render();
+		}else{
+			$content = view('guru.walikelas.isian.pages.smp.tiga.empat',$data)->render();
+		}
 
 		return $content;
 	}
 
 	// PAGE 5
 	function show5(){
+		$jenjang = Session::get('jenjang');
+		if($jenjang=='SD'){
+			$content = $this->show5SD();
+		}else{
+			$content = $this->show5SMP();
+		}
+
+		return $content;
+	}
+
+	function show5SD(){
 		$coni = new Request;
 
 		$npsn = Session::get('npsn');
@@ -726,220 +847,174 @@ class IsianController extends Controller
 		return $content;
 	}
 
-	// PAGE 5
-	function show5Old(){
+	function show5SMP(){
 		$coni = new Request;
-		$coni->jenjang = Session::get('jenjang');
-		$conn = Setkoneksi::set_koneksi($coni);
 
+		$npsn = Session::get('npsn');
+		$nama_schema = Session::get('nama_schema');
+		$jenjang = Session::get('jenjang');
+		$id_rombel = Session::get('id_rombel');
 		$kelas = Session::get('kelas_wk');
 		$rombel = Session::get('rombel_wk');
-		$mapel_id = Session::get('mapel_id_wk');
-		$nama_schema = Session::get('nama_schema');
-		$npsn = Session::get('npsn');
-		$jumkd		= 20;
-		$tgl		= date('Ymd');
+		$mapel_id = Session::get('mapel_id');
 
-		$kkm1 = DB::connection($conn)->table($nama_schema.'.mengajar')->select('kkm')->whereRaw("npsn='$npsn' AND mapel_id='$mapel_id' AND kelas='$kelas' AND rombel='$rombel'")->first();
-		$kkm2 = DB::connection($conn)->table('public.sekolah')->select('kkm')->whereRaw("npsn='$npsn'")->first();
+		$coni->jenjang = $jenjang;
+		$conn = Setkoneksi::set_koneksi($coni);
 
-		$kkm  = (!empty($kkm2)) ? $kkm2->kkm : $kkm1->kkm;
+		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
+		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->orderBy('s.nama','ASC')->get();
+
+		$kd3 = DB::connection($conn)->table($this->schema.'.kd')->whereRaw("kelas='$kelas' AND mapel_id='$mapel_id' AND no_ki='3'")->orderBy('id_kd','ASC')->get();
+		$kd4 = DB::connection($conn)->table($this->schema.'.kd')->whereRaw("kelas='$kelas' AND mapel_id='$mapel_id' AND no_ki='4'")->orderBy('id_kd','ASC')->get();
+		$kkm = 75;
 
 		$temp = round(((100 - $kkm)/3),0);
 		$c	  = $kkm + ($temp-1);
 		$b	  = $c + ($temp);
 		$a    = 100 - $temp;
 
-
-		$kdki3 = DB::connection($conn)->table($nama_schema.'.master_kd')->whereRaw("kelas='$kelas' and mapel_id='$mapel_id'  and no_ki='3' AND semester='1'")->get();
-		$kdki4 = DB::connection($conn)->table($nama_schema.'.master_kd')->whereRaw("kelas='$kelas' and mapel_id='$mapel_id'  and no_ki='4' AND semester='1'")->get();
-
-		$mapel = DB::connection($conn)->table('public.rapor_mapel')->whereRaw("mapel_id='$mapel_id'")->first();
+		$adanilai=false;
+		$kd_pengetahuan_tertinggi	= 1;
+		$nilai_pengetahuan_tertinggi= 0;
+		$kd_pengetahuan_terendah	= 1;
+		$nilai_pengetahuan_terendah	= 100;
+		$kd_pengetahuan_terendah2	= 0;
+		$kd_pengetahuan_terendah3	= 0;
 
 		$tampil = [];
-
 		$id=1;
-		$get_siswa = DB::connection($conn)->table('public.siswa as s')
-		->leftjoin($nama_schema.'.nilai as n',function($join){
-			return $join->on(function($jj){
-				return $jj->on('s.npsn','=','n.npsn')->orOn('s.npsn_asal','=','n.npsn');
-			})->on('s.id_siswa','=','n.id_siswa');
-		},'left outer')
-		->selectRaw("s.nama ,s.id_siswa as idsiswa, n.*")
-		->whereRaw("n.npsn='$npsn' and n.kelas='$kelas' and n.mapel_id='$mapel_id' and n.rombel='$rombel' AND status_siswa='Aktif'")
-		->orderBy("s.nama")->get();
 
-		$hapus_nilai_kahir = DB::connection($conn)->table($nama_schema.'.nilai_akhir')->whereRaw("npsn='$npsn' AND kelas='$kelas' AND rombel='$rombel' AND mapel_id='$mapel_id'")->delete();
+		if($siswa->count()!=0){
+			foreach($siswa as $s){
+				$huruf_ki3 = '';
+				$nilai_ki3 = 0;
+				$catatan3 = '';
+				$nilai_ki4 = 0;
+				$huruf_ki4 = '';
+				$catatan4 = '';
 
-		foreach($get_siswa as $k=>$v){
-			/* ----- KI-3 ----- */
-			$np_pembagi					= 0;
-			$np_jumlah					= 0;
+				$get_nilai_uts = DB::connection($conn)->table($this->schema.'.nilai_mapel as np')
+				->whereRaw("np.anggota_rombel_id='$s->id_anggota_rombel' AND np.mapel_id='$mapel_id'")->first();
 
-			$kd_pengetahuan_tertinggi	= 1;
-			$nilai_pengetahuan_tertinggi= 0;
-			$kd_pengetahuan_terendah	= 1;
-			$nilai_pengetahuan_terendah	= 100;
-			$kd_pengetahuan_terendah2	= 0;
-			$kd_pengetahuan_terendah3	= 0;
+				$nilai_ki3 = (!empty($get_nilai_uts)) ? ($get_nilai_uts->pts+$get_nilai_uts->pas) : 0;
 
-			for($i=1;$i<=$jumkd;$i++){ 
-				#$jumkd = 20;
-				$pembagi_kd=4;
-				$adanilai=false;
+				// KI-3
+				if($kd3->count()!=0){
+					$pembagi = [0,0];
+					$aspek = ['nph','npts'];
+					$nilai_kd = [0,0];
+					$kd_terendah = '';
+					$kd_tertinggi = '';
+					$tinggi = 0;
+					$rendah = 100;
 
-				$kolom_nph = 'nph_'.$i;
-				$kolom_npas = 'npas_'.$i;
-				$kolom_npts = 'npts_'.$i;
+					foreach($kd3 as $i=>$k){
+						$get_nilai = DB::connection($conn)->table($this->schema.'.detail_nilai_mapel as dp')
+						->join($this->schema.'.nilai_mapel as np','np.id_nilai_mapel','dp.nilai_mapel_id')
+						->selectRaw("*,COALESCE(nph,0) as nph,COALESCE(npts,0) as npts,COALESCE(npas,0) as npas")
+						->whereRaw("dp.kd_id='$k->id_kd' AND np.anggota_rombel_id='$s->id_anggota_rombel' AND np.mapel_id='$mapel_id'")->first();
+						
+						if(!empty($get_nilai)){
+							for ($j=0; $j < count($aspek); $j++) { 
+								$kolom = $aspek[$j];
+								if($get_nilai->$kolom!=0){
+									$nilai_kd[$j] += $get_nilai->$kolom;
+									$pembagi[$j]++;
 
-				if(($v->$kolom_nph)>0 && ($v->$kolom_npas)>0){
-					$np_pembagi++;
-					#$np_jumlah+=$v->$kolom_nph;
-					#$pembagi_kd++;
-					$adanilai=true;
-				}
-				if($v->$kolom_npts==0){
-					$pembagi_kd=$pembagi_kd-1;
-				}
+									if($tinggi<$get_nilai->$kolom){
+										$kd_tertinggi = $i;
+										$tinggi = $get_nilai->$kolom;
+									}
 
-				if($adanilai==true){ 
-					$nilai_kd=((2*$v->$kolom_nph)+($v->$kolom_npts)+($v->$kolom_npas))/$pembagi_kd;
-				}else{ 
-					$nilai_kd=0;
-				}
-
-				$np_jumlah+=$nilai_kd;
-
-				if($adanilai){
-					if($nilai_kd > $nilai_pengetahuan_tertinggi){
-						$nilai_pengetahuan_tertinggi=$nilai_kd;
-						$kd_pengetahuan_tertinggi=$i;
+									if($rendah>$get_nilai->$kolom){
+										$kd_terendah = $i;
+										$rendah = $get_nilai->$kolom;
+									}
+								}
+							}
+						}
 					}
-					if($nilai_kd<$nilai_pengetahuan_terendah){
-						$nilai_pengetahuan_terendah=$nilai_kd;
-						$kd_pengetahuan_terendah3=$kd_pengetahuan_terendah2;
-						$kd_pengetahuan_terendah2=$kd_pengetahuan_terendah;
-						$kd_pengetahuan_terendah=$i;
+
+					for ($i=0; $i < count($aspek); $i++) { 						
+						if($pembagi[$i]!=0){
+							$nilai_ki3 += $nilai_kd[$i]/$pembagi[$i];
+						}
 					}
-				}
-			} 
-			# end for
 
-			if($np_pembagi>0){ 
-				$np=$np_jumlah/$np_pembagi;
-			} 
-			else{ 
-				$np=0;
-			}
+					$nilai_ki3 = $nilai_ki3/4;
 
-
-			$nilai_ki3=$np;
-			/*if($uas == 0){
-				$nilai_ki3=round((((2*$np)+$uts)/3),2);
-			}else{
-				$nilai_ki3=round((((2*$np)+$uts+$uas)/4),2);
-			}
-			*/
-
-			$huruf_ki3=Convert::angka2hurufsma($nilai_ki3,$kkm);
-			$catatan3=Convert::catatan_ki3($mapel_id,$kelas,$huruf_ki3,$kd_pengetahuan_terendah,$kd_pengetahuan_terendah2,$kd_pengetahuan_terendah3,$kd_pengetahuan_tertinggi);
-			/* ----- END KI-3 ----- */			
-
-
-			/* ----- KI-4 ----- */
-			// Untuk Mencari Nilai KI-4 //
-			$praktek_pembagi=0;
-			$praktek_jumlah=0;
-			for($i=1;$i<=$jumkd;$i++){
-				$kolom_praktek = "praktek_".$i;
-				if($v->$kolom_praktek>0){
-					$praktek_pembagi++;
-					$praktek_jumlah+=$v->$kolom_praktek;
-				}
-			}
-			if($praktek_pembagi>0){ 
-				$praktek=$praktek_jumlah/$praktek_pembagi; 
-			}else{
-				$praktek=0;
-			}
-
-			//Mencari Nilai Rata-Rata Optimum dari Setiap Aspek
-			$nilai_ki4=0;
-			$nilai_ki4=$praktek;
-
-			//$nr=round(($praktek+$proyek+$portofolio)/3);
-			$nr_ki4=round(($nilai_ki4),2);
-			//$angka_nr=toAngka($nr);
-			$huruf_nr_ki4=Convert::angka2hurufsma($nr_ki4,$kkm);
-			// End Untuk Mencari Nilai KI-4
-
-
-			// Untuk Mencari Deskripsi KI-4
-			$nr_pembagi=0;
-			$nr_jumlah=0;
-
-			$kd_ketrampilan_tertinggi	= 1;
-			$nilai_ketrampilan_tertinggi= 0;
-			$kd_ketrampilan_terendah	= 1;
-			$nilai_ketrampilan_terendah	= 100;
-			$kd_ketrampilan_terendah2	= 0;
-			$kd_ketrampilan_terendah3	= 0;
-
-			for($i=1;$i<=$jumkd;$i++){
-				$kolom_praktek = "praktek_".$i;
-				$pembagi_kd=0;
-				$adanilai=false;
-				if($v->$kolom_praktek>0){
-					$nr_pembagi++;
-					$nr_jumlah+=$v->$kolom_praktek;
-					$pembagi_kd++;
-					$adanilai=true;
-				}						
-
-				if($pembagi_kd>0 ){ 
-					$nilai_kd=($v->$kolom_praktek)/$pembagi_kd;
-				}else{
-					$nilai_kd=0;
+					$huruf_ki3=Convert::angka2hurufsma($nilai_ki3,$kkm);
+					$catatan3=Convert::catatan_ki3($mapel_id,$kelas,$huruf_ki3,$kd_terendah,'','',$kd_tertinggi);
 				}
 
-				if($adanilai){
-					if($nilai_kd>$nilai_ketrampilan_tertinggi){
-						$nilai_ketrampilan_tertinggi=$nilai_kd;
-						$kd_ketrampilan_tertinggi=$i;
-					}
-					if($nilai_kd<$nilai_ketrampilan_terendah){
-						$nilai_ketrampilan_terendah=$nilai_kd;									
-						$kd_ketrampilan_terendah3=$kd_ketrampilan_terendah2;
-						$kd_ketrampilan_terendah2=$kd_ketrampilan_terendah;
-						$kd_ketrampilan_terendah=$i;
-					}
-				}							
-			}					
-			if($nr_pembagi>0) 
-				$nr=$nr_jumlah/$nr_pembagi; 
-			else 
-				$nr=0;
 
-			$catatan4=Convert::catatan_ki4($mapel_id,$kelas,$huruf_nr_ki4,$kd_ketrampilan_terendah,$kd_ketrampilan_terendah2,$kd_ketrampilan_terendah3,$kd_ketrampilan_tertinggi);
-			// End Untuk Mencari Deskripsi KI-4 //
-			/* ----- END KI-4 ----- */
+				// KI-4
+				if($kd4->count()!=0){
+					$pembagi = [0,0,0,0];
+					$aspek = ['keterampilan','portofolio','produk','proyek'];
+					$nilai_kd = [0,0,0,0];
+					$kd_terendah = '';
+					$kd_tertinggi = '';
+					$tinggi = 0;
+					$rendah = 100;
 
-			if($nilai_ki3> 0 OR $nr_ki4 > 0){
-				
+					foreach($kd4 as $i=>$k){
+						$get_nilai = DB::connection($conn)->table($this->schema.'.detail_nilai_mapel as dp')
+						->join($this->schema.'.nilai_mapel as np','np.id_nilai_mapel','dp.nilai_mapel_id')
+						->selectRaw("*,COALESCE(keterampilan,0) as keterampilan,COALESCE(portofolio,0) as portofolio,COALESCE(produk,0) as produk,COALESCE(proyek,0) as proyek")
+						->whereRaw("dp.kd_id='$k->id_kd' AND np.anggota_rombel_id='$s->id_anggota_rombel' AND np.mapel_id='$mapel_id'")->first();
+						
+						if(!empty($get_nilai)){
+							for ($j=0; $j < count($aspek); $j++) { 
+								$kolom = $aspek[$j];
+								if($get_nilai->$kolom!=0){
+									$nilai_kd[$j] += $get_nilai->$kolom;
+									$pembagi[$j]++;
+
+									if($tinggi<$get_nilai->$kolom){
+										$kd_tertinggi = $i;
+										$tinggi = $get_nilai->$kolom;
+									}
+
+									if($rendah>$get_nilai->$kolom){
+										$kd_terendah = $i;
+										$rendah = $get_nilai->$kolom;
+									}
+								}
+							}
+						}
+					}
+
+					for ($i=0; $i < count($aspek); $i++) { 						
+						if($pembagi[$i]!=0){
+							$nilai_ki4 += $nilai_kd[$i]/$pembagi[$i];
+						}
+					}
+
+					$nilai_ki4 = $nilai_ki4/4;
+
+					$huruf_ki4=Convert::angka2hurufsma($nilai_ki4,$kkm);
+					$catatan4=Convert::catatan_ki4($mapel_id,$kelas,$huruf_ki4,$kd_terendah,'','',$kd_terendah);
+				}
+
 				if($nilai_ki3 != 0){
 					$show_hurufk1 = number_format($nilai_ki3,0)." (".$huruf_ki3.")";
 				}else{
 					$show_hurufk1 = "&nbsp<br />&nbsp";
+					$catatan3 = '';
 				}
-				if($nr_ki4 != 0){
-					$show_hurufk2 = number_format($nr_ki4,0)." (".$huruf_nr_ki4.")";
+
+				if($nilai_ki4 != 0){
+					$show_hurufk2 = number_format($nilai_ki4,0)." (".$huruf_ki4.")";
 				}else{
 					$show_hurufk2 = "&nbsp<br />&nbsp";
+					$catatan4 = '';
 				}
-				
+
 				$baris = [
 					'id'=>$id,
-					'nama'=>$v->nama,
+					'nama'=>$s->nama,
 					'hurufk1'=>$show_hurufk1,
 					'catatan1'=>$catatan3,
 					'hurufk2'=>$show_hurufk2,
@@ -948,29 +1023,25 @@ class IsianController extends Controller
 
 				array_push($tampil,$baris);
 
-				$namasiswa	= str_replace("'", "&apos;", $v->nama);
-				$dta_insert = [
-					'npsn'=>$npsn,
-					'id_siswa'=>$v->id_siswa,
-					'nama'=>$namasiswa,
-					'kelas'=>$kelas,
-					'rombel'=>$rombel,
-					'mapel_id'=>$mapel_id,
-					'mapel'=>(!empty($mapel)) ? $mapel->nama : '',
-					'kategori'=>(!empty($mapel)) ? $mapel->kategori_baru : '',
-					'semester'=>'1',
-					'nilai_ki3'=>$nilai_ki3,
-					'predikat_ki3'=>$huruf_ki3,
-					'deskripsi_ki3'=>$catatan3,
-					'nilai_ki4'=>$nr_ki4,
-					'predikat_ki4'=>$huruf_nr_ki4,
-					'deskripsi_ki4'=>$catatan4,
-					'urutan'=>'0'.(!empty($mapel)) ? $mapel->urutan : '',
-					'tapel'=>'Ganjil 2021/2022',
-					'last_update'=>date('Y-m-d H:i:s'),
-				];
-				$simpan = DB::connection($conn)->table($nama_schema.'.nilai_akhir')->insert($dta_insert);
-				$id++;
+				if($nilai_ki3> 0 OR $nilai_ki4 > 0){
+					$namasiswa	= str_replace("'", "&apos;", $s->nama);
+					$dta_insert = [
+						'nilai_ki3'=>$nilai_ki3,
+						'predikat_ki3'=>$huruf_ki3,
+						'deskripsi_ki3'=>$catatan3,
+						'nilai_ki4'=>$nilai_ki4,
+						'predikat_ki4'=>$huruf_ki4,
+						'deskripsi_ki4'=>$catatan4,
+					];
+
+					$get_nilai_mapel = DB::connection($conn)->table($this->schema.'.nilai_mapel as np')
+					->whereRaw("np.anggota_rombel_id='$s->id_anggota_rombel' AND np.mapel_id='$mapel_id'")->first();
+					if(!empty($get_nilai_mapel)){
+						$get_nilai_mapel = DB::connection($conn)->table($this->schema.'.nilai_mapel as np')
+						->whereRaw("np.anggota_rombel_id='$s->id_anggota_rombel' AND np.mapel_id='$mapel_id'")->update($dta_insert);
+					}
+					$id++;
+				}
 			}
 		}
 
@@ -1035,6 +1106,51 @@ class IsianController extends Controller
 		$content = view('guru.walikelas.isian.pages.enam.satu',$data)->render();
 
 		return $content;
+	}
+
+	function simpan_uts(Request $request){
+		$id_siswa = $request->id_siswa;
+		$uas = $request->uas;
+		$uts = $request->uts;
+		$mapel_id = Session::get('mapel_id_wk');
+		$nama_schema = Session::get('nama_schema');
+		$kelas = Session::get('kelas_wk');
+		$rombel = Session::get('rombel_wk');
+		$id_rombel = Session::get('id_rombel');
+		$mapel_id = Session::get('mapel_id');
+		$npsn = Session::get('npsn');
+
+		$request->jenjang = Session::get('jenjang');
+		$conn = Setkoneksi::set_koneksi($request);
+
+		$anggota = DB::connection($conn)->table('public.anggota_rombel')->whereRaw("siswa_id='$id_siswa' AND rombongan_belajar_id='$id_rombel'")->first();
+		$id_anggota = '';
+		if(!empty($anggota)){
+			$id_anggota = $anggota->id_anggota_rombel;
+		}
+
+		$data_nilai_mapel = [
+			'anggota_rombel_id'=>$id_anggota,
+			'mapel_id'=>$mapel_id,
+		];
+
+		$get_nilai_mapel = DB::connection($conn)->table($this->schema.'.nilai_mapel')->where($data_nilai_mapel)->first();
+
+		$data_insert = array_merge($data_nilai_mapel,['pts'=>$uts,'pas'=>$uas]);
+
+		if(!empty($get_nilai_mapel)){
+			$simpan = DB::connection($conn)->table($this->schema.'.nilai_mapel')->where($data_nilai_mapel)->update($data_insert);
+		}else{
+			$simpan = DB::connection($conn)->table($this->schema.'.nilai_mapel')->insert($data_insert);
+		}
+
+		if($simpan){
+			$return = ['code'=>'200','title'=>'Success','type'=>'success','message'=>'Berhasil disimpan'];
+		}else{
+			$return = ['code'=>'250','title'=>'Whooops','type'=>'error','message'=>'Gagal disimpan'];
+		}
+
+		return $return;
 	}
 
 	function simpan_nilai(Request $request){

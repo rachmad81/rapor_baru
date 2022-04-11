@@ -17,6 +17,10 @@
 			<li>Untuk video tutorial petunjuk bisa dilihat di link youtube</li>
 			<li>Maka nilai mapel yg anda ampu ini akan sesuai dg yg barusan diunggah</li>
 		</ol>
-
+		<form method="post" id="upload_excel">
+			<input type="file" name="file_excel" accept=".xls,.xlsx">
+			<br>
+			<a href="javascript:void(0)" class="btn btn-sm btn-primary" id="btn-upload" onclick="upload_nilai()">Upload</a>
+		</form>
 	</div>
 </div>

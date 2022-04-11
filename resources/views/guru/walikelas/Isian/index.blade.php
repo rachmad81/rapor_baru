@@ -265,5 +265,26 @@
 			swal('Whooops','Terjadi kesalahan pada aplikasi','error');
 		});
 	}
+
+	function upload_nilai(){
+		var formData = new FormData($('form#upload_excel')[0]);
+
+		$('#btn-upload').hide();
+
+		$.ajax({
+			url : "{{route('guru-isian-upload_nilai')}}",
+			type : 'POST',
+			data : formData,
+			processData: false,  
+			contentType: false,  
+			success : function(data) {
+				swal(data.status,data.message,data.type);
+				$('#btn-upload').show();
+			}
+		}).fail(function(){
+			swal('Whooops','Terjadi kesalahan pada aplikasi','error');
+			$('#btn-upload').show();
+		});
+	}
 </script>
 @endsection

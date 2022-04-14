@@ -90,6 +90,15 @@
           </a>
         </li>
         <li class="nav-item">
+          <a href="{{route('ks-data-master-upload_nilai-main')}}" class="nav-link @if(isset($main_menu) && $main_menu=='upload') active @endif">
+            <i class="nav-icon fas fa-book"></i>
+            <p>
+              Upload nilai Akhir
+              <!-- <span class="right badge badge-danger">New</span> -->
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
           <a href="{{route('ks-data-master-rapor-kunci-main')}}" class="nav-link @if(isset($main_menu) && $main_menu=='kunci_rapor') active @endif">
             <i class="nav-icon fas fa-lock"></i>
             <p>

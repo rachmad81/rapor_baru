@@ -53,6 +53,13 @@ Route::middleware('mid_ks')->group(function(){
 				Route::post('/hapus','Ks\Datamaster\GurumengajarController@hapus')->name('hapus');
 			});
 
+			Route::name('upload_nilai-')->prefix('upload_nilai')->group(function(){
+				Route::get('/','Ks\Datamaster\UploadController@main')->name('main');
+				Route::post('/mapel','Ks\Datamaster\UploadController@mapel')->name('mapel');
+				Route::get('/template','Ks\Datamaster\UploadController@template')->name('template');
+				Route::post('/upload','Ks\Datamaster\UploadController@upload')->name('upload');
+			});
+
 			Route::name('rapor-')->prefix('rapor')->group(function(){
 				Route::name('kunci-')->prefix('kunci')->group(function(){
 					Route::get('/','Ks\Rapor\KunciController@main')->name('main');

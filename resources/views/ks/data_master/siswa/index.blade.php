@@ -51,6 +51,17 @@
                 </div>
               </div>  
             </div>
+            <div class="row">
+              <div class="col-lg-6">
+                <label>Pilih Semester</label>
+                <div class="input-group mb-3">
+                  <select name="semester" class="form-control" id="semester" onchange="get_siswa()">
+                    <option value="1" selected>Ganjil</option>
+                    <option value="2">Genap</option>
+                  </select>
+                </div>
+              </div>  
+            </div>
             <table id="example2" class="table table-bordered table-hover">
               <thead>
                 <tr>
@@ -83,9 +94,10 @@
   $(document).ready(function () {
     var tahun_ajaran = $('select[name=tahun_ajaran]').val();
     var rombel = $('select[name=rombel]').val();
+    var semester = $('select[name=semester]').val();
 
     dt_table = $('#example2').DataTable( {
-      "ajax": "{{route('ks-data-master-siswa-get_data')}}?tahun_ajaran="+tahun_ajaran+'&kelas='+rombel,
+      "ajax": "{{route('ks-data-master-siswa-get_data')}}?tahun_ajaran="+tahun_ajaran+'&kelas='+rombel+'&semester='+semester,
       "columns": [
       { "data": "nis" },
       { "data": "nik" },
@@ -126,8 +138,11 @@
   function get_siswa(){
     var tahun_ajaran = $('select[name=tahun_ajaran]').val();
     var rombel = $('select[name=rombel]').val();
+    var semester = $('select[name=semester]').val();
+
+    $('#example2 tbody').html('');
     
-    dt_table.ajax.url("{{route('ks-data-master-siswa-get_data')}}?tahun_ajaran="+tahun_ajaran+'&kelas='+rombel).load();
+    dt_table.ajax.url("{{route('ks-data-master-siswa-get_data')}}?tahun_ajaran="+tahun_ajaran+'&kelas='+rombel+'&semester='+semester).load();
   }
 </script>
 @endsection

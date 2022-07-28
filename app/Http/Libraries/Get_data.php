@@ -7,6 +7,11 @@ use DB,Session;
 
 class Get_data
 {
+	public static function set_schema(){
+		$schema = env('CURRENT_SCHEMA','production');
+		return $schema;
+	}
+
 	public static function get_tahun_ajaran(Request $request=null){
 		$coni = new Request;
 		$coni->jenjang = Session::get('jenjang');
@@ -82,7 +87,7 @@ class Get_data
 		$mapel = DB::connection($conn)->table('public.rapor_mapel')->orderByRaw("kategori ASC,nama ASC")->get();
 		if($mapel->count()!=0){
 			foreach($mapel as $m){
-				$kd = DB::connection($conn)->table('rapor_dummy.kd')->whereRaw("mapel_id='".$m->mapel_id."'")->count();
+				$kd = DB::connection($conn)->table(Get_data::set_schema().'.kd')->whereRaw("mapel_id='".$m->mapel_id."'")->count();
 				$m->kd = $kd;
 			}
 		}
@@ -142,7 +147,7 @@ class Get_data
 		$coni->jenjang = Session::get('jenjang');
 		$conn = Setkoneksi::set_koneksi($coni);
 
-		$mengajar = DB::connection($conn)->table('rapor_dummy.mengajar as m')
+		$mengajar = DB::connection($conn)->table(Get_data::set_schema().'.mengajar as m')
 		->leftjoin('public.rapor_mapel as ma','ma.mapel_id','=','m.mapel_id')
 		->leftjoin('public.rombongan_belajar as rb','rb.id_rombongan_belajar','=','m.rombel_id')
 		->selectRaw("*,ma.nama as nama_mapel")

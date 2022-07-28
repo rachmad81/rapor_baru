@@ -35,12 +35,18 @@ class SiswaController extends Controller
 		$kelasrombel = explode('|||',$request->kelas);
 		$kelas = (count($kelasrombel)>1) ? $kelasrombel[0] : '';
 		$rombel = (count($kelasrombel)>1) ? $kelasrombel[1] : '';
+		$semester = $request->semester;
 
 		if($id!=null){
 			$ta = DB::connection($conn)->table('public.tahun_ajaran')->where('id_tahun_ajaran',$id)->first();
 			$now = date('Y-m-d');
 			if($now>=date('Y-m-d',strtotime($ta->tgl_setting_awal)) && $now<=date('Y-m-d',strtotime($ta->tgl_setting_akhir))){
-				$siswa = DB::connection($conn)->table('public.siswa')->whereRaw("npsn='$npsn' AND kelas='$kelas' AND rombel='$rombel' AND status_siswa='Aktif' AND alumni is not true")->get();
+				$siswa = DB::connection($conn)->table('public.rombongan_belajar as rb')
+				->join('public.anggota_rombel as ar','ar.rombongan_belajar_id','rb.id_rombongan_belajar')
+				->join('public.siswa as s',function($join){
+					return $join->on('s.id_siswa','=','ar.id_siswa')->on('s.siswa_id','=','ar.siswa_id');
+				})
+				->whereRaw("rb.npsn='$npsn' AND rb.kelas='$kelas' AND rb.rombel='$rombel' AND s.status_siswa='Aktif' AND s.alumni is not true AND rb.semester='$semester'")->get();
 			}else{
 				$siswa = [];
 			}

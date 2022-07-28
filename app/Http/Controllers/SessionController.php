@@ -35,8 +35,8 @@ class SessionController extends Controller
 		if($now>=date('Y-m-d',strtotime($ta->tgl_setting_awal)) && $now<=date('Y-m-d',strtotime($ta->tgl_setting_akhir))){
 			$kelas = DB::connection($conn)->table('public.siswa')->selectRaw("npsn,kelas,rombel")->whereRaw("npsn='$npsn' AND status_siswa='Aktif' AND alumni is not true")->groupByRaw("npsn,kelas,rombel")->orderByRaw("kelas ASC,rombel ASC")->get();
 		}else{
-			if(date('Y-m-d',strtotime($ta->tgl_setting_awal))){
-				$kelas = [];
+			if(date('Y-m-d',strtotime($ta->tgl_setting_awal)) > $now){
+				$kelas = ['message'=>'Tahun ajaran belum di buka'];
 				$code = '250';
 			}else{
 				$kelas = DB::connection($conn)->table('public.siswa')->selectRaw("npsn,kelas,rombel")->whereRaw("npsn='$npsn' AND status_siswa='Aktif' AND alumni is not true")->groupByRaw("npsn,kelas,rombel")->orderByRaw("kelas ASC,rombel ASC")->get();
@@ -58,7 +58,7 @@ class SessionController extends Controller
 		$conn = Setkoneksi::set_koneksi($request);
 		$npsn = Session::get('npsn');
 
-		$rb = DB::connection($conn)->table('public.rombongan_belajar')->whereRaw("npsn='$npsn'AND tahun_ajaran_id='$id' AND semester='$semester'")->get();
+		$rb = DB::connection($conn)->table('public.rombongan_belajar')->whereRaw("npsn='$npsn'AND tahun_ajaran_id='$id' AND semester='$semester'")->orderByRaw("kelas asc,rombel asc")->get();
 
 		$code = '200';
 

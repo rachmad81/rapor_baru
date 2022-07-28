@@ -41,6 +41,7 @@
 							<div class="col-lg-3">
 								<label>Semester</label>
 								<select class="form-control" name="semester" onchange="set_ta()">
+									<option value="">..:: semester ::..</option>
 									<option value="1">Ganjil</option>
 									<option value="2">Genap</option>
 								</select>

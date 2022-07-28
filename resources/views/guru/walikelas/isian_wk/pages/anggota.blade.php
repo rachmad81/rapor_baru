@@ -1,5 +1,5 @@
 <div>
-	<a href="javascript:void(0)" class="btn btn-sm btn-primary" onclick="generate_anggota()">Generate Anggota Rombel Kelas </a>
+	{{-- <a href="javascript:void(0)" class="btn btn-sm btn-primary" onclick="generate_anggota()">Generate Anggota Rombel Kelas </a> --}}
 	<br>
 	<center><h3>
 		Siswa Rombongan Belajar 
@@ -11,6 +11,7 @@
 	<table style="width:100%">
 		<tr>
 			<td style="vertical-align: top;width: 50%">
+				<h1>Data Anggota Rombel</h1>
 				<table style="width: 100%;border-collapse: collapse;" border="1">
 					<tr>
 						<th>No</th>
@@ -31,6 +32,7 @@
 				</table>
 			</td>
 			<td style="vertical-align: top;width: 50%">
+				<h1>Data Peserta Didik</h1>
 				<table style="width: 100%;border-collapse: collapse;" border="1">
 					<tr>
 						<th>No</th>

@@ -48,6 +48,7 @@ class KdController extends Controller
 		$jenjang = Session::get('jenjang');
 		$coni->jenjang = $jenjang;
 		$conn = Setkoneksi::set_koneksi($coni);
+		// dd($request->all());
 
 		if($jenjang=='SD'){
 			$nama_schema = env('CURRENT_DB_SD', 'production');
@@ -63,6 +64,7 @@ class KdController extends Controller
 				$v->kd = $kd;
 			}
 		}
+		$col_mapel = collect($mapel);
 
 		$data = [
 			'kelas'=>$kelas,
@@ -127,28 +129,37 @@ class KdController extends Controller
 	}
 
 	function get_kd(Request $request){
-		$id = $request->id;
-		$kelas = $request->kelas;
-		$tahun_ajaran = $request->tahun_ajaran;
-		$semester = $request->semester;
+		// return $request->all();
+		if(count($request->all())==0){
+			return '';
+		}else{
+			$id = $request->id;
+			$kelas = $request->kelas;
+			$tahun_ajaran = $request->tahun_ajaran;
+			$semester = $request->semester;
 
-		$coni = new Request;
-		$jenjang = Session::get('jenjang');
-		$coni->jenjang = $jenjang;
-		$conn = Setkoneksi::set_koneksi($coni);
+			if($tahun_ajaran==''){
+				return ['content'=>''];
+			}else{
+				$coni = new Request;
+				$jenjang = Session::get('jenjang');
+				$coni->jenjang = $jenjang;
+				$conn = Setkoneksi::set_koneksi($coni);
 
-		$ki3 = DB::connection($conn)->table($this->schema.'.kd')->whereRaw("kelas='$kelas' AND mapel_id='$id' AND tahun_ajaran_id='$tahun_ajaran' AND semester='$semester' AND no_ki='3'")->orderBy('id_kd','ASC')->get();
-		$ki4 = DB::connection($conn)->table($this->schema.'.kd')->whereRaw("kelas='$kelas' AND mapel_id='$id' AND tahun_ajaran_id='$tahun_ajaran' AND semester='$semester' AND no_ki='4'")->orderBy('id_kd','ASC')->get();
+				$ki3 = DB::connection($conn)->table($this->schema.'.kd')->whereRaw("kelas='$kelas' AND mapel_id='$id' AND tahun_ajaran_id='$tahun_ajaran' AND semester='$semester' AND no_ki='3'")->orderBy('id_kd','ASC')->get();
+				$ki4 = DB::connection($conn)->table($this->schema.'.kd')->whereRaw("kelas='$kelas' AND mapel_id='$id' AND tahun_ajaran_id='$tahun_ajaran' AND semester='$semester' AND no_ki='4'")->orderBy('id_kd','ASC')->get();
 
-		$data = [
-			'ki3'=>$ki3,
-			'ki4'=>$ki4,
-			'kelas'=>$kelas,
-		];
+				$data = [
+					'ki3'=>$ki3,
+					'ki4'=>$ki4,
+					'kelas'=>$kelas,
+				];
 
-		$content = view('admin.kd.data',$data)->render();
+				$content = view('admin.kd.data',$data)->render();
 
-		return ['content'=>$content];
+				return ['content'=>$content];
+			}
+		}
 	}
 
 	function hapus(Request $request){

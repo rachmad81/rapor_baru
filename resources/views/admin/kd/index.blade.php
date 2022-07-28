@@ -1,4 +1,6 @@
 @extends('master.index')
+@section('extend_css')
+@endsection
 @section('content')
 <!-- Content Header (Page header) -->
 <section class="content-header">
@@ -28,7 +30,7 @@
           </div>
           <!-- /.card-header -->
           <div class="card-body" id="data_mapel">
-            
+
           </div>
           <!-- /.card-body -->
         </div>
@@ -45,6 +47,7 @@
 
 @section('extend_js')
 <script>
+  var coll_id = '1';
   $(function () {
     $("#example1").DataTable({
       "responsive": true, "lengthChange": false, "autoWidth": false,
@@ -68,6 +71,7 @@
   function get_mapel_kd(){
     $.post("{{route('admin-kd-get_mapel')}}",{kelas:'{{$kelas}}'},function(data){
       $('#data_mapel').html(data.content);
+      acordion(coll_id);
     });
   }
 
@@ -75,10 +79,9 @@
     $.post("{{route('admin-kd-setting')}}",{id:id,kelas:kelas},function(data){
       $('.modal_page').html(data.content);
       $('#modal-default').modal('show');
+      get_kd();
+      get_mapel_kd();
     });
-
-    get_kd();
-    get_mapel_kd();
   }
 
   function simpan(isi,kd,kelas){
@@ -177,6 +180,14 @@
       get_kd();
       get_mapel_kd();
     });
+  }
+
+  function acordion(id){
+    coll_id = id;
+    $('#collapse2').fadeOut();
+    $('#collapse1').fadeOut();
+    $('#collapse3').fadeOut();
+    $('#collapse'+id).fadeIn();
   }
 </script>
 @endsection

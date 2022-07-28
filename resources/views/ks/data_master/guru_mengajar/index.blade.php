@@ -60,6 +60,7 @@
                   <th>Nama Mapel</th>
                   <th>Kelas Rombel</th>
                   <th>Pengajar</th>
+                  <th>User rapor</th>
                   <th style="width: 10%">#</th>
                 </tr>
               </thead>
@@ -97,6 +98,7 @@
       { "data": "nama_mapel" },
       { "data": "kelas_rombel" },
       { "data": "nama_guru" },
+      { "data": "user_rapor" },
       { "data": "aksi" },
       ],
       "autoWidth": false,
@@ -115,8 +117,6 @@
       };
 
       set_ta(ini);
-
-      $('#modal-default').modal('show');
     });
   }
 
@@ -164,6 +164,8 @@
   function data_pengajar(){
     var ta = $('select[name=tahun_ajaran]').val();
     var semester = $('select[name=semester]').val();
+
+    $('#data_pengajar tbody').html('');
 
     dt_table.ajax.url( "{{route('ks-data-master-guru_mengajar-get_data')}}?tahun_ajaran="+ta+"&semester="+semester ).load();
   }

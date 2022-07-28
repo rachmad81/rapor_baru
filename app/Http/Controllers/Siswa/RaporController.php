@@ -40,7 +40,7 @@ class RaporController extends Controller
 		->join('public.rombongan_belajar as rb','ar.rombongan_belajar_id','rb.id_rombongan_belajar')
 		->join('public.tahun_ajaran as ta','ta.id_tahun_ajaran','rb.tahun_ajaran_id')
 		->selectRaw("ta.nama_tahun_ajaran,rb.semester,rb.kelas,rb.rombel,ta.id_tahun_ajaran,ar.id_anggota_rombel,CASE WHEN (rb.semester='1') THEN 'Ganjil' ELSE 'Genap' END as nama_semester")
-		->whereRaw("siswa_id='$siswa->id_siswa'")
+		->whereRaw("id_siswa='$siswa->id_siswa'")
 		->orderByRaw("ta.nama_tahun_ajaran ASC,rb.semester ASC")->get();
 
 		$data = [
@@ -73,8 +73,11 @@ class RaporController extends Controller
 		$coni->jenjang = $jenjang;
 		$conn = Setkoneksi::set_koneksi($coni);
 
-		$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
-		->join('public.siswa as s','s.id_siswa','ar.siswa_id')
+		$siswa = DB::connection($conn)->table('public.rombongan_belajar as rb')
+		->join('public.anggota_rombel as ar','ar.rombongan_belajar_id','rb.id_rombongan_belajar')
+		->join('public.siswa as s',function($join){
+			return $join->on('s.id_siswa','=','ar.id_siswa')->on('s.siswa_id','=','ar.siswa_id');
+		})
 		->join('public.sekolah as sek','sek.npsn','s.npsn')
 		->leftjoin('public.kecamatan as kec','kec.kecamatan_kode','sek.kec_id')
 		->leftjoin('public.kelurahan as kel','kel.kelurahan_kode','sek.desa')
@@ -85,7 +88,6 @@ class RaporController extends Controller
 		->leftjoin('public.pekerjaan as pa','pa.kode','wm.pekerjaan_ayah')
 		->leftjoin('public.pekerjaan as pi','pi.kode','wm.pekerjaan_ibu')
 		->leftjoin('public.pekerjaan as pw','pw.kode','wm.pekerjaan_wali')
-		->leftjoin('public.rombongan_belajar as rb','rb.id_rombongan_belajar','ar.rombongan_belajar_id')
 		->leftjoin('public.tahun_ajaran as ta','ta.id_tahun_ajaran','rb.tahun_ajaran_id')
 		->selectRaw("s.foto,s.nama as nama_siswa,s.tgl_lahir,s.nisn,s.nis,s.tempat_lahir,rb.kelas,rb.rombel,sek.kepala,sek.email as email_sekolah,sek.website as website_sekolah,s.id_siswa,sek.nama as nama_sekolah,sek.alamat as alamat_sekolah,kec.kecamatan_dispenduk,kel.kelurahan_dispenduk,s.kelamin,s.asal_sekolah,a.aga_nama,s.status_anak,s.anakke,s.alamat_ortu,s.telpon,s.alamat as alamat_siswa,wm.nama_ayah as ayah,wm.nama_ibu as ibu,wm.nama_wali,wm.pekerjaan_wali,pa.nama as pekerjaan_ayah,pi.nama as pekerjaan_ibu,pw.nama as pekerjaan_wali,wm.alamat_rumah,wm.rt,wm.rw,sek.kkm,sek.nss,ta.tgl_setting_awal,ta.tgl_setting_akhir,ar.id_anggota_rombel")
 		->whereRaw("ar.id_anggota_rombel='$id_anggota_rombel'")->first();
@@ -193,12 +195,12 @@ class RaporController extends Controller
 		$smt1 = DB::connection($conn)->table('public.rombongan_belajar as rb')
 		->join('public.anggota_rombel as ar','ar.rombongan_belajar_id','rb.id_rombongan_belajar')
 		->join($this->schema.'.nilai_perilaku as np','np.anggota_rombel_id','ar.id_anggota_rombel')
-		->whereRaw("rb.kelas='$siswa->kelas' AND rb.rombel='$siswa->rombel' AND rb.semester='1' AND rb.npsn='$npsn' AND ar.siswa_id='$siswa->id_siswa'")->first();
+		->whereRaw("rb.kelas='$siswa->kelas' AND rb.rombel='$siswa->rombel' AND rb.semester='1' AND rb.npsn='$npsn' AND ar.id_siswa='$siswa->id_siswa'")->first();
 		
 		$smt2 = DB::connection($conn)->table('public.rombongan_belajar as rb')
 		->join('public.anggota_rombel as ar','ar.rombongan_belajar_id','rb.id_rombongan_belajar')
 		->join($this->schema.'.nilai_perilaku as np','np.anggota_rombel_id','ar.id_anggota_rombel')
-		->whereRaw("rb.kelas='$siswa->kelas' AND rb.rombel='$siswa->rombel' AND rb.semester='2' AND rb.npsn='$npsn' AND ar.siswa_id='$siswa->id_siswa'")->first();
+		->whereRaw("rb.kelas='$siswa->kelas' AND rb.rombel='$siswa->rombel' AND rb.semester='2' AND rb.npsn='$npsn' AND ar.id_siswa='$siswa->id_siswa'")->first();
 
 		$kesehatan1->tinggi = (!empty($smt1)) ? $smt1->tinggi_badan : '';
 		$kesehatan1->berat = (!empty($smt1)) ? $smt1->berat_badan : '';

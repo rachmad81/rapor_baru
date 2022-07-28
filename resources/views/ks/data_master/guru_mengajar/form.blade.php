@@ -73,3 +73,6 @@
 	</div>
 	<!-- /.modal-dialog -->
 </div>
+<script type="text/javascript">
+	$('#modal-default').modal({backdrop: 'static', keyboard: false, show: true});
+</script>

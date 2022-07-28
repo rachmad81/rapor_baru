@@ -109,7 +109,7 @@ class Convert
 		$catatan	='';
 		
 		$kd = DB::connection($conn)->table($schema.'.kd')->whereRaw("mapel_id='$mapel_id' AND no_ki='3' and kelas='$kelas'")->orderBy('id_kd','ASC')->offset($kd_tertinggi)->limit(1)->first();
-		$hasil_kd = (!empty($kd)) ? $kd->isi : 'nothing';
+		$hasil_kd = (!empty($kd)) ? $kd->isi : "nothing";
 		
 		if($huruf == 'A'){
 			$catatan	= "Sangat Baik, menguasai dan memahami semua kompetensi, terutama ";

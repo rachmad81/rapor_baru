@@ -25,10 +25,10 @@ class Hitung_sikap
 		$catatan2 = '';
 		$jumkd = 6;
 
-		$anggota = DB::connection($conn)->table('public.anggota_rombel')->whereRaw("siswa_id='$id_siswa' AND rombongan_belajar_id='$id_rombel'")->first();
+		$anggota = DB::connection($conn)->table('public.anggota_rombel')->whereRaw("id_siswa='$id_siswa' AND rombongan_belajar_id='$id_rombel'")->first();
 		if(!empty($anggota)){
 			// NILAI KI1
-			$nama_aspek = ['Ketaan Beribadah','Perilaku Bersyukur','Berdoa','Toleransi beribadah'];
+			$nama_aspek = ['Ketaatan Beribadah','Perilaku Bersyukur','Berdoa','Toleransi beribadah'];
 			$aspek = ['ibadah','syukur','berdoa','toleransi'];
 			$arr_nilai = [];
 			$nilai_tot_1 = 0;
@@ -371,11 +371,17 @@ class Hitung_sikap
 		$catatan2 = '';
 		$jumkd = 6;
 
-		$anggota = DB::connection($conn)->table('public.anggota_rombel')->whereRaw("siswa_id='$id_siswa' AND rombongan_belajar_id='$id_rombel'")->first();
+		$anggota = DB::connection($conn)->table('public.anggota_rombel')->whereRaw("id_siswa='$id_siswa' AND rombongan_belajar_id='$id_rombel'")->first();
 		if(!empty($anggota)){
 			// NILAI KI1
-			$nama_aspek = ['Perilaku Bersyukur','Ketaan Beribadah'];
-			$aspek = ['syukur','ibadah'];
+			if(in_array(Session::get('jenjang'),['SMP','MTS'])){
+				$nama_aspek = ['Perilaku Bersyukur','Ketaatan Beribadah'];
+				$aspek = ['syukur','ibadah'];
+			}else{
+				$nama_aspek = ['Ketaatan Beribadah','Perilaku Bersyukur','Berdoa','Toleransi beribadah'];
+				$aspek = ['ibadah','syukur','berdoa','toleransi'];
+			}
+			
 			$arr_nilai = [];
 			$nilai_tot_1 = 0;
 			$nilai_tot_2 = 0;
@@ -414,6 +420,9 @@ class Hitung_sikap
 							default:
 							break;
 						}
+					}else{
+						$nilai_3++;
+						$nilai_tot_3++;
 					}
 
 					$paling_besar = 0;
@@ -514,8 +523,15 @@ class Hitung_sikap
 			}
 
 			// NILAI KI2
-			$nama_aspek = ['Jujur','Disiplin','Tanggung jawab','Sopan Santun','Percaya Diri','Peduli','Kerjasama'];
-			$aspek = ['jujur','disiplin','tanggung_jawab','sopan_santun','percaya_diri','peduli','kerjasama'];
+
+			if(in_array(Session::get('jenjang'),['SMP','MTS'])){
+				$nama_aspek = ['Jujur','Disiplin','Tanggung jawab','Sopan Santun','Percaya Diri','Peduli','Kerjasama'];
+				$aspek = ['jujur','disiplin','tanggung_jawab','sopan_santun','percaya_diri','peduli','kerjasama'];
+			}else{
+				$nama_aspek = ['Jujur','Disiplin','Tanggung jawab','Sopan Santun','Percaya Diri','Peduli'];
+				$aspek = ['jujur','disiplin','tanggung_jawab','sopan_santun','percaya_diri','peduli'];
+			}
+
 			$arr_nilai = [];
 			$nilai_tot_1 = 0;
 			$nilai_tot_2 = 0;
@@ -554,6 +570,9 @@ class Hitung_sikap
 							default:
 							break;
 						}
+					}else{
+						$nilai_3++;
+						$nilai_tot_3++;
 					}
 
 					$paling_besar = 0;
@@ -603,7 +622,7 @@ class Hitung_sikap
 			if($paling_besar == 1){ 
 				$hurufk2		= 'D';							
 				$sikap_modus_1	= "";
-				for($a=0;$a<=6;$a++){
+				for($a=0;$a<count($aspek);$a++){
 					if($arr_nilai[$a]==1) $sikap_modus_1.= ", ".$nama_aspek[$a];
 				}
 				$sikap_modus_1	= substr($sikap_modus_1,1);
@@ -612,12 +631,12 @@ class Hitung_sikap
 			if($paling_besar == 2){
 				$hurufk2		= 'C';
 				$sikap_modus_2	= "";
-				for($a=0;$a<=6;$a++){
+				for($a=0;$a<count($aspek);$a++){
 					if($arr_nilai[$a]==2) $sikap_modus_2.= ", ".$nama_aspek[$a];
 				}
 				$sikap_modus_2		= substr($sikap_modus_2,1);
 				$sikap_modus_kurang	= "";
-				for($a=0;$a<=6;$a++){
+				for($a=0;$a<count($aspek);$a++){
 					if(($arr_nilai[$a]<2) and $arr_nilai[$a]>0) $sikap_modus_kurang.= ", ".$nama_aspek[$a];
 				}
 				$sikap_modus_kurang	= substr($sikap_modus_kurang,1);
@@ -627,12 +646,12 @@ class Hitung_sikap
 			if($paling_besar == 3){ 
 				$hurufk2		= 'B';
 				$sikap_modus_3	= "";
-				for($a=0;$a<=6;$a++){
+				for($a=0;$a<count($aspek);$a++){
 					if($arr_nilai[$a]==3) $sikap_modus_3.= ", ".$nama_aspek[$a];
 				}
 				$sikap_modus_3		= substr($sikap_modus_3,1);
 				$sikap_modus_kurang	= "";
-				for($a=0;$a<=6;$a++){
+				for($a=0;$a<count($aspek);$a++){
 					if(($arr_nilai[$a]<3) and ($arr_nilai[$a]>0)) $sikap_modus_kurang.= ", ".$nama_aspek[$a];
 				}
 				$sikap_modus_kurang	= substr($sikap_modus_kurang,1);
@@ -643,12 +662,12 @@ class Hitung_sikap
 			if($paling_besar == 4) {
 				$hurufk2 		= 'SB';
 				$sikap_modus_4	= "";
-				for($a=0;$a<=6;$a++){
+				for($a=0;$a<count($aspek);$a++){
 					if($arr_nilai[$a]==4) $sikap_modus_4.= ", ".$nama_aspek[$a];
 				}
 				$sikap_modus_4		= substr($sikap_modus_4,1);
 				$sikap_modus_kurang	= "";
-				for($a=0;$a<=6;$a++){
+				for($a=0;$a<count($aspek);$a++){
 					if(($arr_nilai[$a]<4) and ($arr_nilai[$a]>0)) $sikap_modus_kurang.= ", ".$nama_aspek[$a];
 				}
 				$sikap_modus_kurang	= substr($sikap_modus_kurang,1);

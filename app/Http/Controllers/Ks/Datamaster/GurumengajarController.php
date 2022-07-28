@@ -139,8 +139,9 @@ class GurumengajarController extends Controller
 			->leftjoin('public.pegawai as p',function($join){
 				return $join->on('p.nik','=','m.nik_pengajar')->on('p.peg_id','=','m.peg_id');
 			})
-			->selectRaw("p.nama as nama_guru,rm.nama as nama_mapel,CONCAT(rb.kelas,'.',rb.rombel) as kelas_rombel,rb.tahun_ajaran_id,m.id_mengajar")
+			->selectRaw("p.nama as nama_guru,rm.nama as nama_mapel,CONCAT(rb.kelas,'.',rb.rombel) as kelas_rombel,rb.tahun_ajaran_id,m.id_mengajar,p.user_rapor")
 			->whereRaw("rb.npsn='$npsn' AND rb.tahun_ajaran_id='$id' AND semester='$semester'")
+			->orderByRaw("rb.kelas ASC,rb.rombel ASC")
 			->get();
 
 			if($mengajar->count()!=0){

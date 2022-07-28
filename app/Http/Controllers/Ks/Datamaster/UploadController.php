@@ -74,12 +74,14 @@ class UploadController extends Controller
 			$mengajar->nama_mapel = $mapel_id;
 			$mengajar->nama_pengajar = '';
 
-			$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
-			->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-			->join('public.rombongan_belajar as r','r.id_rombongan_belajar','ar.rombongan_belajar_id')
+			$siswa = DB::connection($conn)->table('public.rombongan_belajar as rb')
+			->join('public.anggota_rombel as ar','ar.rombongan_belajar_id','rb.id_rombongan_belajar')
+			->join('public.siswa as s',function($join){
+				return $join->on('s.id_siswa','=','ar.id_siswa')->on('s.siswa_id','=','ar.siswa_id');
+			})
 			->leftjoin($this->schema.'.nilai_perilaku as ns','ns.anggota_rombel_id','ar.id_anggota_rombel')
-			->selectRaw("r.*,s.nama,s.id_siswa,ar.id_anggota_rombel,ns.*")
-			->whereRaw("ar.rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->orderBy('s.nama')->get();
+			->selectRaw("rb.*,s.nama,s.id_siswa,ar.id_anggota_rombel,ns.*")
+			->whereRaw("ar.rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn' AND s.status_siswa='Aktif'")->orderBy('s.nama')->get();
 		}else{
 			$mengajar = DB::connection($conn)->table($this->schema.'.mengajar as m')
 			->join('public.rapor_mapel as ma','ma.mapel_id','m.mapel_id')
@@ -89,14 +91,16 @@ class UploadController extends Controller
 			->selectRaw("*,ma.nama as nama_mapel,p.nama as nama_pengajar")
 			->whereRaw("m.rombel_id='$id_rombel' AND m.mapel_id='$mapel_id'")->first();
 			
-			$siswa = DB::connection($conn)->table('public.anggota_rombel as ar')
-			->join('public.siswa as s','s.id_siswa','ar.siswa_id')
-			->join('public.rombongan_belajar as r','r.id_rombongan_belajar','ar.rombongan_belajar_id')
+			$siswa = DB::connection($conn)->table('public.rombongan_belajar as rb')
+			->join('public.anggota_rombel as ar','ar.rombongan_belajar_id','rb.id_rombongan_belajar')
+			->join('public.siswa as s',function($join){
+				return $join->on('s.id_siswa','=','ar.id_siswa')->on('s.siswa_id','=','ar.siswa_id');
+			})
 			->leftjoin($this->schema.'.nilai_mapel as ns',function($join) use($mapel_id){
 				return $join->on('ns.anggota_rombel_id','=','ar.id_anggota_rombel')->where('ns.mapel_id','=',$mapel_id);
 			})
-			->selectRaw("r.*,s.nama,s.id_siswa,ar.id_anggota_rombel,ns.*")
-			->whereRaw("ar.rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn'")->orderBy('s.nama')->get();
+			->selectRaw("rb.*,s.nama,s.id_siswa,ar.id_anggota_rombel,ns.*")
+			->whereRaw("ar.rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn' AND s.status_siswa='Aktif'")->orderBy('s.nama')->get();
 		}
 
 

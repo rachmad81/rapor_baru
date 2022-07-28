@@ -27,7 +27,7 @@
           </div>
           <!-- /.card-header -->
           <div class="card-body">
-            <a href="javascript:void(0)" class="btn btn-primary" onclick="form_mapel('0')"><i class="fa fa-plus"></i> Tambah</a>
+            {{-- <a href="javascript:void(0)" class="btn btn-primary" onclick="form_mapel('0')"><i class="fa fa-plus"></i> Tambah</a> --}}
             <div class="row">
               <div class="col-lg-6">
                 <label>Tahun Ajaran</label>
@@ -60,6 +60,7 @@
                   <th>Kelas</th>
                   <th>Rombel</th>
                   <th>Wali Kelas</th>
+                  <th>User rapor</th>
                   <th style="width: 10%">#</th>
                 </tr>
               </thead>
@@ -95,6 +96,7 @@
       { "data": "kelas" },
       { "data": "rombel" },
       { "data": "nama" },
+      { "data": "user_rapor" },
       { "data": "aksi" },
       ],
       "autoWidth": false,
@@ -151,6 +153,8 @@
   function get_wakel(){
     var tahun_ajaran = $('select[name=tahun_ajaran]').val();
     var semester = $('select[name=semester]').val();
+
+    $('#data_walkel tbody').html('');
 
     dt_table.ajax.url("{{route('ks-data-master-walikelas-get_data')}}?tahun_ajaran="+tahun_ajaran+"&semester="+semester).load();
   }

@@ -1,7 +1,7 @@
 <div class="row">
 	<div class="col-3 col-sm-3">
 		<div class="nav flex-column nav-tabs h-100" id="vert-tabs-tab" role="tablist" aria-orientation="vertical">
-			<a href="javascript:void(0)" class="nav-link active-tab2" id="tab2-1" onclick="pages2('1')">Ketaan Beribadah</a>
+			<a href="javascript:void(0)" class="nav-link active-tab2" id="tab2-1" onclick="pages2('1')">Ketaatan Beribadah</a>
 			<a href="javascript:void(0)" class="nav-link active-tab2" id="tab2-2" onclick="pages2('2')">Perilaku Bersyukur</a>
 			@if(Session::get('jenjang')=='SD')
 			<a href="javascript:void(0)" class="nav-link active-tab2" id="tab2-3" onclick="pages2('3')">Berdoa</a>

@@ -34,7 +34,7 @@ class IsianController extends Controller
 		$rombel = (!empty($siswa)) ? $siswa->rombel : '';
 
 		$rombel = DB::connection($conn)->table('public.anggota_rombel as ar')->join('public.rombongan_belajar as rb','rb.id_rombongan_belajar','ar.rombongan_belajar_id')
-		->whereRaw("ar.siswa_id='$siswa->id_siswa' AND rb.kelas='$kelas' AND rombel='$rombel' AND npsn='$npsn'")->first();
+		->whereRaw("ar.id_siswa='$siswa->id_siswa' AND rb.kelas='$kelas' AND rombel='$rombel' AND npsn='$npsn'")->first();
 
 		$id_rombel = '';
 		$id_anggota_rombel = '';

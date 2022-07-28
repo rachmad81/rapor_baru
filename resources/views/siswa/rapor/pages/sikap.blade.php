@@ -144,14 +144,14 @@ $nomor = 1;
 	<tr>
 		<td>1</td>
 		<td>Tinggi</td>
-		<td>{{$kesehatan1->tinggi_badan}} Cm</td>
-		<td>{{$kesehatan2->tinggi_badan}} Cm</td>
+		<td>{{(!empty($kesehatan1)) ? $kesehatan1->tinggi_badan : ''}} Cm</td>
+		<td>{{(!empty($kesehatan2)) ? $kesehatan2->tinggi_badan : ''}} Cm</td>
 	</tr>
 	<tr>
 		<td>2</td>
 		<td>Berat Badan</td>
-		<td>{{$kesehatan1->berat_badan}} Kg</td>
-		<td>{{$kesehatan2->berat_badan}} Kg</td>
+		<td>{{(!empty($kesehatan1)) ? $kesehatan1->berat_badan : ''}} Kg</td>
+		<td>{{(!empty($kesehatan2)) ? $kesehatan2->berat_badan : ''}} Kg</td>
 	</tr>
 </table>
 <label class="label_rapor">F. Kondisi Kesehatan</label>
@@ -169,26 +169,26 @@ $nomor = 1;
 	<tr>
 		<td>1</td>
 		<td>Pendengaran</td>
-		<td>@if(!empty($ekskul)) {{$ekskul->pendengaran_semester1}} @endif</td>
-		<td>@if(!empty($ekskul)) {{$ekskul->pendengaran_semester2}} @endif</td>
+		<td>@if(!empty($kesehatan1)) {{$kesehatan1->pendengaran}} @endif</td>
+		<td>@if(!empty($kesehatan2)) {{$kesehatan2->pendengaran}} @endif</td>
 	</tr>
 	<tr>
 		<td>2</td>
 		<td>Penglihatan</td>
-		<td>@if(!empty($ekskul)) {{$ekskul->penglihatan_semester1}} @endif</td>
-		<td>@if(!empty($ekskul)) {{$ekskul->penglihatan_semester2}} @endif</td>
+		<td>@if(!empty($kesehatan1)) {{$kesehatan1->penglihatan}} @endif</td>
+		<td>@if(!empty($kesehatan2)) {{$kesehatan2->penglihatan}} @endif</td>
 	</tr>
 	<tr>
 		<td>3</td>
 		<td>Gigi</td>
-		<td>@if(!empty($ekskul)) {{$ekskul->gigi_semester1}} @endif</td>
-		<td>@if(!empty($ekskul)) {{$ekskul->gigi_semester2}} @endif</td>
+		<td>@if(!empty($kesehatan1)) {{$kesehatan1->gizi}} @endif</td>
+		<td>@if(!empty($kesehatan2)) {{$kesehatan2->gizi}} @endif</td>
 	</tr>
 	<tr>
 		<td>4</td>
 		<td>Lainnya</td>
-		<td>@if(!empty($ekskul)) {{$ekskul->lainnya_semester1}} @endif</td>
-		<td>@if(!empty($ekskul)) {{$ekskul->lainnya_semester2}} @endif</td>
+		<td>@if(!empty($kesehatan1)) {{$kesehatan1->lainnya}} @endif</td>
+		<td>@if(!empty($kesehatan2)) {{$kesehatan2->lainnya}} @endif</td>
 	</tr>
 </table>
 <label class="label_rapor">G. Catatan Prestasi</label>

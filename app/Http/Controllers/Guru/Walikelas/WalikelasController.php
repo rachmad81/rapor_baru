@@ -25,7 +25,7 @@ class WalikelasController extends Controller
 		$coni = new Request;
 		$coni->jenjang = Session::get('jenjang');
 		$conn = Setkoneksi::set_koneksi($coni);
-		$tahun_ajaran = DB::connection($conn)->table('public.tahun_ajaran')->orderBy('nama_tahun_ajaran')->get();
+		$tahun_ajaran = DB::connection('pgsql_sd')->table('public.tahun_ajaran')->orderBy('nama_tahun_ajaran')->get();
 
 		$data = [
 			'main_menu'=>'walikelas',
@@ -48,19 +48,19 @@ class WalikelasController extends Controller
 		$conn = Setkoneksi::set_koneksi($coni);
 
 		if($nik==''){
-			$pegawai = DB::connection($conn)->table('public.pegawai')->whereRaw("user_rapor='$user_rapor' AND nik is null AND npsn='$npsn'")->first();
+			$pegawai = DB::connection($conn)->table('public.pegawai')->whereRaw("user_rapor='$user_rapor' AND (nik is null OR nik='') AND npsn='$npsn'")->first();
 		}else{
 			$pegawai = DB::connection($conn)->table('public.pegawai')->whereRaw("user_rapor='$user_rapor' AND nik='$nik' AND npsn='$npsn'")->first();
 		}
 
 		if(!empty($pegawai)){
 			if($nik==''){
-				$walikelas = DB::connection($conn)->table('public.rombongan_belajar')->whereRaw("npsn='$npsn' AND nik_wk is null AND wali_kelas_peg_id='$pegawai->peg_id' AND tahun_ajaran_id='$ta' AND semester='$semester'")->orderByRaw("kelas ASC,rombel ASC")->get();
+				$walikelas = DB::connection($conn)->table('public.rombongan_belajar')->whereRaw("npsn='$npsn' AND (nik_wk is null OR nik_wk='') AND wali_kelas_peg_id='$pegawai->peg_id' AND tahun_ajaran_id='$ta' AND semester='$semester'")->orderByRaw("kelas ASC,rombel ASC")->get();
 				$mengajar = DB::connection($conn)->table($this->schema.'.mengajar as m')
 				->join('public.rombongan_belajar as rb','rb.id_rombongan_belajar','m.rombel_id')
 				->join('public.rapor_mapel as ma','ma.mapel_id','m.mapel_id')
 				->selectRaw("*,ma.nama as nama_mapel")
-				->whereRaw("rb.npsn='$npsn' AND m.nik_pengajar is null AND m.peg_id='$pegawai->peg_id' AND rb.tahun_ajaran_id='$ta' AND rb.semester='$semester'")
+				->whereRaw("rb.npsn='$npsn' AND (m.nik_pengajar is null OR m.nik_pengajar='') AND m.peg_id='$pegawai->peg_id' AND rb.tahun_ajaran_id='$ta' AND rb.semester='$semester'")
 				->orderByRaw("rb.kelas ASC,rb.rombel ASC,ma.nama ASC")
 				->get();
 			}else{
@@ -73,7 +73,6 @@ class WalikelasController extends Controller
 				->orderByRaw("rb.kelas ASC,rb.rombel ASC,ma.nama ASC")
 				->get();
 			}
-
 
 			$data = [
 				'walikelas'=>$walikelas,

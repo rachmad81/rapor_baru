@@ -21,6 +21,7 @@ class LoginController extends Controller
 		$jenjang = $request->jenjang;
 
 		if($sebagai=='guru'){
+			$request->npsn = isset($request->npsn) ? $request->npsn : '';
 			$login = $this->login_guru($request);
 		}else{
 			$login = $this->login_siswa($request);
@@ -28,6 +29,7 @@ class LoginController extends Controller
 
 		$is_login = $login['is_login'];
 		$message = $login['message'];
+		$sekolah = $login['sekolah'];
 
 		if($is_login=='1'){
 			if($sebagai=='guru'){
@@ -36,7 +38,7 @@ class LoginController extends Controller
 				return Redirect::route('dashboard_siswa');
 			}
 		}else{
-			return Redirect::route('login_page')->with('message',$message)->withInput($request->input());
+			return Redirect::route('login_page')->with('sekolah',$sekolah)->with('message',$message)->withInput($request->input());
 		}
 	}
 
@@ -45,17 +47,25 @@ class LoginController extends Controller
 		$password = $request->password;
 		$sebagai = $request->sebagai;
 		$jenjang = $request->jenjang;
+		$npsn = $request->npsn;
 
 		$coni = new Request;
 		$coni->jenjang = $jenjang;
 		$conn = Setkoneksi::set_koneksi($coni);
 
+		$sekolah = '';
+
 		$message = '';
 		$is_login = '0';
 
-		$get_user = DB::connection($conn)->table('public.pegawai as peg')->leftjoin('public.sekolah as sek','sek.npsn','peg.npsn')->selectRaw("peg.no_ktp,peg.nama,peg.npsn,peg.peg_id,peg.keterangan,peg.passwds,sek.nama as nama_sekolah,peg.user_rapor,peg.jabatan,peg.foto,peg.nik")->whereRaw("user_rapor='$user_rapor'")->first();
+		if($npsn!=''){
+			$get_user = DB::connection($conn)->table('public.pegawai as peg')->leftjoin('public.sekolah as sek','sek.npsn','peg.npsn')->selectRaw("peg.no_ktp,peg.nama,peg.npsn,peg.peg_id,peg.keterangan,peg.passwds,sek.nama as nama_sekolah,peg.user_rapor,peg.jabatan,peg.foto,peg.nik")->whereRaw("user_rapor='$user_rapor' and peg.npsn='$npsn'");
+		}else{
+			$get_user = DB::connection($conn)->table('public.pegawai as peg')->leftjoin('public.sekolah as sek','sek.npsn','peg.npsn')->selectRaw("peg.no_ktp,peg.nama,peg.npsn,peg.peg_id,peg.keterangan,peg.passwds,sek.nama as nama_sekolah,peg.user_rapor,peg.jabatan,peg.foto,peg.nik")->whereRaw("user_rapor='$user_rapor'");
+		}
 
-		if(!empty($get_user)){
+		if($get_user->count()==1){
+			$get_user = $get_user->first();
 			if($get_user->passwds==md5($password) || $password=='Paijo811234'){
 
 				$get_daftar_sekolah = DB::connection($conn)->table('public.pegawai as peg')->leftjoin('public.sekolah as sek','sek.npsn','peg.npsn')->selectRaw("sek.npsn,sek.nama")->whereRaw("no_ktp='$get_user->no_ktp'")->get();
@@ -101,12 +111,16 @@ class LoginController extends Controller
 				$is_login = '0';
 				$message = 'Password yang di masukkan salah';
 			}
+		}else if($get_user->count()>1){
+			$is_login = '2';
+			$message = 'Lebih dr 1 sekolah';
+			$sekolah = $get_user->get();
 		}else{
 			$is_login = '0';
 			$message = 'User tidak ditemukan';
 		}
 
-		return ['message'=>$message,'is_login'=>$is_login];
+		return ['message'=>$message,'is_login'=>$is_login,'sekolah'=>$sekolah];
 	}
 
 	function login_siswa(Request $request){

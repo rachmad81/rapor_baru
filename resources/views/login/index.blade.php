@@ -83,6 +83,13 @@
               </div>
             </div>
           </div>
+          @php
+          if(Session::has('sekolah') && Session::get('sekolah')!=''){
+            foreach(Session::get('sekolah') as $s){
+              echo '<label><input type="radio" name="npsn" value="'.$s->npsn.'"> '.$s->nama_sekolah.'</label><br>';
+            }
+          }
+          @endphp
           <div class="row">
             <div class="col-12">
               <button type="submit" class="btn btn-success btn-block">Login</button>

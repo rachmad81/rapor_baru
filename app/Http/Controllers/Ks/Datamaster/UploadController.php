@@ -24,7 +24,7 @@ class UploadController extends Controller
 		$coni = new Request;
 		$coni->jenjang = Session::get('jenjang');
 		$conn = Setkoneksi::set_koneksi($coni);
-		$tahun_ajaran = DB::connection($conn)->table('public.tahun_ajaran')->orderBy('nama_tahun_ajaran')->get();
+		$tahun_ajaran = DB::connection('pgsql_sd')->table('public.tahun_ajaran')->orderBy('nama_tahun_ajaran')->get();
 
 		$data = [
 			'main_menu'=>'upload',
@@ -60,9 +60,12 @@ class UploadController extends Controller
 		$semester = Session::get('semester_wk');
 		$npsn = Session::get('npsn');
 
-		$rombongan_belajar = DB::connection($conn)->table('public.rombongan_belajar as rb')->join('public.tahun_ajaran as ta','ta.id_tahun_ajaran','rb.tahun_ajaran_id')->join('public.pegawai as p',function($join){
+		$rombongan_belajar = DB::connection($conn)->table('public.rombongan_belajar as rb')->join('public.pegawai as p',function($join){
 			return $join->on('rb.wali_kelas_peg_id','=',DB::raw("CAST(p.peg_id as varchar)"))->on('rb.nik_wk','=','p.nik');
 		})->where('rb.id_rombongan_belajar',$id_rombel)->first();
+
+		$tahun_ajaran = DB::connection('pgsql_sd')->table('public.tahun_ajaran')->where('id_tahun_ajaran',$rombongan_belajar->tahun_ajaran_id)->first();
+		$rombongan_belajar->nama_tahun_ajaran = $tahun_ajaran->nama_tahun_ajaran;
 
 		$kelas = (!empty($rombongan_belajar)) ? $rombongan_belajar->kelas : '';
 		$rombel = (!empty($rombongan_belajar)) ? $rombongan_belajar->rombel : '';

@@ -27,7 +27,7 @@ class SessionController extends Controller
 		$request->jenjang = Session::get('jenjang');
 		$conn = Setkoneksi::set_koneksi($request);
 
-		$ta = DB::connection($conn)->table('public.tahun_ajaran')->where('id_tahun_ajaran',$id)->first();
+		$ta = DB::connection('pgsql_sd')->table('public.tahun_ajaran')->where('id_tahun_ajaran',$id)->first();
 		$now = date('Y-m-d');
 		$npsn = Session::get('npsn');
 

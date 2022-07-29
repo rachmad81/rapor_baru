@@ -15,7 +15,7 @@ class SiswaController extends Controller
 		$coni = new Request;
 		$coni->jenjang = Session::get('jenjang');
 		$conn = Setkoneksi::set_koneksi($coni);
-		$tahun_ajaran = DB::connection($conn)->table('public.tahun_ajaran')->orderBy('nama_tahun_ajaran')->get();
+		$tahun_ajaran = DB::connection('pgsql_sd')->table('public.tahun_ajaran')->orderBy('nama_tahun_ajaran')->get();
 
 		$data = [
 			'main_menu'=>'master_siswa',
@@ -38,7 +38,7 @@ class SiswaController extends Controller
 		$semester = $request->semester;
 
 		if($id!=null){
-			$ta = DB::connection($conn)->table('public.tahun_ajaran')->where('id_tahun_ajaran',$id)->first();
+			$ta = DB::connection('pgsql_sd')->table('public.tahun_ajaran')->where('id_tahun_ajaran',$id)->first();
 			$now = date('Y-m-d');
 			if($now>=date('Y-m-d',strtotime($ta->tgl_setting_awal)) && $now<=date('Y-m-d',strtotime($ta->tgl_setting_akhir))){
 				$siswa = DB::connection($conn)->table('public.rombongan_belajar as rb')

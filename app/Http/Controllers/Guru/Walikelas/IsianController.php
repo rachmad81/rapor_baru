@@ -28,12 +28,14 @@ class IsianController extends Controller
 		$request->jenjang = $jenjang;
 		$conn = Setkoneksi::set_koneksi($request);
 
-		$rombongan_belajar = DB::connection($conn)->table('public.rombongan_belajar as rb')->join('public.tahun_ajaran as ta','ta.id_tahun_ajaran','rb.tahun_ajaran_id')->where('rb.id_rombongan_belajar',$id_rombel)->first();
+		$rombongan_belajar = DB::connection($conn)->table('public.rombongan_belajar as rb')->where('rb.id_rombongan_belajar',$id_rombel)->first();
+		$tahun_ajaran = DB::connection('pgsql_sd')->table('public.tahun_ajaran')->where('id_tahun_ajaran',$rombongan_belajar->tahun_ajaran_id)->first();
+		$rombongan_belajar->nama_tahun_ajaran = $tahun_ajaran->nama_tahun_ajaran;
 
 		if(!empty($rombongan_belajar)){
 			Session::put('kelas_wk',$rombongan_belajar->kelas);
 			Session::put('rombel_wk',$rombongan_belajar->rombel);
-			Session::put('ta_wk',$rombongan_belajar->nama_tahun_ajaran);
+			Session::put('ta_wk',$tahun_ajaran->nama_tahun_ajaran);
 			$semester = ($rombongan_belajar->semester==1) ? 'Semester Ganjil' : 'Semester Genap';
 			Session::put('semester_wk',$semester);
 		}else{
@@ -1366,9 +1368,11 @@ class IsianController extends Controller
 		$coni->jenjang = $jenjang;
 		$conn = Setkoneksi::set_koneksi($coni);
 
-		$rombongan_belajar = DB::connection($conn)->table('public.rombongan_belajar as rb')->join('public.tahun_ajaran as ta','ta.id_tahun_ajaran','rb.tahun_ajaran_id')->join('public.pegawai as p',function($join){
+		$rombongan_belajar = DB::connection($conn)->table('public.rombongan_belajar as rb')->join('public.pegawai as p',function($join){
 			return $join->on('rb.wali_kelas_peg_id','=',DB::raw("CAST(p.peg_id as varchar)"))->on('rb.nik_wk','=','p.nik');
 		})->where('rb.id_rombongan_belajar',$id_rombel)->first();
+		$tahun_ajaran = DB::connection('pgsql_sd')->table('public.tahun_ajaran')->where('id_tahun_ajaran',$rombongan_belajar->tahun_ajaran_id)->first();
+		$rombongan_belajar->nama_tahun_ajaran = $tahun_ajaran->nama_tahun_ajaran;
 
 		$sekolah = DB::connection($conn)->table('public.sekolah')->whereRaw("npsn='$npsn'")->first();
 		

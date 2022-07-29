@@ -24,7 +24,7 @@ class WalikelasController extends Controller
 		$coni = new Request;
 		$coni->jenjang = Session::get('jenjang');
 		$conn = Setkoneksi::set_koneksi($coni);
-		$tahun_ajaran = DB::connection($conn)->table('public.tahun_ajaran')->orderBy('nama_tahun_ajaran')->get();
+		$tahun_ajaran = DB::connection('pgsql_sd')->table('public.tahun_ajaran')->orderBy('nama_tahun_ajaran')->get();
 
 		$data = [
 			'main_menu'=>'walikelas',
@@ -42,7 +42,7 @@ class WalikelasController extends Controller
 		$request->jenjang = $jenjang;
 		$conn = Setkoneksi::set_koneksi($request);
 
-		$tahun_ajaran = DB::connection($conn)->table('public.tahun_ajaran')->orderBy('nama_tahun_ajaran')->get();
+		$tahun_ajaran = DB::connection('pgsql_sd')->table('public.tahun_ajaran')->orderBy('nama_tahun_ajaran')->get();
 		$guru = Get_data::get_guru();
 
 

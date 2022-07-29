@@ -38,7 +38,7 @@ class TaController extends Controller
 		$request->jenjang = Session::get('jenjang');
 		$conn = Setkoneksi::set_koneksi($request);
 
-		$ta = DB::connection($conn)->table('public.tahun_ajaran')->where('id_tahun_ajaran',$id)->first();
+		$ta = DB::connection('pgsql_sd')->table('public.tahun_ajaran')->where('id_tahun_ajaran',$id)->first();
 
 		$data = [
 			'title'=>$title,
@@ -66,11 +66,11 @@ class TaController extends Controller
 		$request->jenjang = Session::get('jenjang');
 		$conn = Setkoneksi::set_koneksi($request);
 
-		$get = DB::connection($conn)->table('public.tahun_ajaran')->where('id_tahun_ajaran',$id)->first();
+		$get = DB::connection('pgsql_sd')->table('public.tahun_ajaran')->where('id_tahun_ajaran',$id)->first();
 		if(!empty($get)){
-			$simpan = DB::connection($conn)->table('public.tahun_ajaran')->where('id_tahun_ajaran',$id)->update($data_input);
+			$simpan = DB::connection('pgsql_sd')->table('public.tahun_ajaran')->where('id_tahun_ajaran',$id)->update($data_input);
 		}else{
-			$simpan = DB::connection($conn)->table('public.tahun_ajaran')->insert($data_input);
+			$simpan = DB::connection('pgsql_sd')->table('public.tahun_ajaran')->insert($data_input);
 		}
 
 		if($simpan){
@@ -86,7 +86,7 @@ class TaController extends Controller
 		$coni = new Request;
 		$coni->jenjang = Session::get('jenjang');
 		$conn = Setkoneksi::set_koneksi($coni);
-		$tahun_ajaran = DB::connection($conn)->table('public.tahun_ajaran')->orderByRaw("nama_tahun_ajaran ASC")->get();
+		$tahun_ajaran = DB::connection('pgsql_sd')->table('public.tahun_ajaran')->orderByRaw("nama_tahun_ajaran ASC")->get();
 		if($tahun_ajaran->count()!=0){
 			foreach($tahun_ajaran as $ta){
 				$ta->awal = date('d-m-Y',strtotime($ta->tgl_setting_awal));
@@ -106,7 +106,7 @@ class TaController extends Controller
 		$request->jenjang = Session::get('jenjang');
 		$conn = Setkoneksi::set_koneksi($request);
 
-		$hapus = DB::connection($conn)->table('public.tahun_ajaran')->where('id_tahun_ajaran',$id)->delete();
+		$hapus = DB::connection('pgsql_sd')->table('public.tahun_ajaran')->where('id_tahun_ajaran',$id)->delete();
 
 		if($hapus){
 			$result = ['code'=>'200'];

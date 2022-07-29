@@ -12,7 +12,7 @@
 				<div class="row">
 					@php
 					if(count($mapel)!=0){
-						$agama = $mapel->where('kategori_baru','AGAMA ISLAM');
+						$agama = $mapel->where($kolom_kategori,'AGAMA ISLAM');
 						foreach ($agama as $m) { 
 							@endphp
 							<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
@@ -47,7 +47,7 @@
 				<div class="row">
 					@php
 					if(count($mapel)!=0){
-						$agama = $mapel->where('kategori_baru','KELOMPOK A');
+						$agama = $mapel->where($kolom_kategori,'KELOMPOK A');
 						foreach ($agama as $m) { 
 							@endphp
 							<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
@@ -82,7 +82,7 @@
 				<div class="row">
 					@php
 					if(count($mapel)!=0){
-						$agama = $mapel->where('kategori_baru','KELOMPOK B');
+						$agama = $mapel->where($kolom_kategori,'KELOMPOK B');
 						foreach ($agama as $m) { 
 							@endphp
 							<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">

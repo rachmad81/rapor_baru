@@ -52,8 +52,10 @@ class KdController extends Controller
 
 		if($jenjang=='SD'){
 			$nama_schema = env('CURRENT_DB_SD', 'production');
+			$kolom_kategori = 'kategori_baru';
 		}else{
 			$nama_schema = env('CURRENT_DB_SMP', 'production');
+			$kolom_kategori = 'kategori';
 		}
 
 		$kelas = $request->kelas;
@@ -69,6 +71,7 @@ class KdController extends Controller
 		$data = [
 			'kelas'=>$kelas,
 			'mapel'=>$mapel,
+			'kolom_kategori'=>$kolom_kategori,
 		];
 
 		$content = view('admin.kd.data_mapel',$data)->render();
@@ -82,7 +85,7 @@ class KdController extends Controller
 		$request->jenjang = Session::get('jenjang');
 		$conn = Setkoneksi::set_koneksi($request);
 
-		$tahun_ajaran = DB::connection($conn)->table('public.tahun_ajaran')->orderBy('nama_tahun_ajaran','ASC')->get();
+		$tahun_ajaran = DB::connection('pgsql_sd')->table('public.tahun_ajaran')->orderBy('nama_tahun_ajaran','ASC')->get();
 
 		$title = ($id=='0') ? 'Tambah' : 'Edit';
 

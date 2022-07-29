@@ -30,12 +30,14 @@ class IsianwkController extends Controller
 		$request->jenjang = $jenjang;
 		$conn = Setkoneksi::set_koneksi($request);
 
-		$rombongan_belajar = DB::connection($conn)->table('public.rombongan_belajar as rb')->join('public.tahun_ajaran as ta','ta.id_tahun_ajaran','rb.tahun_ajaran_id')->where('rb.id_rombongan_belajar',$id_rombel)->first();
+		$rombongan_belajar = DB::connection($conn)->table('public.rombongan_belajar as rb')->where('rb.id_rombongan_belajar',$id_rombel)->first();
+		$tahun_ajaran = DB::connection('pgsql_sd')->table('public.tahun_ajaran')->where('id_tahun_ajaran',$rombongan_belajar->tahun_ajaran_id)->first();
+		$rombongan_belajar->nama_tahun_ajaran = $tahun_ajaran->nama_tahun_ajaran;
 
 		if(!empty($rombongan_belajar)){
 			Session::put('kelas_wk',$rombongan_belajar->kelas);
 			Session::put('rombel_wk',$rombongan_belajar->rombel);
-			Session::put('ta_wk',$rombongan_belajar->nama_tahun_ajaran);
+			Session::put('ta_wk',$tahun_ajaran->nama_tahun_ajaran);
 			Session::put('rombel_semester',$rombongan_belajar->semester);
 			$semester = ($rombongan_belajar->semester==1) ? 'Semester Ganjil' : 'Semester Genap';
 			Session::put('semester_wk',$semester);

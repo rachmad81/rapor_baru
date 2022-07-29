@@ -128,7 +128,7 @@ class RaporController extends Controller
 			return $join->on('ma.mapel_id','=','na.mapel_id');
 		})
 		->leftjoin('public.pegawai as peg',function($join){
-			return $join->on('peg.nik','=','m.nik_pengajar')->on('peg.peg_id','=','m.peg_id');
+			return $join->on('peg.no_ktp','=','m.nik_pengajar')->on('peg.peg_id','=','m.peg_id');
 		})
 		->selectRaw("ma.nama as mapel,peg.nama as guru_mengajar,na.nilai_ki3,na.predikat_ki3,na.deskripsi_ki3,na.nilai_ki4,na.predikat_ki4,na.deskripsi_ki4,75 as kkm")
 		->whereRaw("na.anggota_rombel_id='$siswa->id_anggota_rombel' AND ma.kategori_baru IN ('KELOMPOK A','WAJIB','A. MATA PELAJARAN')")
@@ -143,7 +143,7 @@ class RaporController extends Controller
 			return $join->on('ma.mapel_id','=','na.mapel_id');
 		})
 		->leftjoin('public.pegawai as peg',function($join){
-			return $join->on('peg.nik','=','m.nik_pengajar')->on('peg.peg_id','=','m.peg_id');
+			return $join->on('peg.no_ktp','=','m.nik_pengajar')->on('peg.peg_id','=','m.peg_id');
 		})
 		->selectRaw("ma.nama as mapel,peg.nama as guru_mengajar,na.nilai_ki3,na.predikat_ki3,na.deskripsi_ki3,na.nilai_ki4,na.predikat_ki4,na.deskripsi_ki4,75 as kkm")
 		->whereRaw("na.anggota_rombel_id='$siswa->id_anggota_rombel' AND ma.kategori_baru IN ('KELOMPOK B','MUATAN LOKAL')")
@@ -158,7 +158,7 @@ class RaporController extends Controller
 			return $join->on('ma.mapel_id','=','na.mapel_id');
 		})
 		->leftjoin('public.pegawai as peg',function($join){
-			return $join->on('peg.nik','=','m.nik_pengajar')->on('peg.peg_id','=','m.peg_id');
+			return $join->on('peg.no_ktp','=','m.nik_pengajar')->on('peg.peg_id','=','m.peg_id');
 		})
 		->selectRaw("ma.nama as mapel,peg.nama as guru_mengajar,na.nilai_ki3,na.predikat_ki3,na.deskripsi_ki3,na.nilai_ki4,na.predikat_ki4,na.deskripsi_ki4,75 as kkm")
 		->whereRaw("na.anggota_rombel_id='$siswa->id_anggota_rombel' AND ma.kategori_baru IN ('AGAMA ISLAM')")
@@ -169,7 +169,7 @@ class RaporController extends Controller
 		
 		$walikelas = DB::connection($conn)->table('public.rombongan_belajar as wk')
 		->leftjoin('public.pegawai as p',function($join){
-			return $join->on('wk.wali_kelas_peg_id','=',DB::raw("CAST(p.peg_id as varchar)"))->on('wk.nik_wk','=','p.nik');
+			return $join->on('wk.wali_kelas_peg_id','=',DB::raw("CAST(p.peg_id as varchar)"))->on('wk.nik_wk','=','p.no_ktp');
 		})
 		->leftjoin('public.gelar_akademik as gd',function($join){
 			return $join->on('p.gelar','=',DB::raw('CAST(gd.gelar_akademik_id as varchar)'));

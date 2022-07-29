@@ -88,7 +88,7 @@ class LoginController extends Controller
 				}
 
 				$session_array = [
-					'nik'=>$get_user->nik,
+					'nik'=>$get_user->no_ktp,
 					'nama'=>$get_user->nama,
 					'npsn'=>$get_user->npsn,
 					'nama_sekolah'=>$get_user->nama_sekolah,

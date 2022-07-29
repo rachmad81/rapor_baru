@@ -1287,7 +1287,7 @@ class IsianController extends Controller
 		$conn = Setkoneksi::set_koneksi($coni);
 
 		$rombongan_belajar = DB::connection($conn)->table('public.rombongan_belajar as rb')->join('public.tahun_ajaran as ta','ta.id_tahun_ajaran','rb.tahun_ajaran_id')->join('public.pegawai as p',function($join){
-			return $join->on('rb.wali_kelas_peg_id','=',DB::raw("CAST(p.peg_id as varchar)"))->on('rb.nik_wk','=','p.nik');
+			return $join->on('rb.wali_kelas_peg_id','=',DB::raw("CAST(p.peg_id as varchar)"))->on('rb.nik_wk','=','p.no_ktp');
 		})->where('rb.id_rombongan_belajar',$id_rombel)->first();
 
 		$sekolah = DB::connection($conn)->table('public.sekolah')->whereRaw("npsn='$npsn'")->first();
@@ -1295,7 +1295,7 @@ class IsianController extends Controller
 		$mengajar = DB::connection($conn)->table($this->schema.'.mengajar as m')
 		->join('public.rapor_mapel as ma','ma.mapel_id','m.mapel_id')
 		->join('public.pegawai as p',function($join){
-			return $join->on('m.peg_id','=','p.peg_id')->on('m.nik_pengajar','=','p.nik');
+			return $join->on('m.peg_id','=','p.peg_id')->on('m.nik_pengajar','=','p.no_ktp');
 		})
 		->selectRaw("*,ma.nama as nama_mapel,p.nama as nama_pengajar")
 		->whereRaw("m.rombel_id='$id_rombel' AND m.mapel_id='$mapel_id'")->first();
@@ -1369,7 +1369,7 @@ class IsianController extends Controller
 		$conn = Setkoneksi::set_koneksi($coni);
 
 		$rombongan_belajar = DB::connection($conn)->table('public.rombongan_belajar as rb')->join('public.pegawai as p',function($join){
-			return $join->on('rb.wali_kelas_peg_id','=',DB::raw("CAST(p.peg_id as varchar)"))->on('rb.nik_wk','=','p.nik');
+			return $join->on('rb.wali_kelas_peg_id','=',DB::raw("CAST(p.peg_id as varchar)"))->on('rb.nik_wk','=','p.no_ktp');
 		})->where('rb.id_rombongan_belajar',$id_rombel)->first();
 		$tahun_ajaran = DB::connection('pgsql_sd')->table('public.tahun_ajaran')->where('id_tahun_ajaran',$rombongan_belajar->tahun_ajaran_id)->first();
 		$rombongan_belajar->nama_tahun_ajaran = $tahun_ajaran->nama_tahun_ajaran;
@@ -1379,7 +1379,7 @@ class IsianController extends Controller
 		$mengajar = DB::connection($conn)->table($this->schema.'.mengajar as m')
 		->join('public.rapor_mapel as ma','ma.mapel_id','m.mapel_id')
 		->join('public.pegawai as p',function($join){
-			return $join->on('m.peg_id','=','p.peg_id')->on('m.nik_pengajar','=','p.nik');
+			return $join->on('m.peg_id','=','p.peg_id')->on('m.nik_pengajar','=','p.no_ktp');
 		})
 		->selectRaw("*,ma.nama as nama_mapel,p.nama as nama_pengajar")
 		->whereRaw("m.rombel_id='$id_rombel' AND m.mapel_id='$mapel_id'")->first();

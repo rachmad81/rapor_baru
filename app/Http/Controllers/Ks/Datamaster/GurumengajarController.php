@@ -50,7 +50,7 @@ class GurumengajarController extends Controller
 
 		$mengajar = DB::connection($conn)->table($this->schema.'.mengajar as m')
 		->leftjoin('public.pegawai as peg',function($join){
-			$join->on('m.peg_id','=','peg.peg_id')->on('m.nik_pengajar','=','peg.nik');
+			$join->on('m.peg_id','=','peg.peg_id')->on('m.nik_pengajar','=','peg.no_ktp');
 		})
 		->leftjoin('public.rombongan_belajar as r',function($join){
 			$join->on('m.rombel_id','=','r.id_rombongan_belajar');
@@ -58,7 +58,7 @@ class GurumengajarController extends Controller
 		->leftjoin('public.rapor_mapel as rm',function($join){
 			$join->on('m.mapel_id','=','rm.mapel_id');
 		})
-		->selectRaw("m.*,peg.nik,r.tahun_ajaran_id")
+		->selectRaw("m.*,peg.no_ktp,r.tahun_ajaran_id")
 		->where('id_mengajar',$id)
 		->first();
 
@@ -96,7 +96,7 @@ class GurumengajarController extends Controller
 		$npsn = Session::get('npsn');
 
 		$pegawai = DB::connection($conn)->table('public.pegawai')->whereRaw("peg_id='$guru'")->first();
-		$nik = (!empty($pegawai)) ? $pegawai->nik : '';
+		$nik = (!empty($pegawai)) ? $pegawai->no_ktp : '';
 		$peg_id = (!empty($pegawai)) ? $pegawai->peg_id : '';
 
 		$data = [
@@ -137,7 +137,7 @@ class GurumengajarController extends Controller
 			->join($this->schema.'.mengajar as m','m.rombel_id','rb.id_rombongan_belajar')
 			->join('public.rapor_mapel as rm','rm.mapel_id','m.mapel_id')
 			->leftjoin('public.pegawai as p',function($join){
-				return $join->on('p.nik','=','m.nik_pengajar')->on('p.peg_id','=','m.peg_id');
+				return $join->on('p.no_ktp','=','m.nik_pengajar')->on('p.peg_id','=','m.peg_id');
 			})
 			->selectRaw("p.nama as nama_guru,rm.nama as nama_mapel,CONCAT(rb.kelas,'.',rb.rombel) as kelas_rombel,rb.tahun_ajaran_id,m.id_mengajar,p.user_rapor")
 			->whereRaw("rb.npsn='$npsn' AND rb.tahun_ajaran_id='$id' AND semester='$semester'")

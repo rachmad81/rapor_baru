@@ -48,9 +48,9 @@ class WalikelasController extends Controller
 		$conn = Setkoneksi::set_koneksi($coni);
 
 		if($nik==''){
-			$pegawai = DB::connection($conn)->table('public.pegawai')->whereRaw("user_rapor='$user_rapor' AND (nik is null OR nik='') AND npsn='$npsn'")->first();
+			$pegawai = DB::connection($conn)->table('public.pegawai')->whereRaw("user_rapor='$user_rapor' AND (no_ktp is null OR no_ktp='') AND npsn='$npsn'")->first();
 		}else{
-			$pegawai = DB::connection($conn)->table('public.pegawai')->whereRaw("user_rapor='$user_rapor' AND nik='$nik' AND npsn='$npsn'")->first();
+			$pegawai = DB::connection($conn)->table('public.pegawai')->whereRaw("user_rapor='$user_rapor' AND no_ktp='$nik' AND npsn='$npsn'")->first();
 		}
 
 		if(!empty($pegawai)){
@@ -64,12 +64,12 @@ class WalikelasController extends Controller
 				->orderByRaw("rb.kelas ASC,rb.rombel ASC,ma.nama ASC")
 				->get();
 			}else{
-				$walikelas = DB::connection($conn)->table('public.rombongan_belajar')->whereRaw("npsn='$npsn' AND nik_wk='$pegawai->nik' AND wali_kelas_peg_id='$pegawai->peg_id' AND tahun_ajaran_id='$ta' AND semester='$semester'")->orderByRaw("kelas ASC,rombel ASC")->get();
+				$walikelas = DB::connection($conn)->table('public.rombongan_belajar')->whereRaw("npsn='$npsn' AND nik_wk='$pegawai->no_ktp' AND wali_kelas_peg_id='$pegawai->peg_id' AND tahun_ajaran_id='$ta' AND semester='$semester'")->orderByRaw("kelas ASC,rombel ASC")->get();
 				$mengajar = DB::connection($conn)->table($this->schema.'.mengajar as m')
 				->join('public.rombongan_belajar as rb','rb.id_rombongan_belajar','m.rombel_id')
 				->join('public.rapor_mapel as ma','ma.mapel_id','m.mapel_id')
 				->selectRaw("*,ma.nama as nama_mapel")
-				->whereRaw("rb.npsn='$npsn' AND m.nik_pengajar='$pegawai->nik' AND m.peg_id='$pegawai->peg_id' AND rb.tahun_ajaran_id='$ta' AND rb.semester='$semester'")
+				->whereRaw("rb.npsn='$npsn' AND m.nik_pengajar='$pegawai->no_ktp' AND m.peg_id='$pegawai->peg_id' AND rb.tahun_ajaran_id='$ta' AND rb.semester='$semester'")
 				->orderByRaw("rb.kelas ASC,rb.rombel ASC,ma.nama ASC")
 				->get();
 			}

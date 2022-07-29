@@ -82,7 +82,7 @@ class WalikelasController extends Controller
 		$npsn = Session::get('npsn');
 		
 		$pegawai = DB::connection($conn)->table('public.pegawai')->whereRaw("peg_id='$peg_id' and npsn='$npsn'")->first();
-		$nik = (!empty($pegawai)) ? $pegawai->nik : '';
+		$nik = (!empty($pegawai)) ? $pegawai->no_ktp : '';
 		$nama = (!empty($pegawai)) ? $pegawai->nama : '';
 
 		$data = [
@@ -141,7 +141,7 @@ class WalikelasController extends Controller
 			$wali_kelas = DB::connection($conn)->table('public.rombongan_belajar as wk')
 			->join('public.pegawai as p',function($join){
 				return $join->on(DB::raw("CAST(p.peg_id as varchar)"),'=','wk.wali_kelas_peg_id');
-			})->whereRaw("wk.npsn='$npsn' AND wk.tahun_ajaran_id='$id' AND semester='$semester' AND CASE WHEN (wk.nik_wk is null) THEN p.nik is null ELSE wk.nik_wk=p.nik END")->get();
+			})->whereRaw("wk.npsn='$npsn' AND wk.tahun_ajaran_id='$id' AND semester='$semester' AND CASE WHEN (wk.nik_wk is null) THEN p.no_ktp is null ELSE wk.nik_wk=p.no_ktp END")->get();
 
 			if($wali_kelas->count()!=0){
 				foreach($wali_kelas as $wk){

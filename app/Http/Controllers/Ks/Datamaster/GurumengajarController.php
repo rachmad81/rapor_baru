@@ -16,10 +16,10 @@ class GurumengajarController extends Controller
 {
 	protected $schema;
 
-    public function __construct() 
-    {
-        $this->schema = env('CURRENT_SCHEMA','production');
-    }
+	public function __construct() 
+	{
+		$this->schema = env('CURRENT_SCHEMA','production');
+	}
 
 	function main(){
 		$coni = new Request;
@@ -167,10 +167,10 @@ class GurumengajarController extends Controller
 		$coni->jenjang = Session::get('jenjang');
 		$conn = Setkoneksi::set_koneksi($coni);
 		
-		$mengajar = DB::connection($conn)->table($nama_schema.'.mengajar')->whereRaw("npsn='$npsn' and kelas='$kelas' and rombel='$rombel' and nip='$nip' and mapel_id='$mapel_id'")->first();
+		$mengajar = DB::connection($conn)->table($this->schema.'.mengajar')->whereRaw("npsn='$npsn' and kelas='$kelas' and rombel='$rombel' and nip='$nip' and mapel_id='$mapel_id'")->first();
 
 		if(!empty($mengajar)){
-			$hapus = DB::connection($conn)->table($nama_schema.'.mengajar')->whereRaw("npsn='$npsn' and kelas='$kelas' and rombel='$rombel' and nip='$nip' and mapel_id='$mapel_id'")->delete();
+			$hapus = DB::connection($conn)->table($this->schema.'.mengajar')->whereRaw("npsn='$npsn' and kelas='$kelas' and rombel='$rombel' and nip='$nip' and mapel_id='$mapel_id'")->delete();
 			if($hapus){
 				Session::flash('title','Success');
 				Session::flash('message','Berhasil dihapus');
@@ -184,5 +184,49 @@ class GurumengajarController extends Controller
 		}
 
 		return $return;
+	}
+
+	function set_guru_kelas(Request $request){
+		$semester = $request->semester; //: "1"
+		$tahun_ajaran = $request->tahun_ajaran; //: "3"
+		$npsn = Session::get('npsn');
+
+		$coni = new Request;
+		$coni->jenjang = Session::get('jenjang');
+		$conn = Setkoneksi::set_koneksi($coni);
+
+		$wali_kelas = DB::connection($conn)->table('public.rombongan_belajar as rb')
+		->join('public.pegawai as p',function($join){
+			$join->on(DB::raw("CAST(p.peg_id as varchar)"),'=','rb.wali_kelas_peg_id')->on('rb.nik_wk','=','p.no_ktp')->on('rb.npsn','=','p.npsn');
+		})
+		->selectRaw("rb.id_rombongan_belajar,rb.kelas,rb.rombel,rb.wali_kelas_peg_id,rb.nik_wk,p.nama")->whereRaw("rb.npsn='$npsn' and rb.soft_delete='0' and rb.semester='$semester'")
+		->orderByRaw("rb.kelas ASC,rb.rombel ASC")->get();
+
+		if($wali_kelas->count()!=0){
+			foreach($wali_kelas as $wk){
+				$mapel = ['2','3','4','5','6','7','9'];
+				for ($i=0; $i < count($mapel); $i++) { 
+					$dt_mengajar = [
+						'mapel_id'=>$mapel[$i],
+						'rombel_id'=>$wk->id_rombongan_belajar,
+						'nik_pengajar'=>$wk->nik_wk,
+						'peg_id'=>$wk->wali_kelas_peg_id,
+						'created_at'=>date('Y-m-d H:i:s'),
+						'updated_at'=>date('Y-m-d H:i:s'),
+					];
+
+					$where_mengajar = $dt_mengajar;
+					unset($where_mengajar['updated_at']);
+					unset($where_mengajar['created_at']);
+
+					$cek_mengajar = DB::connection($conn)->table($this->schema.'.mengajar')->where($where_mengajar)->first();
+					if(empty($cek_mengajar)){
+						DB::connection($conn)->table($this->schema.'.mengajar')->insert($dt_mengajar);
+					}
+				}
+			}
+		}
+
+		return ['code'=>'200','message'=>'Berhasil dihapus','title'=>'Success','type'=>'success'];
 	}
 }

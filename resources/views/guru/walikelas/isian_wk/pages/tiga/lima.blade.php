@@ -47,19 +47,15 @@
 		if($key){
 			$nilai_pakai = $nilai[$key];
 		}else{
-			$nilai_pakai = 0;
+			$nilai_pakai = 3;
 		}
 		@endphp
 		<select class="form-control" name="{{$kolom}}" onblur="simpan_nilai('{{$kolom}}','{{$s->id_siswa}}',this,'4')">
 			@for($i=0;$i<count($options);$i++)
-			@if($nilai_pakai==$options[$i]['value'])
-			<option value="{{$options[$i]['value']}}" selected>{{$options[$i]['text']}}</option>
-			@else
 			@if('3'==$options[$i]['value'])
 			<option value="{{$options[$i]['value']}}" selected>{{$options[$i]['text']}}</option>
 			@else
 			<option value="{{$options[$i]['value']}}">{{$options[$i]['text']}}</option>
-			@endif
 			@endif
 			@endfor
 		</select>

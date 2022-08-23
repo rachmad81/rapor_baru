@@ -198,7 +198,12 @@
 		};
 
 		$.post("{{route('guru-isian_wk-simpan_nilai')}}",data,function(data){
-			swal(data.title,data.message,data.type);
+			swal({
+				title:data.title,
+				text:data.message,
+				icon:data.type,
+				timer:1000,
+			});
 		}).fail(function(){
 			swal('Whooops','Terjadi kesalahan pada aplikasi','error');
 		})

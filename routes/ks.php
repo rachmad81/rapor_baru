@@ -51,6 +51,8 @@ Route::middleware('mid_ks')->group(function(){
 				Route::post('/simpan','Ks\Datamaster\GurumengajarController@simpan')->name('simpan');
 				Route::get('/get_data','Ks\Datamaster\GurumengajarController@get_data')->name('get_data');
 				Route::post('/hapus','Ks\Datamaster\GurumengajarController@hapus')->name('hapus');
+
+				Route::post('set_guru_kelas','Ks\DataMaster\GurumengajarController@set_guru_kelas')->name('set_guru_kelas');
 			});
 
 			Route::name('upload_nilai-')->prefix('upload_nilai')->group(function(){

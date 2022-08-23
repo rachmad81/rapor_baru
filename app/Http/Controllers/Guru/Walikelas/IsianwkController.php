@@ -1167,51 +1167,30 @@ class IsianwkController extends Controller
 		$sikap = DB::connection($conn)->table($this->schema.'.nilai_perilaku')
 		->selectRaw("*,COALESCE(sakit,0) as sakit,COALESCE(izin,0) as izin, COALESCE(tanpa_keterangan,0) as tanpa_keterangan")
 		->whereRaw("anggota_rombel_id='$siswa->id_anggota_rombel' AND npsn='$npsn'")->first();
+
+		$nilai_all = DB::connection($conn)->table($this->schema.'.nilai_mapel as na')
+		->leftjoin('public.anggota_rombel as ar',function($join){
+			return $join->on('na.anggota_rombel_id','=','ar.id_anggota_rombel');
+		})
+		->leftjoin($this->schema.'.mengajar as m',function($join){
+			return $join->on('ar.rombongan_belajar_id','=','m.rombel_id')->on('m.mapel_id','=','na.mapel_id');
+		})
+		->leftjoin('public.rapor_mapel as ma',function($join){
+			return $join->on('ma.mapel_id','=','na.mapel_id');
+		})
+		->leftjoin('public.pegawai as peg',function($join){
+			return $join->on('peg.no_ktp','=','m.nik_pengajar')->on('peg.peg_id','=','m.peg_id');
+		})
+		->selectRaw("ma.nama as mapel,peg.nama as guru_mengajar,na.nilai_ki3,na.predikat_ki3,na.deskripsi_ki3,na.nilai_ki4,na.predikat_ki4,na.deskripsi_ki4,75 as kkm")
+		->whereRaw("na.anggota_rombel_id='$siswa->id_anggota_rombel'")
+		->groupByRaw("ma.nama,peg.nama,na.nilai_ki3,na.predikat_ki3,na.deskripsi_ki3,na.nilai_ki4,na.predikat_ki4,na.deskripsi_ki4")
+		->orderBy('ma.nama','ASC');
 		
-		$nilaia = DB::connection($conn)->table($this->schema.'.nilai_mapel as na')
-		->leftjoin($this->schema.'.mengajar as m',function($join){
-			return $join->on('m.mapel_id','=','na.mapel_id');
-		})
-		->leftjoin('public.rapor_mapel as ma',function($join){
-			return $join->on('ma.mapel_id','=','na.mapel_id');
-		})
-		->leftjoin('public.pegawai as peg',function($join){
-			return $join->on('peg.no_ktp','=','m.nik_pengajar')->on('peg.peg_id','=','m.peg_id');
-		})
-		->selectRaw("ma.nama as mapel,peg.nama as guru_mengajar,na.nilai_ki3,na.predikat_ki3,na.deskripsi_ki3,na.nilai_ki4,na.predikat_ki4,na.deskripsi_ki4,75 as kkm")
-		->whereRaw("na.anggota_rombel_id='$siswa->id_anggota_rombel' AND ma.kategori IN ('KELOMPOK A','WAJIB','A. MATA PELAJARAN')")
-		->groupByRaw("ma.nama,peg.nama,na.nilai_ki3,na.predikat_ki3,na.deskripsi_ki3,na.nilai_ki4,na.predikat_ki4,na.deskripsi_ki4")
-		->orderBy('ma.nama','ASC')->get();
+		$nilaia = $nilai_all->whereRaw("ma.kategori IN ('KELOMPOK A','WAJIB','A. MATA PELAJARAN')")->get();
 
-		$nilaib = DB::connection($conn)->table($this->schema.'.nilai_mapel as na')
-		->leftjoin($this->schema.'.mengajar as m',function($join){
-			return $join->on('m.mapel_id','=','na.mapel_id');
-		})
-		->leftjoin('public.rapor_mapel as ma',function($join){
-			return $join->on('ma.mapel_id','=','na.mapel_id');
-		})
-		->leftjoin('public.pegawai as peg',function($join){
-			return $join->on('peg.no_ktp','=','m.nik_pengajar')->on('peg.peg_id','=','m.peg_id');
-		})
-		->selectRaw("ma.nama as mapel,peg.nama as guru_mengajar,na.nilai_ki3,na.predikat_ki3,na.deskripsi_ki3,na.nilai_ki4,na.predikat_ki4,na.deskripsi_ki4,75 as kkm")
-		->whereRaw("na.anggota_rombel_id='$siswa->id_anggota_rombel' AND ma.kategori IN ('KELOMPOK B','MUATAN LOKAL')")
-		->groupByRaw("ma.nama,peg.nama,na.nilai_ki3,na.predikat_ki3,na.deskripsi_ki3,na.nilai_ki4,na.predikat_ki4,na.deskripsi_ki4")
-		->orderBy('ma.nama','ASC')->get();
+		$nilaib = $nilai_all->whereRaw("ma.kategori IN ('KELOMPOK B','MUATAN LOKAL')")->get();
 
-		$nilai_agama = DB::connection($conn)->table($this->schema.'.nilai_mapel as na')
-		->leftjoin($this->schema.'.mengajar as m',function($join){
-			return $join->on('m.mapel_id','=','na.mapel_id');
-		})
-		->leftjoin('public.rapor_mapel as ma',function($join){
-			return $join->on('ma.mapel_id','=','na.mapel_id');
-		})
-		->leftjoin('public.pegawai as peg',function($join){
-			return $join->on('peg.no_ktp','=','m.nik_pengajar')->on('peg.peg_id','=','m.peg_id');
-		})
-		->selectRaw("ma.nama as mapel,peg.nama as guru_mengajar,na.nilai_ki3,na.predikat_ki3,na.deskripsi_ki3,na.nilai_ki4,na.predikat_ki4,na.deskripsi_ki4,75 as kkm")
-		->whereRaw("na.anggota_rombel_id='$siswa->id_anggota_rombel' AND ma.kategori IN ('AGAMA ISLAM')")
-		->groupByRaw("ma.nama,peg.nama,na.nilai_ki3,na.predikat_ki3,na.deskripsi_ki3,na.nilai_ki4,na.predikat_ki4,na.deskripsi_ki4")
-		->orderBy('ma.nama','ASC')->get();
+		$nilai_agama = $nilai_all->whereRaw("ma.kategori IN ('AGAMA ISLAM')")->get();
 
 		$prestasi = DB::connection($conn)->table('public.prestasi_siswa')->whereRaw("id_siswa='$siswa->id_siswa' AND npsn='".Session::get('npsn')."'")->get();
 		

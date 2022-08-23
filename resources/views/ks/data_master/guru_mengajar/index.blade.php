@@ -24,10 +24,20 @@
       <div class="col-12">
         <div class="card card-primary card-outline">
           <div class="card-header">
+            <i style="color:red;font-size:9pt">
+              <b>( I N F O R M A S I )</b><br>
+              <b>Tambah</b> untuk menambahkan guru untuk mengajar mapel pada kelas tertentu<br>
+              @if(Session::get('jenjang')=='SD')
+              <b>Set Guru Kelas</b> untuk setting mapel umum kelas kepada wali kelas<br>
+              @endif
+            </i>
           </div>
           <!-- /.card-header -->
           <div class="card-body">
             <a href="javascript:void(0)" class="btn btn-primary" onclick="form('0')"><i class="fa fa-plus"></i> Tambah</a>
+            @if(Session::get('jenjang')=='SD')
+            <a href="javascript:void(0)" class="btn btn-success" onclick="set_guru_kelas()"><i class="fa fa-cog"></i> Set Guru Kelas</a>
+            @endif
             <div class="row">
               <div class="col-lg-6">
                 <label>Tahun Ajaran</label>
@@ -213,6 +223,52 @@
         });
       }
     });
+  }
+
+  function set_guru_kelas(){
+    var ta = $('select[name=tahun_ajaran]').val();
+    var tatext = $('select[name=tahun_ajaran] option:selected').html();
+    var semester = $('select[name=semester]').val();
+
+    if(ta==''){
+      swal({
+        title: 'Whooops',
+        text: 'Tahun ajaran harus diisi',
+        icon: 'error'
+      });
+    }else if(tatext=='2021/2022'){
+      swal({
+        title: 'Whooops',
+        text: 'Tahun ajaran harus lebih dari 2021',
+        icon: 'error'
+      });
+    }else{
+      swal({
+        title: "Apakah anda yakin?",
+        text: "Setting guru mengajar tahun ajaran "+tatext,
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      })
+      .then((willDelete) => {
+        var data = {
+          tahun_ajaran:ta,
+          semester:semester,
+        };
+        if (willDelete) {
+          $.post("{{route('ks-data-master-guru_mengajar-set_guru_kelas')}}",data,function(data){
+            if(data.code=='200'){
+              data_pengajar();
+            }else{
+              swal(data.title,data.message,data.type);
+            }
+
+          }).fail(function(){
+            swal('Whooops','Terjadi kesalahan dengan aplikasi','error');
+          });
+        }
+      });
+    }   
   }
 </script>
 @endsection

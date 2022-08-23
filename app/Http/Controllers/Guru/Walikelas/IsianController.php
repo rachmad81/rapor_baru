@@ -677,7 +677,7 @@ class IsianController extends Controller
 			foreach($siswa as $s){
 				$huruf_ki3 = '';
 				$nilai_ki3 = 0;
-				$nr_ki4 = '';
+				$nr_ki4 = 0;
 				$catatan3 = '';
 				$catatan4 = '';
 				$arr_nilai = [];
@@ -811,7 +811,6 @@ class IsianController extends Controller
 					}else{
 						$nr=0;
 					} 
-
 				}
 
 				if($nilai_ki3 != 0){

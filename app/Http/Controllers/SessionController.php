@@ -58,7 +58,7 @@ class SessionController extends Controller
 		$conn = Setkoneksi::set_koneksi($request);
 		$npsn = Session::get('npsn');
 
-		$rb = DB::connection($conn)->table('public.rombongan_belajar')->whereRaw("npsn='$npsn'AND tahun_ajaran_id='$id' AND semester='$semester'")->orderByRaw("kelas asc,rombel asc")->get();
+		$rb = DB::connection($conn)->table('public.rombongan_belajar')->whereRaw("npsn='$npsn'AND tahun_ajaran_id='$id' AND semester='$semester' and soft_delete='0'")->orderByRaw("kelas asc,rombel asc")->get();
 
 		$code = '200';
 

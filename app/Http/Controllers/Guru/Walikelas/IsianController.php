@@ -235,8 +235,8 @@ class IsianController extends Controller
 					$get_nilai = DB::connection($conn)->table($this->schema.'.nilai_mapel as np')
 					->whereRaw("np.anggota_rombel_id='$s->id_anggota_rombel' AND np.mapel_id='$mapel_id'")->first();
 
-					$s->uts = (!empty($get_nilai)) ? $get_nilai->pts : '';;
-					$s->uas = (!empty($get_nilai)) ? $get_nilai->pas : '';;
+					$s->uts = (!empty($get_nilai)) ? $get_nilai->pts : '';
+					$s->uas = (!empty($get_nilai)) ? $get_nilai->pas : '';
 				}
 			}
 		}
@@ -268,6 +268,7 @@ class IsianController extends Controller
 
 		$coni->jenjang = $jenjang;
 		$conn = Setkoneksi::set_koneksi($coni);
+
 
 		$siswa = DB::connection($conn)->table('public.rombongan_belajar as rb')
 		->join('public.anggota_rombel as ar','ar.rombongan_belajar_id','rb.id_rombongan_belajar')
@@ -1128,7 +1129,15 @@ class IsianController extends Controller
 		->join('public.siswa as s',function($join){
 			return $join->on('s.id_siswa','=','ar.id_siswa')->on('s.siswa_id','=','ar.siswa_id');
 		})
-		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn' AND s.status_siswa='Aktif'")->get();
+		->whereRaw("rombongan_belajar_id='$id_rombel' AND s.npsn='$npsn' AND s.status_siswa='Aktif'")->orderBy('s.nama')->get();
+
+		foreach($siswa as $s){
+			$arr_nilai = [];
+			$get_nilai = DB::connection($conn)->table($this->schema.'.nilai_mapel as np')
+			->whereRaw("np.anggota_rombel_id='$s->id_anggota_rombel' AND np.mapel_id='$mapel_id'")->first();
+
+			$s->usek = (!empty($get_nilai)) ? $get_nilai->usek : '';
+		}
 
 		$data = [
 			'siswa'=>$siswa,
@@ -1150,6 +1159,8 @@ class IsianController extends Controller
 		$id_rombel = Session::get('id_rombel');
 		$mapel_id = Session::get('mapel_id');
 		$npsn = Session::get('npsn');
+		$kategori = $request->kategori;
+		$usek = $request->usek;
 
 		$request->jenjang = Session::get('jenjang');
 		$conn = Setkoneksi::set_koneksi($request);
@@ -1167,7 +1178,11 @@ class IsianController extends Controller
 
 		$get_nilai_mapel = DB::connection($conn)->table($this->schema.'.nilai_mapel')->where($data_nilai_mapel)->first();
 
-		$data_insert = array_merge($data_nilai_mapel,['pts'=>$uts,'pas'=>$uas]);
+		if($kategori=='usek'){
+			$data_insert = array_merge($data_nilai_mapel,['usek'=>$usek]);
+		}else{
+			$data_insert = array_merge($data_nilai_mapel,['pts'=>$uts,'pas'=>$uas]);
+		}
 
 		if(!empty($get_nilai_mapel)){
 			$simpan = DB::connection($conn)->table($this->schema.'.nilai_mapel')->where($data_nilai_mapel)->update($data_insert);

@@ -88,9 +88,11 @@
 							<li class="nav-item">
 								<a class="nav-link" id="tab-5" onclick="generate_nilai_akhir()">Hasil Akhir</a>
 							</li>
+							@if($rombongan_belajar->semester!='2' && ($rombongan_belajar->kelas=='6' || $rombongan_belajar->kelas=='9'))
 							<li class="nav-item">
 								<a class="nav-link" id="tab-6" onclick="get_pages(6)">Ujian Sekolah</a>
 							</li>
+							@endif
 						</ul>
 					</div>
 					<div class="card-body">
@@ -249,18 +251,26 @@
 		});
 	}
 
-	function simpan_uts(id_siswa){
+	function simpan_uts(id_siswa,kategori=''){
 		var uts = $('input[name=uts_'+id_siswa+']').val();
 		var uas = $('input[name=uas_'+id_siswa+']').val();
+		var usek = $('input[name=usek_'+id_siswa+']').val();
 
 		var data = {
 			id_siswa:id_siswa,
 			uts:uts,
 			uas:uas,
+			usek:usek,
+			kategori:kategori,
 		};
 
 		$.post("{{route('guru-isian-simpan_uts')}}",data,function(data){
-			swal(data.title,data.message,data.type);
+			swal({
+				title: data.title,
+				text: data.message,
+				icon: data.type,
+				timer: 500,
+			});
 		}).fail(function(){
 			swal('Whooops','Terjadi kesalahan pada aplikasi','error');
 		});

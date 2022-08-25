@@ -2,7 +2,7 @@
 	<div class="col-3 col-sm-3">
 		<div class="nav flex-column nav-tabs h-100" id="vert-tabs-tab" role="tablist" aria-orientation="vertical">
 			<a href="javascript:void(0)" class="nav-link active-tab6" id="tab6-1" onclick="pages6('1')">Ujian Sekolah</a>
-			<a href="javascript:void(0)" class="nav-link active-tab6" id="tab6-2" onclick="pages6('2')">Unggah Nilai</a>
+			{{-- <a href="javascript:void(0)" class="nav-link active-tab6" id="tab6-2" onclick="pages6('2')">Unggah Nilai</a> --}}
 		</div>
 	</div>
 	<div class="col-9 col-sm-9">
